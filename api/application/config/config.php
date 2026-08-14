@@ -17,7 +17,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | environments.
 |
 */
-$config['base_url'] = 'http://localhost/newkotainter/';   
+$config['base_url'] = 'http://localhost/newkotainter/api/';   
 //$config['base_url'] = 'http://10.71.1.173:8888/kotainter/';
 //$config['base_url'] = 'http://10.71.1.175:8888/kotainter/';
 //$config['base_url'] = 'http://10.68.35.12:8888/kotainter/';
