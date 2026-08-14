@@ -10,7 +10,7 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
   
   const rowsPerPage = 5;
 
-  const safeLogs = Array.isArray(logs) ? logs : [];
+  const safeLogs = Array.isArray(logs) ? logs.filter(Boolean) : [];
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -19,14 +19,24 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
 
   // Apply filters
   const filteredData = safeLogs.filter(log => {
-    const matchesSearch = 
-      (log.no_tiket || '').toLowerCase().includes(searchVal.toLowerCase().trim()) ||
-      (log.no_pelanggan || '').toLowerCase().includes(searchVal.toLowerCase().trim()) ||
-      (log.jenis_transaksi || '').toLowerCase().includes(searchVal.toLowerCase().trim()) ||
-      (log.petugas || '').toLowerCase().includes(searchVal.toLowerCase().trim());
+    if (!log) return false;
     
-    const matchesDb = dbVal === '' || log.database === dbVal;
-    const matchesStatus = statusVal === '' || log.status === statusVal;
+    const noTiketStr = (log.no_tiket !== null && log.no_tiket !== undefined) ? log.no_tiket.toString() : '';
+    const noPelangganStr = (log.no_pelanggan !== null && log.no_pelanggan !== undefined) ? log.no_pelanggan.toString() : '';
+    const jenisTransaksiStr = (log.jenis_transaksi !== null && log.jenis_transaksi !== undefined) ? log.jenis_transaksi.toString() : '';
+    const petugasStr = (log.petugas !== null && log.petugas !== undefined) ? log.petugas.toString() : '';
+    
+    const matchesSearch = 
+      noTiketStr.toLowerCase().includes(searchVal.toLowerCase().trim()) ||
+      noPelangganStr.toLowerCase().includes(searchVal.toLowerCase().trim()) ||
+      jenisTransaksiStr.toLowerCase().includes(searchVal.toLowerCase().trim()) ||
+      petugasStr.toLowerCase().includes(searchVal.toLowerCase().trim());
+    
+    const logDb = log.database ? log.database.toString() : '';
+    const logStatus = log.status ? log.status.toString() : '';
+
+    const matchesDb = dbVal === '' || logDb === dbVal;
+    const matchesStatus = statusVal === '' || logStatus === statusVal;
     
     return matchesSearch && matchesDb && matchesStatus;
   });
@@ -35,8 +45,8 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
   const sortedData = [...filteredData];
   if (sortKey) {
     sortedData.sort((a, b) => {
-      let valA = (a[sortKey] || '').toString().toLowerCase();
-      let valB = (b[sortKey] || '').toString().toLowerCase();
+      let valA = a && a[sortKey] !== undefined && a[sortKey] !== null ? a[sortKey].toString().toLowerCase() : '';
+      let valB = b && b[sortKey] !== undefined && b[sortKey] !== null ? b[sortKey].toString().toLowerCase() : '';
       
       if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
       if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
@@ -46,9 +56,9 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
 
   // Stats calculation
   const totalLogs = filteredData.length;
-  const oracleLogs = filteredData.filter(l => l.database === 'ORACLE').length;
-  const postgresLogs = filteredData.filter(l => l.database === 'POSTGRESQL').length;
-  const systemIssues = filteredData.filter(l => l.status === 'ERROR' || l.status === 'WARNING').length;
+  const oracleLogs = filteredData.filter(l => l && l.database && l.database.toString() === 'ORACLE').length;
+  const postgresLogs = filteredData.filter(l => l && l.database && l.database.toString() === 'POSTGRESQL').length;
+  const systemIssues = filteredData.filter(l => l && l.status && (l.status.toString() === 'ERROR' || l.status.toString() === 'WARNING')).length;
 
   // Pagination calculation
   const totalPages = Math.ceil(totalLogs / rowsPerPage) || 1;
@@ -95,11 +105,11 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
         {/* Status Koneksi DB Aktif */}
         <div className="db-status-bar">
           <div className="db-indicator">
-            <span className={`indicator-dot ${dbStatus.oracle ? 'online' : 'offline'}`} id="status-dot-oracle"></span>
+            <span className={`indicator-dot ${(dbStatus && dbStatus.oracle) ? 'online' : 'offline'}`} id="status-dot-oracle"></span>
             <span>Oracle Train</span>
           </div>
           <div className="db-indicator">
-            <span className={`indicator-dot ${dbStatus.postgresql ? 'online' : 'offline'}`} id="status-dot-postgres"></span>
+            <span className={`indicator-dot ${(dbStatus && dbStatus.postgresql) ? 'online' : 'offline'}`} id="status-dot-postgres"></span>
             <span>PostgreSQL dev</span>
           </div>
         </div>
@@ -241,10 +251,13 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
                 </tr>
               ) : (
                 paginatedData.map((log, index) => {
-                  const dbBadge = log.database === 'ORACLE' ? 'badge-oracle' : 'badge-postgres';
+                  const logDb = log.database ? log.database.toString() : '';
+                  const logStatus = log.status ? log.status.toString() : '';
+                  const dbBadge = logDb === 'ORACLE' ? 'badge-oracle' : 'badge-postgres';
+                  
                   let statusBadge = 'badge-success';
-                  if (log.status === 'WARNING') statusBadge = 'badge-warning';
-                  if (log.status === 'ERROR') statusBadge = 'badge-error';
+                  if (logStatus === 'WARNING') statusBadge = 'badge-warning';
+                  if (logStatus === 'ERROR') statusBadge = 'badge-error';
 
                   return (
                     <tr key={`${log.no_tiket}-${log.no_pelanggan}-${index}`}>
@@ -252,8 +265,8 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
                       <td>{log.jenis_transaksi}</td>
                       <td>{log.no_pelanggan}</td>
                       <td>{log.tanggal_proses}</td>
-                      <td><span className={`badge ${dbBadge}`}>{log.database}</span></td>
-                      <td><span className={`badge ${statusBadge}`}>{log.status}</span></td>
+                      <td><span className={`badge ${dbBadge}`}>{logDb}</span></td>
+                      <td><span className={`badge ${statusBadge}`}>{logStatus}</span></td>
                       <td>{log.petugas}</td>
                       <td style={{ textAlign: 'center' }}>
                         <button 

@@ -34,11 +34,18 @@ export default function UsersGrid() {
     }
   };
 
-  const filteredUsers = users.filter(u => 
-    u.nama.toLowerCase().includes(searchVal.toLowerCase()) || 
-    u.username.toLowerCase().includes(searchVal.toLowerCase()) ||
-    u.unit.toLowerCase().includes(searchVal.toLowerCase())
-  );
+  const filteredUsers = users.filter(u => {
+    if (!u) return false;
+    const nameStr = u.nama ? u.nama.toString() : '';
+    const usernameStr = u.username ? u.username.toString() : '';
+    const unitStr = u.unit ? u.unit.toString() : '';
+    
+    return (
+      nameStr.toLowerCase().includes(searchVal.toLowerCase()) ||
+      usernameStr.toLowerCase().includes(searchVal.toLowerCase()) ||
+      unitStr.toLowerCase().includes(searchVal.toLowerCase())
+    );
+  });
 
   return (
     <div>
