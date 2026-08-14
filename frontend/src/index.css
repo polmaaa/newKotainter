@@ -390,7 +390,7 @@
         .tab-item {
             display: flex;
             align-items: center;
-            height: 28px; /* Tab tidak aktif dibuat lebih pendek */
+            height: 30px; /* Tab tidak aktif dibuat lebih pendek */
             background-color: #cbd5e1; /* Warna tab tidak aktif abu-abu sedang asli */
             color: var(--text-muted); /* Teks abu-abu gelap asli */
             padding: 0 16px;
