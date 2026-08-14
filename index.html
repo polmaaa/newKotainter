@@ -957,6 +957,25 @@
         }
         .indicator-dot.online { background-color: var(--success); }
         .indicator-dot.offline { background-color: var(--error); }
+
+        /* Smooth transitions for Auth screens (Login & Logout) */
+        .fade-out-auth {
+            animation: fadeOutAuth 0.3s ease-in-out forwards;
+        }
+
+        .fade-in-auth {
+            animation: fadeInAuth 0.3s ease-in-out forwards;
+        }
+
+        @keyframes fadeOutAuth {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.97); }
+        }
+
+        @keyframes fadeInAuth {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -1314,20 +1333,17 @@
                 const result = await response.json();
 
                 if (response.ok && result.status === 'success') {
-                    // Berhasil login
+                    // Sesi aktif: Tampilkan aplikasi secara instan pada muat awal
                     document.getElementById('login-container').style.display = 'none';
                     document.getElementById('app-container').style.display = 'flex';
                     
-                    // Set identitas pengguna di header dan sidebar
                     const user = result.data;
                     document.getElementById('user-display-name').textContent = user.nama_user;
                     document.getElementById('header-user-display').textContent = user.nama_user;
                     
-                    // Memuat data logs dan dashboard
                     TabManager.init();
                     DashboardGrid.init();
                 } else {
-                    // Sesi belum aktif
                     showLoginScreen();
                 }
             } catch (error) {
@@ -1349,6 +1365,12 @@
             const alertMsg = document.getElementById('login-error-msg');
             alertBox.style.display = 'none';
 
+            // Efek tombol loading
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="pi pi-spin pi-spinner"></i> Memproses...';
+
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
 
@@ -1365,16 +1387,49 @@
                 const result = await response.json();
 
                 if (response.ok && result.status === 'success') {
-                    // Bersihkan form
+                    // Bersihkan form sandi
                     document.getElementById('password').value = '';
-                    checkAuth(); // Muat aplikasi
+                    
+                    // Efek transisi masuk (Fade Out Login -> Fade In App)
+                    const loginContainer = document.getElementById('login-container');
+                    const appContainer = document.getElementById('app-container');
+                    
+                    loginContainer.classList.add('fade-out-auth');
+                    setTimeout(() => {
+                        loginContainer.style.display = 'none';
+                        loginContainer.classList.remove('fade-out-auth');
+                        
+                        // Set data profil
+                        const user = result.data;
+                        document.getElementById('user-display-name').textContent = user.nama_user;
+                        document.getElementById('header-user-display').textContent = user.nama_user;
+                        
+                        // Aktifkan App Container
+                        appContainer.style.display = 'flex';
+                        appContainer.classList.add('fade-in-auth');
+                        
+                        // Inisialisasi data dashboard
+                        TabManager.init();
+                        DashboardGrid.init();
+                        
+                        setTimeout(() => {
+                            appContainer.classList.remove('fade-in-auth');
+                            // Pulihkan tombol login untuk sesi berikutnya
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalBtnHtml;
+                        }, 300);
+                    }, 300);
                 } else {
                     alertMsg.textContent = result.message || 'Username atau password salah.';
                     alertBox.style.display = 'flex';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
                 }
             } catch (error) {
                 alertMsg.textContent = 'Gagal terhubung ke server API.';
                 alertBox.style.display = 'flex';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
             }
         });
 
@@ -1387,7 +1442,23 @@
                 });
 
                 if (response.ok) {
-                    showLoginScreen();
+                    // Efek transisi keluar (Fade Out App -> Fade In Login)
+                    const loginContainer = document.getElementById('login-container');
+                    const appContainer = document.getElementById('app-container');
+                    
+                    appContainer.classList.add('fade-out-auth');
+                    setTimeout(() => {
+                        appContainer.style.display = 'none';
+                        appContainer.classList.remove('fade-out-auth');
+                        
+                        loginContainer.style.display = 'flex';
+                        loginContainer.classList.add('fade-in-auth');
+                        
+                        setTimeout(() => {
+                            loginContainer.classList.remove('fade-in-auth');
+                            document.getElementById('username').focus();
+                        }, 300);
+                    }, 300);
                 }
             } catch (error) {
                 console.error("Gagal melakukan logout:", error);
