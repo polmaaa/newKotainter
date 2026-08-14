@@ -251,35 +251,35 @@ export default function App() {
               onLogout={handleLogout} 
             />
             
-            <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto' }}>
-              {/* Dynamic Tabs Bar */}
-              <div className="tabs-container" id="tabs-bar">
-                {tabs.map(tab => (
-                  <div 
-                    key={tab.id} 
-                    className={`tab-item ${activeTabId === tab.id ? 'active' : ''}`}
-                    onClick={() => setActiveTabId(tab.id)}
-                  >
-                    <span className="tab-icon"><i className={`pi pi-${getTabIcon(tab.id)}`}></i></span>
-                    <span className="tab-title">{tab.title}</span>
-                    {tab.closable && (
-                      <span 
-                        className="tab-close" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCloseTab(tab.id);
-                        }}
-                        style={{ marginLeft: '8px', cursor: 'pointer' }}
-                      >
-                        &times;
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-              
+            {/* Dynamic Tabs Bar */}
+            <div className="tabs-container" id="tabs-bar">
+              {tabs.map(tab => (
+                <div 
+                  key={tab.id} 
+                  className={`tab-item ${activeTabId === tab.id ? 'active' : ''}`}
+                  onClick={() => setActiveTabId(tab.id)}
+                >
+                  <span className="tab-icon"><i className={`pi pi-${getTabIcon(tab.id)}`}></i></span>
+                  <span className="tab-title">{tab.title}</span>
+                  {tab.closable && (
+                    <span 
+                      className="tab-close" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCloseTab(tab.id);
+                      }}
+                      style={{ marginLeft: '8px', cursor: 'pointer' }}
+                    >
+                      &times;
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto', padding: '24px' }}>
               {/* Tab Content Panels Container */}
-              <div className="tab-panels" id="tab-panels" style={{ marginTop: '20px' }}>
+              <div className="tab-panels" id="tab-panels">
                 <div className="tab-panel active">
                   {renderTabContent()}
                 </div>
