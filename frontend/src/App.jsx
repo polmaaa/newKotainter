@@ -39,7 +39,7 @@ export default function App() {
         });
         const result = await response.json();
         if (response.ok && result.status === 'success') {
-          setUser(result.data);
+          setUser(result.data || { id_user: 'User', nama_user: 'User', level_user: 'Visitor' });
           loadLogs();
           checkDbStatus();
         }
@@ -61,8 +61,10 @@ export default function App() {
       });
       const result = await response.json();
       if (response.ok && result.status === 'success') {
-        setLogs(result.data.logs);
-        setDbStatus(result.data.db_status);
+        const dataLogs = result.data && Array.isArray(result.data.logs) ? result.data.logs : [];
+        const statusDb = result.data && result.data.db_status ? result.data.db_status : { oracle: false, postgresql: false };
+        setLogs(dataLogs);
+        setDbStatus(statusDb);
       }
     } catch (err) {
       console.error('Gagal mengambil data logs:', err);
@@ -79,9 +81,10 @@ export default function App() {
       });
       const result = await response.json();
       if (response.ok && result.status === 'success') {
-        setDbStatus(result.data);
+        const statusDb = result.data ? result.data : { oracle: false, postgresql: false };
+        setDbStatus(statusDb);
         if (alertUser) {
-          alert(`Status Database Terkini:\n- Oracle: ${result.data.oracle ? 'ONLINE' : 'OFFLINE'}\n- PostgreSQL: ${result.data.postgresql ? 'ONLINE' : 'OFFLINE'}`);
+          alert(`Status Database Terkini:\n- Oracle: ${statusDb.oracle ? 'ONLINE' : 'OFFLINE'}\n- PostgreSQL: ${statusDb.postgresql ? 'ONLINE' : 'OFFLINE'}`);
         }
       }
     } catch (err) {
@@ -92,7 +95,7 @@ export default function App() {
   const handleLoginSuccess = (userData) => {
     setTransitionState('logging-in');
     setTimeout(() => {
-      setUser(userData);
+      setUser(userData || { id_user: 'User', nama_user: 'User', level_user: 'Visitor' });
       setTransitionState('');
       loadLogs();
       checkDbStatus();
@@ -119,7 +122,6 @@ export default function App() {
   };
 
   const handleOpenTab = (tabId, title) => {
-    // Check if tab already exists
     const exists = tabs.some(tab => tab.id === tabId);
     if (!exists) {
       setTabs(prev => [...prev, { id: tabId, title, closable: true }]);
@@ -129,18 +131,31 @@ export default function App() {
   };
 
   const handleCloseTab = (tabId) => {
-    // Do not close non-closable tabs
     const targetTab = tabs.find(t => t.id === tabId);
     if (targetTab && !targetTab.closable) return;
 
     const filtered = tabs.filter(t => t.id !== tabId);
     setTabs(filtered);
 
-    // If closed tab was active, switch to nearest remaining tab
     if (activeTabId === tabId) {
       const lastIndex = tabs.findIndex(t => t.id === tabId);
       const nextActiveIndex = Math.max(0, lastIndex - 1);
       setActiveTabId(filtered[nextActiveIndex].id);
+    }
+  };
+
+  const getTabIcon = (tabId) => {
+    switch (tabId) {
+      case 'dashboard': return 'home';
+      case 'save_log': return 'plus-circle';
+      case 'users_ap2t': return 'users';
+      case 'role_permissions': return 'key';
+      case 'crm': return 'chart-line';
+      case 'ap2t_staging': return 'server';
+      case 'fso': return 'folder';
+      case 'db_config': return 'cog';
+      case 'bantuan': return 'question-circle';
+      default: return 'folder';
     }
   };
 
@@ -149,7 +164,8 @@ export default function App() {
       case 'dashboard':
         return (
           <Dashboard 
-            logs={logs} 
+            logs={logs}
+            dbStatus={dbStatus} 
             loading={loadingLogs} 
             onRefresh={loadLogs} 
             onViewDetails={setSelectedLog} 
@@ -192,6 +208,9 @@ export default function App() {
     }
   };
 
+  const activeTabObj = tabs.find(t => t.id === activeTabId);
+  const activeTabTitle = activeTabObj ? activeTabObj.title : 'Dashboard';
+
   if (checkingAuth) {
     return (
       <div style={{ display: 'flex', height: '100vh', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f1f5f9', color: '#475569', fontFamily: 'system-ui, sans-serif' }}>
@@ -214,8 +233,8 @@ export default function App() {
       
       {showApp && (
         <div 
-          className={`app-layout-wrapper ${transitionState === 'logging-in' ? 'fade-in-auth' : (transitionState === 'logging-out' ? 'fade-out-auth' : '')}`}
-          style={{ display: 'flex', width: '100%', minHeight: '100vh' }}
+          id="app-container"
+          className={`app-container ${transitionState === 'logging-in' ? 'fade-in-auth' : (transitionState === 'logging-out' ? 'fade-out-auth' : '')}`}
         >
           <Sidebar 
             user={user} 
@@ -225,42 +244,45 @@ export default function App() {
             sidebarOpen={sidebarOpen} 
           />
           
-          <div className="main-viewport">
+          <div className="workspace">
             <Header 
               user={user} 
-              dbStatus={dbStatus} 
+              activeTabTitle={activeTabTitle}
               onLogout={handleLogout} 
-              onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} 
             />
             
-            <main className="workspace-area">
-              {/* Workspace Tab Bar */}
-              <div className="tab-bar">
+            <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto', padding: '24px' }}>
+              {/* Dynamic Tabs Bar */}
+              <div className="tabs-container" id="tabs-bar">
                 {tabs.map(tab => (
                   <div 
                     key={tab.id} 
                     className={`tab-item ${activeTabId === tab.id ? 'active' : ''}`}
                     onClick={() => setActiveTabId(tab.id)}
                   >
-                    <span>{tab.title}</span>
+                    <span className="tab-icon"><i className={`pi pi-${getTabIcon(tab.id)}`}></i></span>
+                    <span className="tab-title">{tab.title}</span>
                     {tab.closable && (
-                      <button 
+                      <span 
                         className="tab-close" 
                         onClick={(e) => {
                           e.stopPropagation();
                           handleCloseTab(tab.id);
                         }}
+                        style={{ marginLeft: '8px', cursor: 'pointer' }}
                       >
-                        <i className="pi pi-times" style={{ fontSize: '0.6rem' }}></i>
-                      </button>
+                        &times;
+                      </span>
                     )}
                   </div>
                 ))}
               </div>
               
-              {/* Workspace Workspace view content */}
-              <div style={{ marginTop: '16px' }}>
-                {renderTabContent()}
+              {/* Tab Content Panels Container */}
+              <div className="tab-panels" id="tab-panels" style={{ marginTop: '20px' }}>
+                <div className="tab-panel active">
+                  {renderTabContent()}
+                </div>
               </div>
             </main>
           </div>

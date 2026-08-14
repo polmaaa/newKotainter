@@ -32,7 +32,6 @@ export default function Login({ apiBaseUrl, onLoginSuccess }) {
 
       if (response.ok && result.status === 'success') {
         setPassword('');
-        // Panggil handler sukses login
         onLoginSuccess(result.data);
       } else {
         setError(result.message || 'Username atau password salah.');
@@ -49,56 +48,50 @@ export default function Login({ apiBaseUrl, onLoginSuccess }) {
     <div id="login-container" className="login-wrapper">
       <div className="login-card">
         <div className="login-header">
-          <img src="/newkotainter/ap2t.jpg" alt="Logo PLN AP2T" />
-          <h2>NewKotainter</h2>
-          <p>Masukkan kredensial Oracle untuk mengakses sistem workspace terpadu.</p>
+          <div className="login-logo"><i className="pi pi-shield"></i></div>
+          <h1 className="login-title">NewKotainter</h1>
+          <p className="login-subtitle">Masuk ke API & Workspace Terpadu</p>
         </div>
 
         {error && (
-          <div id="login-error-alert" className="alert alert-danger" style={{ display: 'flex' }}>
-            <i className="pi pi-exclamation-circle" style={{ marginRight: '8px' }}></i>
+          <div id="login-error-alert" className="login-alert" style={{ display: 'flex' }}>
+            <i className="pi pi-exclamation-circle" style={{ marginRight: '8px', marginTop: '2px' }}></i>
             <span id="login-error-msg">{error}</span>
           </div>
         )}
 
         <form id="login-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">ID User</label>
-            <div className="input-wrapper">
-              <i className="pi pi-user"></i>
-              <input
-                ref={usernameRef}
-                type="text"
-                id="username"
-                placeholder="Contoh: PS.PUSAT.POLMA"
-                required
-                autoComplete="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
+          <div className="form-row">
+            <label htmlFor="username">Username</label>
+            <input
+              ref={usernameRef}
+              type="text"
+              id="username"
+              className="form-input-text"
+              placeholder="Masukkan username"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Kata Sandi (Password)</label>
-            <div className="input-wrapper">
-              <i className="pi pi-lock"></i>
-              <input
-                type="password"
-                id="password"
-                placeholder="••••••••"
-                required
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+          <div className="form-row" style={{ marginBottom: '24px' }}>
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              className="form-input-text"
+              placeholder="Masukkan password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
 
           <button
             type="submit"
             className="btn btn-primary"
-            style={{ width: '100%', justifyContent: 'center', marginTop: '12px' }}
+            style={{ width: '100%', padding: '12px' }}
             disabled={loading}
           >
             {loading ? (

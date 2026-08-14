@@ -21,11 +21,11 @@ export default function DetailModal({ log, onClose }) {
   if (log.status === 'ERROR') statusBadge = 'badge-error';
 
   return (
-    <div id="detail-modal" className="modal-backdrop show" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+    <div id="detail-modal" className="modal show" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3>Detail Query SQL Transaksi</h3>
-          <button className="btn-close" onClick={onClose}><i class="pi pi-times"></i></button>
+          <span className="modal-title">Detail Log Transaksi</span>
+          <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
         
         <div className="modal-body" id="modal-details-container">
@@ -64,7 +64,7 @@ export default function DetailModal({ log, onClose }) {
         </div>
         
         <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Tutup Dialog</button>
+          <button className="btn btn-outline" onClick={onClose}>Tutup</button>
         </div>
       </div>
     </div>
