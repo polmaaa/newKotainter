@@ -417,8 +417,8 @@
             border-right: 1px solid var(--border-color);
             border-left: 1px solid var(--border-color);
             border-bottom: none;
-            height: 33px; /* Dibuat lebih tinggi agar melewati batas atas kontainer */
-            margin-bottom: -1px; /* Menggeser 1px ke bawah untuk menutupi garis pembatas container */
+            height: 32px; /* Dibuat sama tinggi dengan tab tidak aktif agar rata */
+            margin-bottom: 0; /* Menghilangkan offset margin agar tidak melewati batas atas */
             position: relative;
             z-index: 10;
             font-weight: 600;
