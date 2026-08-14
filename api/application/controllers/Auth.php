@@ -8,6 +8,7 @@ class Auth extends MY_Controller {
 
     public function __construct() {
         parent::__construct();
+        $this->load->model('muser');
     }
 
     // ================= LOGIN =================
@@ -27,24 +28,28 @@ class Auth extends MY_Controller {
             return $this->response(400, 'error', 'Username dan password wajib diisi');
         }
 
-        // Kredensial login statis default
-        if ($username === 'admin' && $password === 'admin123') {
+        // Jalankan kueri autentikasi ke database (atau fallback) melalui model Muser
+        $auth_result = $this->muser->login($username, $password);
+
+        if ($auth_result['status'] === 'success') {
+            $user_data = $auth_result['data'];
+            
             $usersession = array(
                 'logged'     => TRUE,
-                'id_user'    => '1',
-                'nama_user'  => 'POLMA SIHOTANG',
-                'level_user' => '1',
+                'id_user'    => $user_data['id_user'],
+                'nama_user'  => $user_data['nama_user'],
+                'level_user' => $user_data['level_user'],
                 'loginstate' => 1
             );
             $this->session->set_userdata($usersession);
 
             return $this->response(200, 'success', 'Login berhasil', array(
-                'id_user'    => '1',
-                'nama_user'  => 'POLMA SIHOTANG',
-                'level_user' => '1'
+                'id_user'    => $user_data['id_user'],
+                'nama_user'  => $user_data['nama_user'],
+                'level_user' => $user_data['level_user']
             ));
         } else {
-            return $this->response(401, 'error', 'Username atau Password salah!');
+            return $this->response(401, 'error', $auth_result['message']);
         }
     }
 

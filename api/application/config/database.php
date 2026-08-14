@@ -62,17 +62,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = "oracle";
 $query_builder = TRUE;
 
-$tnsname_oracle = '(DESCRIPTION=
-    (ADDRESS=
-      (PROTOCOL=TCP)
-      (HOST=10.14.158.145)
-      (PORT=1521)
-    )
-    (CONNECT_DATA=
-      (SERVER=dedicated)
-      (SERVICE_NAME=ap2ttrain.localdomain)
-    )
-  )';
+$tnsname_oracle = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.14.158.145)(PORT=1521))(CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=ap2ttrain.localdomain)))';
 
 $db['oracle'] = array(
 	'dsn'      => '',
