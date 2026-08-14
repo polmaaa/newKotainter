@@ -277,7 +277,7 @@ export default function App() {
               ))}
             </div>
             
-            <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto', padding: '24px' }}>
+            <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto' }}>
               {/* Tab Content Panels Container */}
               <div className="tab-panels" id="tab-panels">
                 <div className="tab-panel active">
