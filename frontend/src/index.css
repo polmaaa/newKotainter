@@ -384,13 +384,14 @@
             gap: 2px;
             flex-shrink: 0;
             overflow: visible; /* Mencegah clipping agar tab aktif dapat melewati garis atas/bawah */
-            height: 32px;
+            height: 28px;
         }
 
         .tab-item {
+            box-sizing: content-box;
             display: flex;
             align-items: center;
-            height: 32px; /* Tab tidak aktif dibuat lebih pendek */
+            height: 28px; /* Tab tidak aktif dibuat lebih pendek */
             background-color: #cbd5e1; /* Warna tab tidak aktif abu-abu sedang asli */
             color: var(--text-muted); /* Teks abu-abu gelap asli */
             padding: 0 16px;
@@ -411,14 +412,15 @@
         }
 
         .tab-item.active {
+            box-sizing: content-box;
             background-color: var(--bg-card); /* Latar belakang putih bersih asli */
             color: var(--primary); /* Teks berwarna Deep Teal asli */
             border-top: 4px solid var(--primary); /* Tanda Deep Teal melewati garis atas */
             border-right: 1px solid var(--border-color);
             border-left: 1px solid var(--border-color);
             border-bottom: none;
-            height: 32px; /* Dibuat sama tinggi dengan tab tidak aktif agar rata */
-            margin-bottom: 0; /* Menghilangkan offset margin agar tidak melewati batas atas */
+            height: 28px; /* Dibuat sama tinggi dengan tab tidak aktif agar rata */
+            margin-bottom: -1px; /* Menggeser 1px ke bawah untuk menutupi garis pembatas container */
             position: relative;
             z-index: 10;
             font-weight: 600;
