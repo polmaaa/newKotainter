@@ -182,6 +182,7 @@ export default function App() {
         return (
           <DbConfig 
             onCheckConnection={() => checkDbStatus(true)} 
+            apiBaseUrl={API_BASE_URL}
           />
         );
       case 'bantuan':

