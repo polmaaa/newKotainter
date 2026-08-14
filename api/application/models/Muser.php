@@ -29,90 +29,61 @@ class Muser extends CI_Model {
     }
 
     /**
-     * Memeriksa kredensial login user terhadap PostgreSQL
+     * Memeriksa kredensial login user terhadap database PostgreSQL secara mutlak
      */
     public function login($username, $password) {
-        $password_md5 = md5($password);
-
-        // 1. Coba kueri database PostgreSQL jika terhubung
-        if ($this->db_postgres) {
-            try {
-                // Kueri case-insensitive untuk ID_USER
-                $sql = "SELECT ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER 
-                        FROM DTKS_USERTAB 
-                        WHERE UPPER(ID_USER) = UPPER(?) AND PASSWD = ?";
-                $query = $this->db_postgres->query($sql, array($username, $password_md5));
-                
-                if ($query && $query->num_rows() > 0) {
-                    $row = $query->row_array();
-                    
-                    // Normalisasi nama kolom menjadi huruf kecil demi kemudahan
-                    $normalized_user = array();
-                    foreach ($row as $key => $val) {
-                        $normalized_user[strtolower($key)] = $val;
-                    }
-                    
-                    if (strtoupper($normalized_user['disable_user']) === 'Y') {
-                        return array(
-                            'status'  => 'error',
-                            'message' => 'Akun pengguna dinonaktifkan (DISABLE_USER = Y).'
-                        );
-                    }
-                    
-                    return array(
-                        'status' => 'success',
-                        'data'   => array(
-                            'id_user'    => $normalized_user['id_user'],
-                            'nama_user'  => $normalized_user['nama_user'],
-                            'level_user' => $normalized_user['level_user']
-                        )
-                    );
-                }
-            } catch (Exception $e) {
-                // Abaikan kesalahan kueri dan biarkan lanjut ke mode simulasi/fallback
-            }
+        // 1. Validasi koneksi database PostgreSQL
+        if (!$this->db_postgres) {
+            return array(
+                'status'  => 'error',
+                'message' => 'Gagal terhubung ke database PostgreSQL (Koneksi Offline).'
+            );
         }
 
-        // 2. MODE FALLBACK: Jika PostgreSQL offline, dukung login statis dengan 3 user terdaftar
-        $fallback_users = array(
-            'PS.PUSAT.POLMA' => array(
-                'id_user'     => 'PS.PUSAT.POLMA', 
-                'nama_user'   => 'POLMA SIHOTANG', 
-                'passwd_md5'  => 'eeb184d2cde34db5718552910d73c983', 
-                'level_user'  => 'DEVELOPER'
-            ),
-            'PS.PUSAT.LUTFI' => array(
-                'id_user'     => 'PS.PUSAT.LUTFI', 
-                'nama_user'   => 'LUTFI INDIARTO WIRAYUDA', 
-                'passwd_md5'  => 'bfce4f791b02f5fa8a35926ec5edfe26', 
-                'level_user'  => 'SUPERUSER'
-            ),
-            'PS.PUSAT.IDHAM' => array(
-                'id_user'     => 'PS.PUSAT.IDHAM', 
-                'nama_user'   => 'IDHAM RIZKY SAPALA', 
-                'passwd_md5'  => 'd74ee5bc288bff461f91e98e7d4fcd93', 
-                'level_user'  => 'SENIOR'
-            )
-        );
+        $password_md5 = md5($password);
 
-        $upper_username = strtoupper($username);
-        if (isset($fallback_users[$upper_username])) {
-            $user = $fallback_users[$upper_username];
-            if ($user['passwd_md5'] === $password_md5) {
+        try {
+            // Kueri case-insensitive untuk ID_USER
+            $sql = "SELECT ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER 
+                    FROM DTKS_USERTAB 
+                    WHERE UPPER(ID_USER) = UPPER(?) AND PASSWD = ?";
+            $query = $this->db_postgres->query($sql, array($username, $password_md5));
+            
+            if ($query && $query->num_rows() > 0) {
+                $row = $query->row_array();
+                
+                // Normalisasi nama kolom menjadi huruf kecil demi kemudahan
+                $normalized_user = array();
+                foreach ($row as $key => $val) {
+                    $normalized_user[strtolower($key)] = $val;
+                }
+                
+                if (strtoupper($normalized_user['disable_user']) === 'Y') {
+                    return array(
+                        'status'  => 'error',
+                        'message' => 'Akun pengguna dinonaktifkan (DISABLE_USER = Y).'
+                    );
+                }
+                
                 return array(
                     'status' => 'success',
                     'data'   => array(
-                        'id_user'    => $user['id_user'],
-                        'nama_user'  => $user['nama_user'],
-                        'level_user' => $user['level_user']
+                        'id_user'    => $normalized_user['id_user'],
+                        'nama_user'  => $normalized_user['nama_user'],
+                        'level_user' => $normalized_user['level_user']
                     )
                 );
+            } else {
+                return array(
+                    'status'  => 'error',
+                    'message' => 'Username atau Password salah!'
+                );
             }
+        } catch (Exception $e) {
+            return array(
+                'status'  => 'error',
+                'message' => 'Gagal memproses data otentikasi di database: ' . $e->getMessage()
+            );
         }
-
-        return array(
-            'status'  => 'error',
-            'message' => 'Username atau Password salah!'
-        );
     }
 }
