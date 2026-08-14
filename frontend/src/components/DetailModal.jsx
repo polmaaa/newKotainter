@@ -9,7 +9,7 @@ export default function DetailModal({ log, onClose }) {
     }
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      window.remove('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [onClose]);
 
