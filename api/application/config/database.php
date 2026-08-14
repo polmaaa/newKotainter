@@ -62,13 +62,61 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = "oracle";
 $query_builder = TRUE;
 
-$tnsname_oracle = '(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.14.158.145)(PORT=1521))(CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=ap2ttrain.localdomain)))';
+$tnsname_oracle = '(DESCRIPTION=
+    (LOAD_BALANCE=yes)
+    (ADDRESS_LIST=
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.10)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.11)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.12)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.13)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.14)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.15)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.16)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.17)
+        (PORT=1521)
+      )
+    )
+    (CONNECT_DATA=
+      (SERVER=dedicated)
+      (SERVICE_NAME=ap2tdr)
+    )
+  )';
 
 $db['oracle'] = array(
 	'dsn'      => '',
 	'hostname' => $tnsname_oracle,
-	'username' => 'OPHARAPP',
-	'password' => '300km/jam',
+	'username' => 'DTKS',
+	'password' => 'Desember123',
 	'database' => '',
 	'dbdriver' => 'oci8',
 	'dbprefix' => '',
