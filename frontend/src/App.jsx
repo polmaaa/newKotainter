@@ -251,7 +251,7 @@ export default function App() {
               onLogout={handleLogout} 
             />
             
-            <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto', padding: '24px' }}>
+            <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto' }}>
               {/* Dynamic Tabs Bar */}
               <div className="tabs-container" id="tabs-bar">
                 {tabs.map(tab => (
