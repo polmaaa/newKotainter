@@ -384,13 +384,13 @@
             gap: 2px;
             flex-shrink: 0;
             overflow: visible; /* Mencegah clipping agar tab aktif dapat melewati garis atas/bawah */
-            height: 32px;
+            height: 28px;
         }
 
         .tab-item {
             display: flex;
             align-items: center;
-            height: 30px; /* Tab tidak aktif dibuat lebih pendek */
+            height: 28px; /* Tab tidak aktif dibuat lebih pendek */
             background-color: #cbd5e1; /* Warna tab tidak aktif abu-abu sedang asli */
             color: var(--text-muted); /* Teks abu-abu gelap asli */
             padding: 0 16px;
@@ -417,7 +417,7 @@
             border-right: 1px solid var(--border-color);
             border-left: 1px solid var(--border-color);
             border-bottom: none;
-            height: 35px; /* Dibuat lebih tinggi agar melewati batas atas kontainer */
+            height: 33px; /* Dibuat lebih tinggi agar melewati batas atas kontainer */
             margin-bottom: -1px; /* Menggeser 1px ke bawah untuk menutupi garis pembatas container */
             position: relative;
             z-index: 10;
