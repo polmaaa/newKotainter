@@ -39,7 +39,7 @@ class Muser extends CI_Model {
             try {
                 // Kueri case-insensitive untuk ID_USER
                 $sql = "SELECT ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER 
-                        FROM DTKS_MENUTAB 
+                        FROM DTKS_USERTAB 
                         WHERE UPPER(ID_USER) = UPPER(?) AND PASSWD = ?";
                 $query = $this->db_postgres->query($sql, array($username, $password_md5));
                 
