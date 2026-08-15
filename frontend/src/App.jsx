@@ -23,6 +23,23 @@ export default function App() {
   ]);
 
   const tabsRef = useRef(null);
+  const [showScrollButtons, setShowScrollButtons] = useState(false);
+
+  const checkForOverflow = () => {
+    requestAnimationFrame(() => {
+      if (tabsRef.current) {
+        const { scrollWidth, clientWidth } = tabsRef.current;
+        setShowScrollButtons(scrollWidth > clientWidth);
+      }
+    });
+  };
+
+  useEffect(() => {
+    checkForOverflow();
+    window.addEventListener('resize', checkForOverflow);
+    return () => window.removeEventListener('resize', checkForOverflow);
+  }, [tabs]);
+
   const handleScrollTabs = (direction) => {
     if (tabsRef.current) {
       const scrollAmount = 200;
@@ -353,32 +370,34 @@ export default function App() {
               onLogout={handleLogout} 
             />
             
-            {/* Dynamic Tabs Bar with Prev/Next buttons */}
-            <div className="tabs-container" id="tabs-bar" style={{ display: 'flex', alignItems: 'center', padding: '0 8px', overflow: 'hidden', gap: '0' }}>
-              <button 
-                type="button" 
-                onClick={() => handleScrollTabs('left')}
-                style={{
-                  border: 'none',
-                  background: 'transparent',
-                  height: '24px',
-                  width: '24px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  color: 'var(--text-muted)',
-                  borderRadius: '4px',
-                  transition: 'all 0.2s',
-                  marginRight: '6px',
-                  alignSelf: 'center',
-                  flexShrink: 0
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#cbd5e1'; e.currentTarget.style.color = '#0f172a'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; }}
-              >
-                <i className="pi pi-chevron-left" style={{ fontSize: '0.85rem', fontWeight: 'bold' }}></i>
-              </button>
+            {/* Dynamic Tabs Bar with Prev/Next buttons (conditional render & no margins) */}
+            <div className="tabs-container" id="tabs-bar" style={{ display: 'flex', alignItems: 'center', padding: '0', overflow: 'hidden', gap: '0' }}>
+              {showScrollButtons && (
+                <button 
+                  type="button" 
+                  onClick={() => handleScrollTabs('left')}
+                  style={{
+                    border: 'none',
+                    borderRight: '1px solid var(--border-color)',
+                    background: '#e2e8f0',
+                    height: '100%',
+                    width: '32px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    color: 'var(--text-muted)',
+                    transition: 'all 0.15s',
+                    flexShrink: 0,
+                    margin: 0,
+                    padding: 0
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#cbd5e1'; e.currentTarget.style.color = '#0f172a'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#e2e8f0'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+                >
+                  <i className="pi pi-chevron-left" style={{ fontSize: '0.85rem', fontWeight: 'bold' }}></i>
+                </button>
+              )}
 
               <div 
                 ref={tabsRef}
@@ -391,7 +410,8 @@ export default function App() {
                   alignItems: 'flex-end',
                   height: '100%',
                   msOverflowStyle: 'none',
-                  scrollbarWidth: 'none'
+                  scrollbarWidth: 'none',
+                  padding: showScrollButtons ? '0 4px' : '0 16px'
                 }}
               >
                 <style>{`
@@ -424,30 +444,32 @@ export default function App() {
                 ))}
               </div>
 
-              <button 
-                type="button" 
-                onClick={() => handleScrollTabs('right')}
-                style={{
-                  border: 'none',
-                  background: 'transparent',
-                  height: '24px',
-                  width: '24px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  color: 'var(--text-muted)',
-                  borderRadius: '4px',
-                  transition: 'all 0.2s',
-                  marginLeft: '6px',
-                  alignSelf: 'center',
-                  flexShrink: 0
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#cbd5e1'; e.currentTarget.style.color = '#0f172a'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; }}
-              >
-                <i className="pi pi-chevron-right" style={{ fontSize: '0.85rem', fontWeight: 'bold' }}></i>
-              </button>
+              {showScrollButtons && (
+                <button 
+                  type="button" 
+                  onClick={() => handleScrollTabs('right')}
+                  style={{
+                    border: 'none',
+                    borderLeft: '1px solid var(--border-color)',
+                    background: '#e2e8f0',
+                    height: '100%',
+                    width: '32px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    color: 'var(--text-muted)',
+                    transition: 'all 0.15s',
+                    flexShrink: 0,
+                    margin: 0,
+                    padding: 0
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#cbd5e1'; e.currentTarget.style.color = '#0f172a'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#e2e8f0'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+                >
+                  <i className="pi pi-chevron-right" style={{ fontSize: '0.85rem', fontWeight: 'bold' }}></i>
+                </button>
+              )}
             </div>
             
             <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto' }}>
