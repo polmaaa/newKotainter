@@ -15,47 +15,111 @@ class Mlogs extends CI_Model {
     }
 
     /**
+     * Helper to ping a host and port with a short timeout to prevent PHP blocks on offline databases
+     */
+    private function _ping_host($host, $port, $timeout = 1) {
+        if (empty($host) || empty($port)) return false;
+        
+        // Handle TNS string description
+        if (strpos($host, '(DESCRIPTION') !== false) {
+            preg_match_all('/HOST\s*=\s*([a-zA-Z0-9\.-]+)/i', $host, $matches);
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $ip) {
+                    $fp = @fsockopen($ip, $port, $errno, $errstr, $timeout);
+                    if ($fp) {
+                        fclose($fp);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        
+        $fp = @fsockopen($host, $port, $errno, $errstr, $timeout);
+        if ($fp) {
+            fclose($fp);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Menginisialisasi koneksi database Oracle dan PostgreSQL secara aman.
      * Jika salah satu koneksi gagal, sistem tidak akan crash.
      */
     private function init_databases() {
+        // Load database configuration
+        $db_file = APPPATH . 'config/database.php';
+        $oracle_host = '';
+        $fso_oracle_host = '';
+        $pg_host = '';
+        $pg_port = 5432;
+        $fso_pg_host = '';
+        $fso_pg_port = 5488;
+        
+        if (file_exists($db_file)) {
+            include($db_file);
+            $oracle_host = isset($tnsname_oracle) ? $tnsname_oracle : '';
+            $fso_oracle_host = isset($tnsname_fso_oracle) ? $tnsname_fso_oracle : '';
+            $pg_host = isset($db['postgres']['hostname']) ? $db['postgres']['hostname'] : '';
+            $pg_port = isset($db['postgres']['port']) ? $db['postgres']['port'] : 5432;
+            $fso_pg_host = isset($db['fso_postgres']['hostname']) ? $db['fso_postgres']['hostname'] : '';
+            $fso_pg_port = isset($db['fso_postgres']['port']) ? $db['fso_postgres']['port'] : 5488;
+        }
+
         // 1. Inisialisasi Database Oracle (oci8)
-        try {
-            $this->db_oracle = @$this->load->database('oracle', TRUE);
-            if (!$this->db_oracle || !$this->db_oracle->conn_id) {
+        if ($this->_ping_host($oracle_host, 1521, 1)) {
+            try {
+                $this->db_oracle = @$this->load->database('oracle', TRUE);
+                if (!$this->db_oracle || !$this->db_oracle->conn_id) {
+                    $this->db_oracle = null;
+                }
+            } catch (Exception $e) {
                 $this->db_oracle = null;
             }
-        } catch (Exception $e) {
+        } else {
             $this->db_oracle = null;
         }
 
         // 2. Inisialisasi Database PostgreSQL (postgre)
-        try {
-            $this->db_postgres = @$this->load->database('postgres', TRUE);
-            if (!$this->db_postgres || !$this->db_postgres->conn_id) {
+        if ($this->_ping_host($pg_host, $pg_port, 1)) {
+            try {
+                $this->db_postgres = @$this->load->database('postgres', TRUE);
+                if (!$this->db_postgres || !$this->db_postgres->conn_id) {
+                    $this->db_postgres = null;
+                }
+            } catch (Exception $e) {
                 $this->db_postgres = null;
             }
-        } catch (Exception $e) {
+        } else {
             $this->db_postgres = null;
         }
 
         // 3. Inisialisasi Database FSO Oracle (oci8)
-        try {
-            $this->db_fso_oracle = @$this->load->database('fso_oracle', TRUE);
-            if (!$this->db_fso_oracle || !$this->db_fso_oracle->conn_id) {
+        if ($this->_ping_host($fso_oracle_host, 1521, 1)) {
+            try {
+                $this->db_fso_oracle = @$this->load->database('fso_oracle', TRUE);
+                if (!$this->db_fso_oracle || !$this->db_fso_oracle->conn_id) {
+                    $this->db_fso_oracle = null;
+                }
+            } catch (Exception $e) {
                 $this->db_fso_oracle = null;
             }
-        } catch (Exception $e) {
+        } else {
             $this->db_fso_oracle = null;
         }
 
         // 4. Inisialisasi Database FSO PostgreSQL (postgre)
-        try {
-            $this->db_fso_postgres = @$this->load->database('fso_postgres', TRUE);
-            if (!$this->db_fso_postgres || !$this->db_fso_postgres->conn_id) {
+        if ($this->_ping_host($fso_pg_host, $fso_pg_port, 1)) {
+            try {
+                $this->db_fso_postgres = @$this->load->database('fso_postgres', TRUE);
+                if (!$this->db_fso_postgres || !$this->db_fso_postgres->conn_id) {
+                    $this->db_fso_postgres = null;
+                }
+            } catch (Exception $e) {
                 $this->db_fso_postgres = null;
             }
-        } catch (Exception $e) {
+        } else {
             $this->db_fso_postgres = null;
         }
     }

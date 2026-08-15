@@ -12,12 +12,57 @@ class Muser extends CI_Model {
     }
 
     /**
+     * Helper to ping a host and port with a short timeout to prevent PHP blocks on offline databases
+     */
+    private function _ping_host($host, $port, $timeout = 1) {
+        if (empty($host) || empty($port)) return false;
+        
+        // Handle TNS string description
+        if (strpos($host, '(DESCRIPTION') !== false) {
+            preg_match_all('/HOST\s*=\s*([a-zA-Z0-9\.-]+)/i', $host, $matches);
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $ip) {
+                    $fp = @fsockopen($ip, $port, $errno, $errstr, $timeout);
+                    if ($fp) {
+                        fclose($fp);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        
+        $fp = @fsockopen($host, $port, $errno, $errstr, $timeout);
+        if ($fp) {
+            fclose($fp);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Menginisialisasi koneksi database Oracle secara aman,
      * serta secara otomatis membuat dan mengisi tabel DTKS_USERTAB di Oracle jika belum terbuat.
      */
     private function init_db() {
         $db_debug_default = $this->db->db_debug;
         $this->db->db_debug = FALSE;
+
+        // Load database configuration to get Oracle host
+        $db_file = APPPATH . 'config/database.php';
+        $oracle_host = '';
+        if (file_exists($db_file)) {
+            include($db_file);
+            $oracle_host = isset($tnsname_oracle) ? $tnsname_oracle : '';
+        }
+
+        // PING Oracle first (timeout 1s)
+        if (!$this->_ping_host($oracle_host, 1521, 1)) {
+            $this->db_oracle = null;
+            $this->db->db_debug = $db_debug_default;
+            return;
+        }
+
         try {
             $this->db_oracle = @$this->load->database('oracle', TRUE);
             if ($this->db_oracle && $this->db_oracle->conn_id) {
