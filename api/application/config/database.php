@@ -5,52 +5,52 @@ $active_group = "oracle";
 $query_builder = TRUE;
 
 $tnsname_oracle = '(DESCRIPTION=
+    (LOAD_BALANCE=yes)
     (ADDRESS_LIST=
-      (LOAD_BALANCE=on)
       (ADDRESS=
         (PROTOCOL=TCP)
-        (HOST=10.14.158.10)
+        (HOST=10.14.159.10)
         (PORT=1521)
       )
       (ADDRESS=
         (PROTOCOL=TCP)
-        (HOST=10.14.158.11)
+        (HOST=10.14.159.11)
         (PORT=1521)
       )
       (ADDRESS=
         (PROTOCOL=TCP)
-        (HOST=10.14.158.12)
+        (HOST=10.14.159.12)
         (PORT=1521)
       )
       (ADDRESS=
         (PROTOCOL=TCP)
-        (HOST=10.14.158.13)
+        (HOST=10.14.159.13)
         (PORT=1521)
       )
       (ADDRESS=
         (PROTOCOL=TCP)
-        (HOST=10.14.158.14)
+        (HOST=10.14.159.14)
         (PORT=1521)
       )
       (ADDRESS=
         (PROTOCOL=TCP)
-        (HOST=10.14.158.15)
+        (HOST=10.14.159.15)
         (PORT=1521)
       )
       (ADDRESS=
         (PROTOCOL=TCP)
-        (HOST=10.14.158.16)
+        (HOST=10.14.159.16)
         (PORT=1521)
       )
       (ADDRESS=
         (PROTOCOL=TCP)
-        (HOST=10.14.158.17)
+        (HOST=10.14.159.17)
         (PORT=1521)
       )
     )
     (CONNECT_DATA=
       (SERVER=dedicated)
-      (SERVICE_NAME=ap2t)
+      (SERVICE_NAME=ap2tdr)
     )
   )';
 $tnsname_fso_oracle = '(DESCRIPTION =
