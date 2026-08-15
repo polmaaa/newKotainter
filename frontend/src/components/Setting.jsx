@@ -81,9 +81,10 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
             setOracleTns(oTns);
             setOracleUsername(data.oracle_username || '');
             setOraclePassword(data.oracle_password || '');
-            if (oTns.indexOf('10.14.159.10') !== -1) {
+            const oTnsLower = oTns.toLowerCase();
+            if (oTnsLower.includes('ap2tdr') || oTnsLower.includes('10.14.159.10')) {
               setOraclePreset('truno');
-            } else if (oTns.indexOf('10.14.158.10') !== -1) {
+            } else if (oTnsLower.includes('ap2t') || oTnsLower.includes('10.14.158.10')) {
               setOraclePreset('gandul');
             } else {
               setOraclePreset('custom');
@@ -101,9 +102,10 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
             setFsoOracleTns(fsoTns);
             setFsoOracleUsername(data.fso_oracle_username || '');
             setFsoOraclePassword(data.fso_oracle_password || '');
-            if (fsoTns.indexOf('10.14.212.11') !== -1) {
+            const fsoTnsLower = fsoTns.toLowerCase();
+            if (fsoTnsLower.includes('fsodr') || fsoTnsLower.includes('10.14.212.11')) {
               setFsoOraclePreset('truno');
-            } else if (fsoTns.indexOf('10.14.211.11') !== -1) {
+            } else if (fsoTnsLower.includes('fso') || fsoTnsLower.includes('10.14.211.11')) {
               setFsoOraclePreset('gandul');
             } else {
               setFsoOraclePreset('custom');
