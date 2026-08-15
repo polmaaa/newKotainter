@@ -608,7 +608,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
 
           <div className="content-card">
             <div className="table-responsive">
-              <table className="log-table">
+              <table className="custom-table">
                 <thead>
                   <tr>
                     <th>Username (ID User)</th>
