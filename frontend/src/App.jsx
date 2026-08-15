@@ -33,6 +33,14 @@ export default function App() {
     site_description: 'v2.0 REST API & Workspace Terpadu'
   });
   const [dbConfig, setDbConfig] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [checkingDb, setCheckingDb] = useState(false);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    if (window.toastTimer) clearTimeout(window.toastTimer);
+    window.toastTimer = setTimeout(() => setToast(null), 4000);
+  };
 
   const loadDbConfig = async () => {
     try {
@@ -120,6 +128,7 @@ export default function App() {
   };
 
   const checkDbStatus = async (alertUser = false) => {
+    if (alertUser) setCheckingDb(true);
     try {
       const response = await fetch(`${API_BASE_URL}/api/logs/get_db_status`, {
         method: 'GET',
@@ -131,10 +140,16 @@ export default function App() {
         setDbStatus(statusDb);
         if (alertUser) {
           setDbStatusModal(statusDb);
+          showToast('Status koneksi database berhasil diverifikasi!', 'success');
         }
+      } else {
+        if (alertUser) showToast('Gagal memverifikasi status koneksi.', 'error');
       }
     } catch (err) {
       console.error('Gagal memverifikasi status koneksi DB:', err);
+      if (alertUser) showToast('Gagal terhubung ke server API.', 'error');
+    } finally {
+      if (alertUser) setCheckingDb(false);
     }
   };
 
@@ -241,6 +256,7 @@ export default function App() {
           <TicketForm 
             apiBaseUrl={API_BASE_URL} 
             onSuccess={loadLogs} 
+            showToast={showToast}
           />
         );
       case 'setting':
@@ -256,6 +272,8 @@ export default function App() {
               setSystemSettings({ site_name: name, site_description: desc });
               loadDbConfig();
             }}
+            showToast={showToast}
+            checkingDb={checkingDb}
           />
         );
       case 'bantuan':
@@ -413,6 +431,48 @@ export default function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modern Toast Notification in Top-Right Corner */}
+      {toast && (
+        <>
+          <style>{`
+            @keyframes toastSlideIn {
+              from { transform: translateX(120%); opacity: 0; }
+              to { transform: translateX(0); opacity: 1; }
+            }
+          `}</style>
+          <div 
+            style={{
+              position: 'fixed',
+              top: '24px',
+              right: '24px',
+              zIndex: 9999,
+              backgroundColor: toast.type === 'success' ? '#0f766e' : (toast.type === 'error' ? '#e11d48' : '#d97706'),
+              color: '#ffffff',
+              padding: '14px 20px',
+              borderRadius: '8px',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              minWidth: '300px',
+              maxWidth: '450px',
+              animation: 'toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+            }}
+          >
+            <i className={`pi ${toast.type === 'success' ? 'pi-check-circle' : (toast.type === 'error' ? 'pi-exclamation-circle' : 'pi-info-circle')}`} style={{ fontSize: '1.25rem' }}></i>
+            <div style={{ flex: 1, lineHeight: '1.4' }}>{toast.message}</div>
+            <i 
+              className="pi pi-times" 
+              style={{ cursor: 'pointer', fontSize: '0.85rem', opacity: 0.7, padding: '4px' }} 
+              onClick={() => setToast(null)}
+            />
+          </div>
+        </>
       )}
     </>
   );

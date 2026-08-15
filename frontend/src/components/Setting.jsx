@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateSystemSettings }) {
+export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateSystemSettings, showToast, checkingDb }) {
   const isPrivileged = user && (user.level_user === 'DEVELOPER' || user.level_user === 'SUPERUSER');
   const [activeSubTab, setActiveSubTab] = useState(isPrivileged ? 'general' : 'users');
 
@@ -48,6 +48,8 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   const [showPostgresPass, setShowPostgresPass] = useState(false);
   const [showFsoOraclePass, setShowFsoOraclePass] = useState(false);
   const [showFsoPostgresPass, setShowFsoPostgresPass] = useState(false);
+  const [showModalPass, setShowModalPass] = useState(false);
+  const [showSelfPass, setShowSelfPass] = useState(false);
 
   // User Management states (Superadmin / Developer)
   const [usersList, setUsersList] = useState([]);
@@ -259,8 +261,8 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
       (SERVICE_NAME=ap2t)
     )
   )`);
-      setOracleUsername('DTKS');
-      setOraclePassword('Desember123');
+      setOracleUsername('POLMASIHOTANG');
+      setOraclePassword('P@ssw0rd666');
     }
   };
 
@@ -356,6 +358,9 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
 
       if (response.ok && result.status === 'success') {
         setSuccess('Pengaturan sistem dan 4 database berhasil disimpan!');
+        if (showToast) {
+          showToast('Pengaturan sistem dan 4 database berhasil disimpan!', 'success');
+        }
         
         if (onUpdateSystemSettings) {
           onUpdateSystemSettings(siteName, siteDescription);
@@ -366,10 +371,16 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
         }
       } else {
         setError(result.message || 'Gagal menyimpan konfigurasi.');
+        if (showToast) {
+          showToast(result.message || 'Gagal menyimpan konfigurasi.', 'error');
+        }
       }
     } catch (err) {
       console.error('Error saving config:', err);
       setError('Gagal mengirim konfigurasi ke server.');
+      if (showToast) {
+        showToast('Gagal mengirim konfigurasi ke server.', 'error');
+      }
     } finally {
       setSaving(false);
     }
@@ -425,13 +436,22 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
       const result = await response.json();
       if (response.ok && result.status === 'success') {
         setSuccess(`User ${modalIdUser} berhasil disimpan!`);
+        if (showToast) {
+          showToast(`User ${modalIdUser} berhasil disimpan!`, 'success');
+        }
         setShowUserModal(false);
         await fetchUsers();
       } else {
         setError(result.message || 'Gagal menyimpan user.');
+        if (showToast) {
+          showToast(result.message || 'Gagal menyimpan user.', 'error');
+        }
       }
     } catch (err) {
       setError('Gagal terhubung ke server.');
+      if (showToast) {
+        showToast('Gagal terhubung ke server.', 'error');
+      }
     } finally {
       setSaving(false);
     }
@@ -452,12 +472,21 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
       const result = await response.json();
       if (response.ok && result.status === 'success') {
         setSuccess(`Status user ${idUser} berhasil diubah.`);
+        if (showToast) {
+          showToast(`Status user ${idUser} berhasil diubah.`, 'success');
+        }
         await fetchUsers();
       } else {
         setError(result.message || 'Gagal mengubah status.');
+        if (showToast) {
+          showToast(result.message || 'Gagal mengubah status.', 'error');
+        }
       }
     } catch (err) {
       setError('Gagal mengirim perintah ke server.');
+      if (showToast) {
+        showToast('Gagal mengirim perintah ke server.', 'error');
+      }
     }
   };
 
@@ -479,12 +508,21 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
       const result = await response.json();
       if (response.ok && result.status === 'success') {
         setSuccess(`User ${idUser} berhasil dihapus.`);
+        if (showToast) {
+          showToast(`User ${idUser} berhasil dihapus.`, 'success');
+        }
         await fetchUsers();
       } else {
         setError(result.message || 'Gagal menghapus user.');
+        if (showToast) {
+          showToast(result.message || 'Gagal menghapus user.', 'error');
+        }
       }
     } catch (err) {
       setError('Gagal mengirim perintah ke server.');
+      if (showToast) {
+        showToast('Gagal mengirim perintah ke server.', 'error');
+      }
     }
   };
 
@@ -511,18 +549,26 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
 
       const result = await response.json();
       if (response.ok && result.status === 'success') {
-        setSuccess('Profil Anda berhasil diperbarui! Silakan reload jika nama profil belum terupdate.');
+        setSuccess('Profil Anda berhasil diperbarui!');
         setSelfPasswd('');
-        alert('Profil Anda berhasil diperbarui!');
+        if (showToast) {
+          showToast('Profil Anda berhasil diperbarui!', 'success');
+        }
         if (user) {
           user.id_user = selfIdUser;
           user.nama_user = selfNamaUser;
         }
       } else {
         setError(result.message || 'Gagal memperbarui profil.');
+        if (showToast) {
+          showToast(result.message || 'Gagal memperbarui profil.', 'error');
+        }
       }
     } catch (err) {
       setError('Gagal terhubung ke server.');
+      if (showToast) {
+        showToast('Gagal terhubung ke server.', 'error');
+      }
     } finally {
       setSaving(false);
     }
@@ -666,8 +712,17 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
             </div>
 
             <button type="submit" className="btn btn-primary" disabled={saving}>
-              {saving ? <i className="pi pi-spin pi-spinner" style={{ marginRight: '8px' }}></i> : <i className="pi pi-save" style={{ marginRight: '8px' }}></i>}
-              Simpan Identitas Sistem
+              {saving ? (
+                <>
+                  <i className="pi pi-spin pi-spinner" style={{ marginRight: '8px' }}></i>
+                  Menyimpan...
+                </>
+              ) : (
+                <>
+                  <i className="pi pi-save" style={{ marginRight: '8px' }}></i>
+                  Simpan Identitas Sistem
+                </>
+              )}
             </button>
           </form>
         </div>
@@ -1157,11 +1212,30 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
             
             <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '16px', display: 'flex', gap: '8px' }}>
               <button type="submit" className="btn btn-primary" disabled={saving}>
-                {saving ? <i className="pi pi-spin pi-spinner" style={{ marginRight: '8px' }}></i> : <i className="pi pi-save" style={{ marginRight: '8px' }}></i>}
-                Simpan Semua Database
+                {saving ? (
+                  <>
+                    <i className="pi pi-spin pi-spinner" style={{ marginRight: '8px' }}></i>
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <i className="pi pi-save" style={{ marginRight: '8px' }}></i>
+                    Simpan Semua Database
+                  </>
+                )}
               </button>
-              <button type="button" className="btn btn-outline" onClick={onCheckConnection}>
-                <i className="pi pi-wifi" style={{ marginRight: '8px' }}></i> Cek Koneksi Aktif
+              <button type="button" className="btn btn-outline" onClick={onCheckConnection} disabled={checkingDb || saving}>
+                {checkingDb ? (
+                  <>
+                    <i className="pi pi-spin pi-spinner" style={{ marginRight: '8px' }}></i>
+                    Memeriksa...
+                  </>
+                ) : (
+                  <>
+                    <i className="pi pi-wifi" style={{ marginRight: '8px' }}></i>
+                    Cek Koneksi Aktif
+                  </>
+                )}
               </button>
             </div>
           </form>
@@ -1321,14 +1395,22 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                     <label htmlFor="modal-passwd">
                       {modalMode === 'add' ? 'Password' : 'Password Baru (Kosongkan jika tidak diubah)'}
                     </label>
-                    <input
-                      type="password"
-                      id="modal-passwd"
-                      className="form-input-text"
-                      required={modalMode === 'add'}
-                      value={modalPasswd}
-                      onChange={(e) => setModalPasswd(e.target.value)}
-                    />
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <input
+                        type={showModalPass ? 'text' : 'password'}
+                        id="modal-passwd"
+                        className="form-input-text"
+                        style={{ paddingRight: '40px', width: '100%' }}
+                        required={modalMode === 'add'}
+                        value={modalPasswd}
+                        onChange={(e) => setModalPasswd(e.target.value)}
+                      />
+                      <i 
+                        className={`pi ${showModalPass ? 'pi-eye-slash' : 'pi-eye'}`} 
+                        style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                        onClick={() => setShowModalPass(!showModalPass)}
+                      />
+                    </div>
                   </div>
 
                   <div className="form-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
@@ -1342,11 +1424,18 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
-                    <button type="button" className="btn btn-outline" onClick={() => setShowUserModal(false)}>
+                    <button type="button" className="btn btn-outline" onClick={() => setShowUserModal(false)} disabled={saving}>
                       Batal
                     </button>
                     <button type="submit" className="btn btn-primary" disabled={saving}>
-                      {saving ? 'Menyimpan...' : 'Simpan User'}
+                      {saving ? (
+                        <>
+                          <i className="pi pi-spin pi-spinner" style={{ marginRight: '8px' }}></i>
+                          Menyimpan...
+                        </>
+                      ) : (
+                        'Simpan User'
+                      )}
                     </button>
                   </div>
                 </form>
@@ -1389,18 +1478,35 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
 
             <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '20px' }}>
               <label htmlFor="self-passwd">Password Baru (Kosongkan jika tidak ingin diubah)</label>
-              <input
-                type="password"
-                id="self-passwd"
-                className="form-input-text"
-                value={selfPasswd}
-                onChange={(e) => setSelfPasswd(e.target.value)}
-              />
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <input
+                  type={showSelfPass ? 'text' : 'password'}
+                  id="self-passwd"
+                  className="form-input-text"
+                  style={{ paddingRight: '40px', width: '100%' }}
+                  value={selfPasswd}
+                  onChange={(e) => setSelfPasswd(e.target.value)}
+                />
+                <i 
+                  className={`pi ${showSelfPass ? 'pi-eye-slash' : 'pi-eye'}`} 
+                  style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                  onClick={() => setShowSelfPass(!showSelfPass)}
+                />
+              </div>
             </div>
 
             <button type="submit" className="btn btn-primary" disabled={saving}>
-              {saving ? <i className="pi pi-spin pi-spinner" style={{ marginRight: '8px' }}></i> : <i className="pi pi-save" style={{ marginRight: '8px' }}></i>}
-              Simpan Profil Saya
+              {saving ? (
+                <>
+                  <i className="pi pi-spin pi-spinner" style={{ marginRight: '8px' }}></i>
+                  Menyimpan...
+                </>
+              ) : (
+                <>
+                  <i className="pi pi-save" style={{ marginRight: '8px' }}></i>
+                  Simpan Profil Saya
+                </>
+              )}
             </button>
           </form>
         </div>

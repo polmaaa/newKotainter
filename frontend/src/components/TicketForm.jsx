@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function TicketForm({ apiBaseUrl, onSuccess }) {
+export default function TicketForm({ apiBaseUrl, onSuccess, showToast }) {
   const [noTiket, setNoTiket] = useState('');
   const [noPelanggan, setNoPelanggan] = useState('');
   const [jenisTransaksi, setJenisTransaksi] = useState('TRANSAKSI BARU');
@@ -35,7 +35,9 @@ export default function TicketForm({ apiBaseUrl, onSuccess }) {
       const result = await response.json();
 
       if (response.ok && result.status === 'success') {
-        alert("Tiket log transaksi berhasil disimpan via API Backend!");
+        if (showToast) {
+          showToast("Tiket log transaksi berhasil disimpan via API Backend!", "success");
+        }
         // Reset form
         setNoTiket('');
         setNoPelanggan('');
@@ -43,6 +45,9 @@ export default function TicketForm({ apiBaseUrl, onSuccess }) {
         onSuccess();
       } else {
         setError(result.message || 'Gagal menyimpan tiket log.');
+        if (showToast) {
+          showToast(result.message || 'Gagal menyimpan tiket log.', "error");
+        }
       }
     } catch (err) {
       console.error('Gagal mengirim log:', err);
