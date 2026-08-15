@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Muser extends CI_Model {
 
     private $db_oracle = null;
+    private $table_name = 'DTKS.DTKS_USERTAB';
 
     public function __construct() {
         parent::__construct();
@@ -66,27 +67,57 @@ class Muser extends CI_Model {
         try {
             $this->db_oracle = @$this->load->database('oracle', TRUE);
             if ($this->db_oracle && $this->db_oracle->conn_id) {
-                // Periksa apakah tabel DTKS_USERTAB ada di Oracle (Oracle menyimpan nama tabel dalam huruf besar)
-                $table_check = $this->db_oracle->query("SELECT table_name FROM user_tables WHERE table_name = 'DTKS_USERTAB'");
-                if (!$table_check || $table_check->num_rows() === 0) {
-                    // Buat tabel jika belum ada
-                    $create_sql = "CREATE TABLE DTKS_USERTAB (
+                // 1. Cek apakah tabel DTKS.DTKS_USERTAB dapat diakses
+                $table_check = @$this->db_oracle->query("SELECT 1 FROM DTKS.DTKS_USERTAB WHERE ROWNUM = 1");
+                if ($table_check) {
+                    $this->table_name = 'DTKS.DTKS_USERTAB';
+                } else {
+                    // Coba buat tabel di skema DTKS
+                    $create_sql = "CREATE TABLE DTKS.DTKS_USERTAB (
                         ID_USER VARCHAR2(50) PRIMARY KEY,
                         NAMA_USER VARCHAR2(100) NOT NULL,
                         PASSWD VARCHAR2(32) NOT NULL,
                         DISABLE_USER CHAR(1) DEFAULT 'N' CHECK (DISABLE_USER IN ('Y', 'N')),
                         LEVEL_USER VARCHAR2(20) NOT NULL CHECK (LEVEL_USER IN ('JUNIOR', 'MIDDLE', 'SENIOR', 'SUPERUSER', 'DEVELOPER'))
                     )";
-                    $this->db_oracle->query($create_sql);
+                    try {
+                        @$this->db_oracle->query($create_sql);
+                        $this->table_name = 'DTKS.DTKS_USERTAB';
 
-                    // Isi data pengguna awal
-                    $insert_queries = array(
-                        "INSERT INTO DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.POLMA', 'POLMA SIHOTANG', 'eeb184d2cde34db5718552910d73c983', 'N', 'DEVELOPER')",
-                        "INSERT INTO DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.LUTFI', 'LUTFI INDIARTO WIRAYUDA', 'bfce4f791b02f5fa8a35926ec5edfe26', 'N', 'SUPERUSER')",
-                        "INSERT INTO DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.IDHAM', 'IDHAM RIZKY SAPALA', 'd74ee5bc288bff461f91e98e7d4fcd93', 'N', 'SENIOR')"
-                    );
-                    foreach ($insert_queries as $sql) {
-                        $this->db_oracle->query($sql);
+                        // Isi data pengguna awal
+                        $insert_queries = array(
+                            "INSERT INTO DTKS.DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.POLMA', 'POLMA SIHOTANG', 'eeb184d2cde34db5718552910d73c983', 'N', 'DEVELOPER')",
+                            "INSERT INTO DTKS.DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.LUTFI', 'LUTFI INDIARTO WIRAYUDA', 'bfce4f791b02f5fa8a35926ec5edfe26', 'N', 'SUPERUSER')",
+                            "INSERT INTO DTKS.DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.IDHAM', 'IDHAM RIZKY SAPALA', 'd74ee5bc288bff461f91e98e7d4fcd93', 'N', 'SENIOR')"
+                        );
+                        foreach ($insert_queries as $sql) {
+                            @$this->db_oracle->query($sql);
+                        }
+                    } catch (Exception $ex) {
+                        // Jika gagal membuat di skema DTKS (misal tidak ada privilage DTKS), gunakan fallback skema sendiri (POLMASIHOTANG)
+                        $table_own_check = @$this->db_oracle->query("SELECT 1 FROM DTKS_USERTAB WHERE ROWNUM = 1");
+                        if ($table_own_check) {
+                            $this->table_name = 'DTKS_USERTAB';
+                        } else {
+                            $create_sql_own = "CREATE TABLE DTKS_USERTAB (
+                                ID_USER VARCHAR2(50) PRIMARY KEY,
+                                NAMA_USER VARCHAR2(100) NOT NULL,
+                                PASSWD VARCHAR2(32) NOT NULL,
+                                DISABLE_USER CHAR(1) DEFAULT 'N' CHECK (DISABLE_USER IN ('Y', 'N')),
+                                LEVEL_USER VARCHAR2(20) NOT NULL CHECK (LEVEL_USER IN ('JUNIOR', 'MIDDLE', 'SENIOR', 'SUPERUSER', 'DEVELOPER'))
+                            )";
+                            @$this->db_oracle->query($create_sql_own);
+                            $this->table_name = 'DTKS_USERTAB';
+
+                            $insert_queries_own = array(
+                                "INSERT INTO DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.POLMA', 'POLMA SIHOTANG', 'eeb184d2cde34db5718552910d73c983', 'N', 'DEVELOPER')",
+                                "INSERT INTO DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.LUTFI', 'LUTFI INDIARTO WIRAYUDA', 'bfce4f791b02f5fa8a35926ec5edfe26', 'N', 'SUPERUSER')",
+                                "INSERT INTO DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.IDHAM', 'IDHAM RIZKY SAPALA', 'd74ee5bc288bff461f91e98e7d4fcd93', 'N', 'SENIOR')"
+                            );
+                            foreach ($insert_queries_own as $sql) {
+                                @$this->db_oracle->query($sql);
+                            }
+                        }
                     }
                 }
             } else {
@@ -127,7 +158,7 @@ class Muser extends CI_Model {
         try {
             // Kueri case-insensitive untuk ID_USER
             $sql = "SELECT ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER 
-                    FROM DTKS_USERTAB 
+                    FROM " . $this->table_name . " 
                     WHERE UPPER(ID_USER) = UPPER(?) AND PASSWD = ?";
             $query = $this->db_oracle->query($sql, array($username, $password_md5));
             
@@ -182,7 +213,7 @@ class Muser extends CI_Model {
         }
 
         try {
-            $query = $this->db_oracle->query("SELECT ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER FROM DTKS_USERTAB ORDER BY NAMA_USER ASC");
+            $query = $this->db_oracle->query("SELECT ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER FROM " . $this->table_name . " ORDER BY NAMA_USER ASC");
             if ($query) {
                 $results = $query->result_array();
                 $normalized = array();
@@ -214,20 +245,20 @@ class Muser extends CI_Model {
         $passwd = isset($data['passwd']) && $data['passwd'] !== '' ? md5($data['passwd']) : null;
 
         // Cek apakah user sudah ada
-        $check = $this->db_oracle->query("SELECT ID_USER FROM DTKS_USERTAB WHERE UPPER(ID_USER) = UPPER(?)", array($id_user));
+        $check = $this->db_oracle->query("SELECT ID_USER FROM " . $this->table_name . " WHERE UPPER(ID_USER) = UPPER(?)", array($id_user));
         if ($check && $check->num_rows() > 0) {
             // Update
             if ($passwd) {
-                $sql = "UPDATE DTKS_USERTAB SET NAMA_USER = ?, LEVEL_USER = ?, DISABLE_USER = ?, PASSWD = ? WHERE UPPER(ID_USER) = UPPER(?)";
+                $sql = "UPDATE " . $this->table_name . " SET NAMA_USER = ?, LEVEL_USER = ?, DISABLE_USER = ?, PASSWD = ? WHERE UPPER(ID_USER) = UPPER(?)";
                 $params = array($nama_user, $level_user, $disable_user, $passwd, $id_user);
             } else {
-                $sql = "UPDATE DTKS_USERTAB SET NAMA_USER = ?, LEVEL_USER = ?, DISABLE_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
+                $sql = "UPDATE " . $this->table_name . " SET NAMA_USER = ?, LEVEL_USER = ?, DISABLE_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
                 $params = array($nama_user, $level_user, $disable_user, $id_user);
             }
             return $this->db_oracle->query($sql, $params);
         } else {
             // Insert
-            $sql = "INSERT INTO DTKS_USERTAB (ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER, PASSWD) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO " . $this->table_name . " (ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER, PASSWD) VALUES (?, ?, ?, ?, ?)";
             return $this->db_oracle->query($sql, array($id_user, $nama_user, $level_user, $disable_user, $passwd ? $passwd : md5('123456')));
         }
     }
@@ -238,11 +269,11 @@ class Muser extends CI_Model {
             return false;
         }
         
-        $query = $this->db_oracle->query("SELECT DISABLE_USER FROM DTKS_USERTAB WHERE UPPER(ID_USER) = UPPER(?)", array($id_user));
+        $query = $this->db_oracle->query("SELECT DISABLE_USER FROM " . $this->table_name . " WHERE UPPER(ID_USER) = UPPER(?)", array($id_user));
         if ($query && $query->num_rows() > 0) {
             $row = $query->row_array();
             $new_status = strtoupper($row['DISABLE_USER']) === 'Y' ? 'N' : 'Y';
-            $sql = "UPDATE DTKS_USERTAB SET DISABLE_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
+            $sql = "UPDATE " . $this->table_name . " SET DISABLE_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
             return $this->db_oracle->query($sql, array($new_status, $id_user));
         }
         return false;
@@ -253,7 +284,7 @@ class Muser extends CI_Model {
         if (!$this->db_oracle) {
             return false;
         }
-        $sql = "DELETE FROM DTKS_USERTAB WHERE UPPER(ID_USER) = UPPER(?)";
+        $sql = "DELETE FROM " . $this->table_name . " WHERE UPPER(ID_USER) = UPPER(?)";
         return $this->db_oracle->query($sql, array($id_user));
     }
 
@@ -274,10 +305,10 @@ class Muser extends CI_Model {
         }
 
         if ($passwd) {
-            $sql = "UPDATE DTKS_USERTAB SET ID_USER = ?, NAMA_USER = ?, PASSWD = ? WHERE UPPER(ID_USER) = UPPER(?)";
+            $sql = "UPDATE " . $this->table_name . " SET ID_USER = ?, NAMA_USER = ?, PASSWD = ? WHERE UPPER(ID_USER) = UPPER(?)";
             $params = array($new_username, $nama_user, $passwd, $id_user);
         } else {
-            $sql = "UPDATE DTKS_USERTAB SET ID_USER = ?, NAMA_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
+            $sql = "UPDATE " . $this->table_name . " SET ID_USER = ?, NAMA_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
             $params = array($new_username, $nama_user, $id_user);
         }
 
