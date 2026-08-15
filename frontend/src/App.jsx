@@ -27,6 +27,7 @@ export default function App() {
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [dbStatus, setDbStatus] = useState({ oracle: false, postgresql: false });
   const [selectedLog, setSelectedLog] = useState(null);
+  const [dbStatusModal, setDbStatusModal] = useState(null);
   const [systemSettings, setSystemSettings] = useState({
     site_name: 'NewKotainter',
     site_description: 'v2.0 REST API & Workspace Terpadu'
@@ -129,15 +130,7 @@ export default function App() {
         const statusDb = result.data ? result.data : { oracle: false, postgresql: false, fso_oracle: false, fso_postgres: false };
         setDbStatus(statusDb);
         if (alertUser) {
-          const statusText = `📡 STATUS KONEKSI DATABASE TERKINI:
-------------------------------------------
-1. Oracle (Utama): ${statusDb.oracle ? '🟢 ONLINE' : '🔴 OFFLINE'}
-2. PostgreSQL (Utama): ${statusDb.postgresql ? '🟢 ONLINE' : '🔴 OFFLINE'}
-3. FSO Oracle: ${statusDb.fso_oracle ? '🟢 ONLINE' : '🔴 OFFLINE'}
-4. FSO PostgreSQL: ${statusDb.fso_postgres ? '🟢 ONLINE' : '🔴 OFFLINE'}
-------------------------------------------
-Semua konfigurasi database aktif telah divalidasi.`;
-          alert(statusText);
+          setDbStatusModal(statusDb);
         }
       }
     } catch (err) {
@@ -370,6 +363,57 @@ Semua konfigurasi database aktif telah divalidasi.`;
       )}
 
       <DetailModal log={selectedLog} onClose={() => setSelectedLog(null)} />
+
+      {dbStatusModal && (
+        <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+          <div className="modal-content" style={{ backgroundColor: 'var(--bg-card)', padding: '24px', borderRadius: '8px', width: '90%', maxWidth: '440px', boxShadow: 'var(--shadow-lg)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-light)', paddingBottom: '12px', marginBottom: '16px' }}>
+              <h3 style={{ margin: 0, color: '#0f766e', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <i className="pi pi-wifi"></i> Status Koneksi Database
+              </h3>
+              <button 
+                onClick={() => setDbStatusModal(null)}
+                style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--text-muted)' }}
+              >
+                &times;
+              </button>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+                <span style={{ fontWeight: '500' }}>1. Oracle (Utama)</span>
+                <span className={`badge ${dbStatusModal.oracle ? 'badge-success' : 'badge-error'}`} style={{ minWidth: '85px', textAlign: 'center', display: 'inline-block' }}>
+                  {dbStatusModal.oracle ? 'ONLINE' : 'OFFLINE'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+                <span style={{ fontWeight: '500' }}>2. PostgreSQL (Utama)</span>
+                <span className={`badge ${dbStatusModal.postgresql ? 'badge-success' : 'badge-error'}`} style={{ minWidth: '85px', textAlign: 'center', display: 'inline-block' }}>
+                  {dbStatusModal.postgresql ? 'ONLINE' : 'OFFLINE'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+                <span style={{ fontWeight: '500' }}>3. FSO Oracle</span>
+                <span className={`badge ${dbStatusModal.fso_oracle ? 'badge-success' : 'badge-error'}`} style={{ minWidth: '85px', textAlign: 'center', display: 'inline-block' }}>
+                  {dbStatusModal.fso_oracle ? 'ONLINE' : 'OFFLINE'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+                <span style={{ fontWeight: '500' }}>4. FSO PostgreSQL</span>
+                <span className={`badge ${dbStatusModal.fso_postgres ? 'badge-success' : 'badge-error'}`} style={{ minWidth: '85px', textAlign: 'center', display: 'inline-block' }}>
+                  {dbStatusModal.fso_postgres ? 'ONLINE' : 'OFFLINE'}
+                </span>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
+              <button className="btn btn-primary" onClick={() => setDbStatusModal(null)} style={{ padding: '8px 24px' }}>
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

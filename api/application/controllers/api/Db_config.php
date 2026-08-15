@@ -73,8 +73,7 @@ class Db_config extends MY_Controller {
         }
 
         // Membaca payload input
-        $stream_clean = $this->security->xss_clean($this->input->raw_input_stream);
-        $json_data = json_decode($stream_clean, true);
+        $json_data = json_decode($this->input->raw_input_stream, true);
 
         // 1. Simpan setelan umum website
         $site_name        = isset($json_data['site_name']) ? trim($json_data['site_name']) : '';

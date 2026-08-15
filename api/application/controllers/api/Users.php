@@ -37,8 +37,7 @@ class Users extends MY_Controller {
         }
         $this->_check_admin();
 
-        $stream_clean = $this->security->xss_clean($this->input->raw_input_stream);
-        $json_data = json_decode($stream_clean, true);
+        $json_data = json_decode($this->input->raw_input_stream, true);
 
         $id_user    = isset($json_data['id_user']) ? trim($json_data['id_user']) : '';
         $nama_user  = isset($json_data['nama_user']) ? trim($json_data['nama_user']) : '';
@@ -73,8 +72,7 @@ class Users extends MY_Controller {
         }
         $this->_check_admin();
 
-        $stream_clean = $this->security->xss_clean($this->input->raw_input_stream);
-        $json_data = json_decode($stream_clean, true);
+        $json_data = json_decode($this->input->raw_input_stream, true);
         $id_user = isset($json_data['id_user']) ? trim($json_data['id_user']) : '';
 
         if (empty($id_user)) {
@@ -100,8 +98,7 @@ class Users extends MY_Controller {
         }
         $this->_check_admin();
 
-        $stream_clean = $this->security->xss_clean($this->input->raw_input_stream);
-        $json_data = json_decode($stream_clean, true);
+        $json_data = json_decode($this->input->raw_input_stream, true);
         $id_user = isset($json_data['id_user']) ? trim($json_data['id_user']) : '';
 
         if (empty($id_user)) {
@@ -126,8 +123,7 @@ class Users extends MY_Controller {
             return $this->response(405, 'error', 'Method Not Allowed');
         }
 
-        $stream_clean = $this->security->xss_clean($this->input->raw_input_stream);
-        $json_data = json_decode($stream_clean, true);
+        $json_data = json_decode($this->input->raw_input_stream, true);
 
         $id_user   = isset($json_data['id_user']) ? trim($json_data['id_user']) : '';
         $nama_user = isset($json_data['nama_user']) ? trim($json_data['nama_user']) : '';
