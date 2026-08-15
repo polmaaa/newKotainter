@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Login from './components/Login';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -21,6 +21,17 @@ export default function App() {
   const [tabs, setTabs] = useState([
     { id: 'dashboard', title: 'Dashboard', closable: false }
   ]);
+
+  const tabsRef = useRef(null);
+  const handleScrollTabs = (direction) => {
+    if (tabsRef.current) {
+      const scrollAmount = 200;
+      tabsRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   // Database activities data
   const [logs, setLogs] = useState([]);
@@ -342,30 +353,101 @@ export default function App() {
               onLogout={handleLogout} 
             />
             
-            {/* Dynamic Tabs Bar */}
-            <div className="tabs-container" id="tabs-bar">
-              {tabs.map(tab => (
-                <div 
-                  key={tab.id} 
-                  className={`tab-item ${activeTabId === tab.id ? 'active' : ''}`}
-                  onClick={() => setActiveTabId(tab.id)}
-                >
-                  <span className="tab-icon"><i className={`pi pi-${getTabIcon(tab.id)}`}></i></span>
-                  <span className="tab-title">{tab.title}</span>
-                  {tab.closable && (
-                    <span 
-                      className="tab-close" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCloseTab(tab.id);
-                      }}
-                      style={{ marginLeft: '8px', cursor: 'pointer' }}
-                    >
-                      &times;
-                    </span>
-                  )}
-                </div>
-              ))}
+            {/* Dynamic Tabs Bar with Prev/Next buttons */}
+            <div className="tabs-container" id="tabs-bar" style={{ display: 'flex', alignItems: 'center', padding: '0 8px', overflow: 'hidden', gap: '0' }}>
+              <button 
+                type="button" 
+                onClick={() => handleScrollTabs('left')}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  height: '24px',
+                  width: '24px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  borderRadius: '4px',
+                  transition: 'all 0.2s',
+                  marginRight: '6px',
+                  alignSelf: 'center',
+                  flexShrink: 0
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#cbd5e1'; e.currentTarget.style.color = '#0f172a'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+              >
+                <i className="pi pi-chevron-left" style={{ fontSize: '0.85rem', fontWeight: 'bold' }}></i>
+              </button>
+
+              <div 
+                ref={tabsRef}
+                style={{
+                  display: 'flex',
+                  flexGrow: 1,
+                  overflowX: 'hidden',
+                  scrollBehavior: 'smooth',
+                  gap: '2px',
+                  alignItems: 'flex-end',
+                  height: '100%',
+                  msOverflowStyle: 'none',
+                  scrollbarWidth: 'none'
+                }}
+              >
+                <style>{`
+                  #tabs-bar div::-webkit-scrollbar {
+                    display: none !important;
+                  }
+                `}</style>
+                {tabs.map(tab => (
+                  <div 
+                    key={tab.id} 
+                    className={`tab-item ${activeTabId === tab.id ? 'active' : ''}`}
+                    onClick={() => setActiveTabId(tab.id)}
+                    style={{ flexShrink: 0 }}
+                  >
+                    <span className="tab-icon"><i className={`pi pi-${getTabIcon(tab.id)}`}></i></span>
+                    <span className="tab-title">{tab.title}</span>
+                    {tab.closable && (
+                      <span 
+                        className="tab-close" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCloseTab(tab.id);
+                        }}
+                        style={{ marginLeft: '8px', cursor: 'pointer' }}
+                      >
+                        &times;
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <button 
+                type="button" 
+                onClick={() => handleScrollTabs('right')}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  height: '24px',
+                  width: '24px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  borderRadius: '4px',
+                  transition: 'all 0.2s',
+                  marginLeft: '6px',
+                  alignSelf: 'center',
+                  flexShrink: 0
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#cbd5e1'; e.currentTarget.style.color = '#0f172a'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+              >
+                <i className="pi pi-chevron-right" style={{ fontSize: '0.85rem', fontWeight: 'bold' }}></i>
+              </button>
             </div>
             
             <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto' }}>
