@@ -8,17 +8,31 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   const [siteName, setSiteName] = useState('');
   const [siteDescription, setSiteDescription] = useState('');
 
-  // Oracle states
+  // 1. Oracle states
   const [oracleTns, setOracleTns] = useState('');
   const [oracleUsername, setOracleUsername] = useState('');
   const [oraclePassword, setOraclePassword] = useState('');
+  const [oraclePreset, setOraclePreset] = useState('custom');
   
-  // Postgres states
+  // 2. Postgres states
   const [postgresHost, setPostgresHost] = useState('');
   const [postgresPort, setPostgresPort] = useState('5432');
   const [postgresUsername, setPostgresUsername] = useState('');
   const [postgresPassword, setPostgresPassword] = useState('');
   const [postgresDatabase, setPostgresDatabase] = useState('');
+
+  // 3. FSO Oracle states
+  const [fsoOracleTns, setFsoOracleTns] = useState('');
+  const [fsoOracleUsername, setFsoOracleUsername] = useState('');
+  const [fsoOraclePassword, setFsoOraclePassword] = useState('');
+  const [fsoOraclePreset, setFsoOraclePreset] = useState('custom');
+
+  // 4. FSO Postgres states
+  const [fsoPostgresHost, setFsoPostgresHost] = useState('10.99.20.11');
+  const [fsoPostgresPort, setFsoPostgresPort] = useState('5488');
+  const [fsoPostgresUsername, setFsoPostgresUsername] = useState('fsm');
+  const [fsoPostgresPassword, setFsoPostgresPassword] = useState('fsm@2026');
+  const [fsoPostgresDatabase, setFsoPostgresDatabase] = useState('fsm');
 
   // User Management states (Superadmin / Developer)
   const [usersList, setUsersList] = useState([]);
@@ -61,14 +75,31 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
             const data = result.data;
             setSiteName(data.site_name || '');
             setSiteDescription(data.site_description || '');
+            
+            // Oracle
             setOracleTns(data.oracle_tns || '');
             setOracleUsername(data.oracle_username || '');
             setOraclePassword(data.oracle_password || '');
+            
+            // Postgres
             setPostgresHost(data.postgres_host || '');
             setPostgresPort(data.postgres_port ? data.postgres_port.toString() : '5432');
             setPostgresUsername(data.postgres_username || '');
             setPostgresPassword(data.postgres_password || '');
             setPostgresDatabase(data.postgres_database || '');
+
+            // FSO Oracle
+            setFsoOracleTns(data.fso_oracle_tns || '');
+            setFsoOracleUsername(data.fso_oracle_username || '');
+            setFsoOraclePassword(data.fso_oracle_password || '');
+
+            // FSO Postgres (fallback to defaults if empty)
+            setFsoPostgresHost(data.fso_postgres_host || '10.99.20.11');
+            setFsoPostgresPort(data.fso_postgres_port ? data.fso_postgres_port.toString() : '5488');
+            setFsoPostgresUsername(data.fso_postgres_username || 'fsm');
+            setFsoPostgresPassword(data.fso_postgres_password || 'fsm@2026');
+            setFsoPostgresDatabase(data.fso_postgres_database || 'fsm');
+
           } else {
             setError(result.message || 'Gagal memuat konfigurasi.');
           }
@@ -89,6 +120,148 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
     }
     loadData();
   }, [apiBaseUrl, isPrivileged, user]);
+
+  // Handle preset selection for Oracle
+  const handleOraclePresetChange = (preset) => {
+    setOraclePreset(preset);
+    if (preset === 'truno') {
+      setOracleTns(`(DESCRIPTION=
+    (LOAD_BALANCE=yes)
+    (ADDRESS_LIST=
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.10)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.11)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.12)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.13)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.14)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.15)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.16)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.159.17)
+        (PORT=1521)
+      )
+    )
+    (CONNECT_DATA=
+      (SERVER=dedicated)
+      (SERVICE_NAME=ap2tdr)
+    )
+  )`);
+      setOracleUsername('DTKS');
+      setOraclePassword('Desember');
+    } else if (preset === 'gandul') {
+      setOracleTns(`(DESCRIPTION=
+    (ADDRESS_LIST=
+      (LOAD_BALANCE=on)
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.158.10)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.158.11)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.158.12)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.158.13)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.158.14)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.158.15)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.158.16)
+        (PORT=1521)
+      )
+      (ADDRESS=
+        (PROTOCOL=TCP)
+        (HOST=10.14.158.17)
+        (PORT=1521)
+      )
+    )
+    (CONNECT_DATA=
+      (SERVER=dedicated)
+      (SERVICE_NAME=ap2t)
+    )
+  )`);
+      setOracleUsername('DTKS');
+      setOraclePassword('Desember123');
+    }
+  };
+
+  // Handle preset selection for FSO Oracle
+  const handleFsoOraclePresetChange = (preset) => {
+    setFsoOraclePreset(preset);
+    if (preset === 'truno') {
+      setFsoOracleTns(`(DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.14.212.11)(PORT = 1521))
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.14.212.12)(PORT = 1521))
+    (LOAD_BALANCE = yes)
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = FSODR)
+    )
+  )`);
+      setFsoOracleUsername('OPHARAPPFSO');
+      setFsoOraclePassword('Opharapp@FSO');
+    } else if (preset === 'gandul') {
+      setFsoOracleTns(`(DESCRIPTION=
+    (ADDRESS=
+      (PROTOCOL=TCP)
+      (HOST=10.14.211.11)
+      (PORT=1521)
+    )
+    (CONNECT_DATA=
+      (SERVER=dedicated)
+      (SERVICE_NAME=FSO)
+    )
+  )`);
+      setFsoOracleUsername('OPHARAPPFSO');
+      setFsoOraclePassword('Opharapp@FSO');
+    }
+  };
 
   // Load user list
   const fetchUsers = async () => {
@@ -123,23 +296,34 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
         body: JSON.stringify({
           site_name: siteName,
           site_description: siteDescription,
+          
           oracle_tns: oracleTns,
           oracle_username: oracleUsername,
           oracle_password: oraclePassword,
+          
           postgres_host: postgresHost,
           postgres_port: parseInt(postgresPort) || 5432,
           postgres_username: postgresUsername,
           postgres_password: postgresPassword,
-          postgres_database: postgresDatabase
+          postgres_database: postgresDatabase,
+          
+          fso_oracle_tns: fsoOracleTns,
+          fso_oracle_username: fsoOracleUsername,
+          fso_oracle_password: fsoOraclePassword,
+          
+          fso_postgres_host: fsoPostgresHost,
+          fso_postgres_port: parseInt(fsoPostgresPort) || 5488,
+          fso_postgres_username: fsoPostgresUsername,
+          fso_postgres_password: fsoPostgresPassword,
+          fso_postgres_database: fsoPostgresDatabase
         })
       });
 
       const result = await response.json();
 
       if (response.ok && result.status === 'success') {
-        setSuccess('Pengaturan sistem dan database berhasil disimpan!');
+        setSuccess('Pengaturan sistem dan 4 database berhasil disimpan!');
         
-        // Callback to dynamically update title and logo in parent App
         if (onUpdateSystemSettings) {
           onUpdateSystemSettings(siteName, siteDescription);
         }
@@ -176,7 +360,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
     setModalIdUser(selectedUser.id_user);
     setModalNamaUser(selectedUser.nama_user);
     setModalLevelUser(selectedUser.level_user);
-    setModalPasswd(''); // Password empty unless they want to change it
+    setModalPasswd('');
     setModalDisableUser(selectedUser.disable_user || 'N');
     setError('');
     setSuccess('');
@@ -297,7 +481,6 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
         setSuccess('Profil Anda berhasil diperbarui! Silakan reload jika nama profil belum terupdate.');
         setSelfPasswd('');
         alert('Profil Anda berhasil diperbarui!');
-        // Update user state if reload is simulated
         if (user) {
           user.id_user = selfIdUser;
           user.nama_user = selfNamaUser;
@@ -459,24 +642,36 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
 
       {/* 2. DATABASE CONFIG TAB */}
       {isPrivileged && activeSubTab === 'database' && (
-        <div className="content-card" style={{ maxWidth: '800px' }}>
+        <div className="content-card" style={{ maxWidth: '100%' }}>
           <form onSubmit={handleSaveConfig}>
-            <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', marginBottom: '20px' }}>
-              {/* Oracle Config */}
-              <div style={{ borderRight: '1px solid var(--border-light)', paddingRight: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <h3 style={{ marginBottom: '4px', color: 'var(--oracle)', fontSize: '1rem' }}>
-                  <i className="pi pi-server" style={{ marginRight: '8px' }}></i> Database Oracle
-                </h3>
+            <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px', marginBottom: '20px' }}>
+              
+              {/* Grup 1: Database ORACLE */}
+              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#fafafa' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, color: 'var(--oracle)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="pi pi-server"></i> Database ORACLE
+                  </h3>
+                  <select 
+                    style={{ padding: '4px 8px', fontSize: '0.85rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}
+                    value={oraclePreset}
+                    onChange={(e) => handleOraclePresetChange(e.target.value)}
+                  >
+                    <option value="custom">-- Pilih Preset / Kustom --</option>
+                    <option value="truno">Versi Truno</option>
+                    <option value="gandul">Versi Gandul</option>
+                  </select>
+                </div>
                 
                 <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label htmlFor="oracle-tns">Oracle TNS Connection String / Host</label>
+                  <label htmlFor="oracle-tns">Oracle TNS Connection String</label>
                   <textarea
                     id="oracle-tns"
                     className="form-input-text"
-                    style={{ height: '140px', resize: 'vertical', fontFamily: 'monospace', fontSize: '0.85rem' }}
+                    style={{ height: '140px', resize: 'vertical', fontFamily: 'monospace', fontSize: '0.8rem' }}
                     required
                     value={oracleTns}
-                    onChange={(e) => setOracleTns(e.target.value)}
+                    onChange={(e) => { setOracleTns(e.target.value); setOraclePreset('custom'); }}
                   />
                 </div>
 
@@ -504,11 +699,11 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                   />
                 </div>
               </div>
-              
-              {/* PostgreSQL Config */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <h3 style={{ marginBottom: '4px', color: 'var(--postgres)', fontSize: '1rem' }}>
-                  <i className="pi pi-server" style={{ marginRight: '8px' }}></i> Database PostgreSQL
+
+              {/* Grup 2: Database POSTGRE */}
+              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#fafafa' }}>
+                <h3 style={{ margin: 0, color: 'var(--postgres)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <i className="pi pi-server"></i> Database POSTGRE
                 </h3>
 
                 <div className="form-row">
@@ -570,12 +765,134 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                   />
                 </div>
               </div>
+              
+              {/* Grup 3: Database FSO ORACLE */}
+              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#fafafa' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, color: '#047857', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="pi pi-server"></i> Database FSO ORACLE
+                  </h3>
+                  <select 
+                    style={{ padding: '4px 8px', fontSize: '0.85rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}
+                    value={fsoOraclePreset}
+                    onChange={(e) => handleFsoOraclePresetChange(e.target.value)}
+                  >
+                    <option value="custom">-- Pilih Preset / Kustom --</option>
+                    <option value="truno">Versi Truno</option>
+                    <option value="gandul">Versi Gandul</option>
+                  </select>
+                </div>
+
+                <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <label htmlFor="fso-oracle-tns">FSO Oracle TNS Connection String</label>
+                  <textarea
+                    id="fso-oracle-tns"
+                    className="form-input-text"
+                    style={{ height: '140px', resize: 'vertical', fontFamily: 'monospace', fontSize: '0.8rem' }}
+                    required
+                    value={fsoOracleTns}
+                    onChange={(e) => { setFsoOracleTns(e.target.value); setFsoOraclePreset('custom'); }}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="fso-oracle-user">Username</label>
+                  <input
+                    type="text"
+                    id="fso-oracle-user"
+                    className="form-input-text"
+                    required
+                    value={fsoOracleUsername}
+                    onChange={(e) => setFsoOracleUsername(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="fso-oracle-pass">Password</label>
+                  <input
+                    type="text"
+                    id="fso-oracle-pass"
+                    className="form-input-text"
+                    required
+                    value={fsoOraclePassword}
+                    onChange={(e) => setFsoOraclePassword(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Grup 4: Database FSO POSTGRE */}
+              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#fafafa' }}>
+                <h3 style={{ margin: 0, color: '#0f766e', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <i className="pi pi-server"></i> Database FSO POSTGRE
+                </h3>
+
+                <div className="form-row">
+                  <label htmlFor="fso-pg-host">Host / IP Address</label>
+                  <input
+                    type="text"
+                    id="fso-pg-host"
+                    className="form-input-text"
+                    required
+                    value={fsoPostgresHost}
+                    onChange={(e) => setFsoPostgresHost(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="fso-pg-port">Port</label>
+                  <input
+                    type="number"
+                    id="fso-pg-port"
+                    className="form-input-text"
+                    required
+                    value={fsoPostgresPort}
+                    onChange={(e) => setFsoPostgresPort(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="fso-pg-db">Database Name</label>
+                  <input
+                    type="text"
+                    id="fso-pg-db"
+                    className="form-input-text"
+                    required
+                    value={fsoPostgresDatabase}
+                    onChange={(e) => setFsoPostgresDatabase(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="fso-pg-user">Username</label>
+                  <input
+                    type="text"
+                    id="fso-pg-user"
+                    className="form-input-text"
+                    required
+                    value={fsoPostgresUsername}
+                    onChange={(e) => setFsoPostgresUsername(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <label htmlFor="fso-pg-pass">Password</label>
+                  <input
+                    type="text"
+                    id="fso-pg-pass"
+                    className="form-input-text"
+                    required
+                    value={fsoPostgresPassword}
+                    onChange={(e) => setFsoPostgresPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+
             </div>
             
             <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '16px', display: 'flex', gap: '8px' }}>
               <button type="submit" className="btn btn-primary" disabled={saving}>
                 {saving ? <i className="pi pi-spin pi-spinner" style={{ marginRight: '8px' }}></i> : <i className="pi pi-save" style={{ marginRight: '8px' }}></i>}
-                Simpan Database & Sistem
+                Simpan Semua Database
               </button>
               <button type="button" className="btn btn-outline" onClick={onCheckConnection}>
                 <i className="pi pi-wifi" style={{ marginRight: '8px' }}></i> Cek Koneksi Aktif
@@ -773,7 +1090,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
         </div>
       )}
 
-      {/* 4. SELF USER SETTINGS (Senior, Middle, Junior - and also fallback option for privileged) */}
+      {/* 4. SELF USER SETTINGS (Senior, Middle, Junior) */}
       {!isPrivileged && (
         <div className="content-card" style={{ maxWidth: '500px' }}>
           <h3 style={{ marginBottom: '16px', color: '#0f766e', fontSize: '1.1rem' }}>
