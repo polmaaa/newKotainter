@@ -197,7 +197,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
     )
   )`);
       setOracleUsername('DTKS');
-      setOraclePassword('Desember');
+      setOraclePassword('Desember_TEST_607');
     } else if (preset === 'gandul') {
       setOracleTns(`(DESCRIPTION=
     (ADDRESS_LIST=
