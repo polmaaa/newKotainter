@@ -708,18 +708,68 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                       {oraclePreset === 'truno' ? 'Versi Truno' : (oraclePreset === 'gandul' ? 'Versi Gandul' : 'Kustom')}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <select 
-                      style={{ padding: '4px 8px', fontSize: '0.85rem', borderRadius: '4px', border: '1px solid var(--border-color)', backgroundColor: '#ffffff' }}
-                      value={oraclePreset}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => handleOraclePresetChange(e.target.value)}
-                    >
-                      <option value="custom">-- Pilih Preset / Kustom --</option>
-                      <option value="truno">Versi Truno</option>
-                      <option value="gandul">Versi Gandul</option>
-                    </select>
-                    <i className={`pi ${openAccordion.oracle ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }} onClick={(e) => e.stopPropagation()}>
+                    <div style={{ display: 'flex', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border-color)', backgroundColor: '#f1f5f9', padding: '2px' }}>
+                      <button
+                        type="button"
+                        onClick={() => handleOraclePresetChange('truno')}
+                        style={{
+                          padding: '3px 10px',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          border: 'none',
+                          borderRadius: '4px',
+                          backgroundColor: oraclePreset === 'truno' ? '#ffffff' : 'transparent',
+                          color: oraclePreset === 'truno' ? '#0f766e' : '#475569',
+                          boxShadow: oraclePreset === 'truno' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s'
+                        }}
+                      >
+                        Truno
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOraclePresetChange('gandul')}
+                        style={{
+                          padding: '3px 10px',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          border: 'none',
+                          borderRadius: '4px',
+                          backgroundColor: oraclePreset === 'gandul' ? '#ffffff' : 'transparent',
+                          color: oraclePreset === 'gandul' ? '#0f766e' : '#475569',
+                          boxShadow: oraclePreset === 'gandul' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s'
+                        }}
+                      >
+                        Gandul
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOraclePresetChange('custom')}
+                        style={{
+                          padding: '3px 10px',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          border: 'none',
+                          borderRadius: '4px',
+                          backgroundColor: oraclePreset === 'custom' ? '#ffffff' : 'transparent',
+                          color: oraclePreset === 'custom' ? '#0f766e' : '#475569',
+                          boxShadow: oraclePreset === 'custom' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s'
+                        }}
+                      >
+                        Kustom
+                      </button>
+                    </div>
+                    <i 
+                      className={`pi ${openAccordion.oracle ? 'pi-chevron-down' : 'pi-chevron-right'}`} 
+                      style={{ color: '#64748b', fontSize: '0.85rem', cursor: 'pointer' }}
+                      onClick={(e) => { e.stopPropagation(); toggleAccordion('oracle'); }}
+                    />
                   </div>
                 </div>
                 
@@ -895,18 +945,68 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                       {fsoOraclePreset === 'truno' ? 'Versi Truno' : (fsoOraclePreset === 'gandul' ? 'Versi Gandul' : 'Kustom')}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <select 
-                      style={{ padding: '4px 8px', fontSize: '0.85rem', borderRadius: '4px', border: '1px solid var(--border-color)', backgroundColor: '#ffffff' }}
-                      value={fsoOraclePreset}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => handleFsoOraclePresetChange(e.target.value)}
-                    >
-                      <option value="custom">-- Pilih Preset / Kustom --</option>
-                      <option value="truno">Versi Truno</option>
-                      <option value="gandul">Versi Gandul</option>
-                    </select>
-                    <i className={`pi ${openAccordion.fsoOracle ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }} onClick={(e) => e.stopPropagation()}>
+                    <div style={{ display: 'flex', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border-color)', backgroundColor: '#f1f5f9', padding: '2px' }}>
+                      <button
+                        type="button"
+                        onClick={() => handleFsoOraclePresetChange('truno')}
+                        style={{
+                          padding: '3px 10px',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          border: 'none',
+                          borderRadius: '4px',
+                          backgroundColor: fsoOraclePreset === 'truno' ? '#ffffff' : 'transparent',
+                          color: fsoOraclePreset === 'truno' ? '#065f46' : '#475569',
+                          boxShadow: fsoOraclePreset === 'truno' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s'
+                        }}
+                      >
+                        Truno
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleFsoOraclePresetChange('gandul')}
+                        style={{
+                          padding: '3px 10px',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          border: 'none',
+                          borderRadius: '4px',
+                          backgroundColor: fsoOraclePreset === 'gandul' ? '#ffffff' : 'transparent',
+                          color: fsoOraclePreset === 'gandul' ? '#065f46' : '#475569',
+                          boxShadow: fsoOraclePreset === 'gandul' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s'
+                        }}
+                      >
+                        Gandul
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleFsoOraclePresetChange('custom')}
+                        style={{
+                          padding: '3px 10px',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          border: 'none',
+                          borderRadius: '4px',
+                          backgroundColor: fsoOraclePreset === 'custom' ? '#ffffff' : 'transparent',
+                          color: fsoOraclePreset === 'custom' ? '#065f46' : '#475569',
+                          boxShadow: fsoOraclePreset === 'custom' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s'
+                        }}
+                      >
+                        Kustom
+                      </button>
+                    </div>
+                    <i 
+                      className={`pi ${openAccordion.fsoOracle ? 'pi-chevron-down' : 'pi-chevron-right'}`} 
+                      style={{ color: '#64748b', fontSize: '0.85rem', cursor: 'pointer' }}
+                      onClick={(e) => { e.stopPropagation(); toggleAccordion('fsoOracle'); }}
+                    />
                   </div>
                 </div>
 
