@@ -1328,77 +1328,117 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
 
           {/* User Form Modal */}
           {showUserModal && (
-            <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-              <div className="modal-content" style={{ backgroundColor: 'var(--bg-card)', padding: '24px', borderRadius: '8px', width: '90%', maxWidth: '480px', boxShadow: 'var(--shadow-lg)' }}>
-                <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', borderBottom: '1px solid var(--border-light)', paddingBottom: '12px', marginBottom: '16px' }}>
-                  <h3 style={{ margin: 0, color: '#0f766e' }}>
-                    {modalMode === 'add' ? 'Tambah User Baru' : `Edit User ${modalIdUser}`}
-                  </h3>
+            <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+              <style>{`
+                @keyframes modalScaleUp {
+                  from { transform: scale(0.95); opacity: 0; }
+                  to { transform: scale(1); opacity: 1; }
+                }
+              `}</style>
+              <div 
+                className="modal-content" 
+                style={{ 
+                  backgroundColor: 'var(--bg-card)', 
+                  padding: '28px', 
+                  borderRadius: '16px', 
+                  width: '90%', 
+                  maxWidth: '460px', 
+                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', 
+                  border: '1px solid var(--border-light)',
+                  animation: 'modalScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-light)', paddingBottom: '14px', marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: '#e6f4f2', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#0f766e' }}>
+                      <i className={`pi ${modalMode === 'add' ? 'pi-user-plus' : 'pi-user-edit'}`} style={{ fontSize: '1.1rem' }}></i>
+                    </div>
+                    <h3 style={{ margin: 0, color: '#0f766e', fontSize: '1.15rem', fontWeight: 700 }}>
+                      {modalMode === 'add' ? 'Tambah Akun Baru' : 'Edit Akun Pengguna'}
+                    </h3>
+                  </div>
                   <button 
+                    type="button"
                     onClick={() => setShowUserModal(false)}
-                    style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--text-muted)' }}
+                    style={{ background: '#f1f5f9', border: 'none', width: '28px', height: '28px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; e.currentTarget.style.color = '#64748b'; }}
                   >
-                    &times;
+                    <i className="pi pi-times" style={{ fontSize: '0.8rem' }}></i>
                   </button>
                 </div>
 
                 <form onSubmit={handleSaveUserSubmit}>
-                  <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
-                    <label htmlFor="modal-id">Username (ID USER)</label>
-                    <input
-                      type="text"
-                      id="modal-id"
-                      className="form-input-text"
-                      required
-                      disabled={modalMode === 'edit'}
-                      value={modalIdUser}
-                      onChange={(e) => setModalIdUser(e.target.value)}
-                      placeholder="Contoh: PS.PUSAT.NAMA"
-                    />
+                  <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
+                    <label htmlFor="modal-id" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Username (ID USER)</label>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <i className="pi pi-user" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
+                      <input
+                        type="text"
+                        id="modal-id"
+                        className="form-input-text"
+                        style={{ paddingLeft: '38px' }}
+                        required
+                        disabled={modalMode === 'edit'}
+                        value={modalIdUser}
+                        onChange={(e) => setModalIdUser(e.target.value)}
+                        placeholder="Contoh: PS.PUSAT.NAMA"
+                      />
+                    </div>
                   </div>
 
-                  <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
-                    <label htmlFor="modal-name">Nama Lengkap</label>
-                    <input
-                      type="text"
-                      id="modal-name"
-                      className="form-input-text"
-                      required
-                      value={modalNamaUser}
-                      onChange={(e) => setModalNamaUser(e.target.value)}
-                    />
+                  <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
+                    <label htmlFor="modal-name" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Nama Lengkap</label>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <i className="pi pi-id-card" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
+                      <input
+                        type="text"
+                        id="modal-name"
+                        className="form-input-text"
+                        style={{ paddingLeft: '38px' }}
+                        required
+                        value={modalNamaUser}
+                        onChange={(e) => setModalNamaUser(e.target.value)}
+                        placeholder="Nama lengkap user..."
+                      />
+                    </div>
                   </div>
 
-                  <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
-                    <label htmlFor="modal-level">Level User / Hak Akses</label>
-                    <select
-                      id="modal-level"
-                      className="form-input-text"
-                      style={{ height: '36px', padding: '0 8px' }}
-                      value={modalLevelUser}
-                      onChange={(e) => setModalLevelUser(e.target.value)}
-                    >
-                      <option value="DEVELOPER">DEVELOPER</option>
-                      <option value="SUPERUSER">SUPERUSER</option>
-                      <option value="SENIOR">SENIOR</option>
-                      <option value="MIDDLE">MIDDLE</option>
-                      <option value="JUNIOR">JUNIOR</option>
-                    </select>
+                  <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
+                    <label htmlFor="modal-level" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Level User / Hak Akses</label>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <i className="pi pi-shield" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
+                      <select
+                        id="modal-level"
+                        className="form-input-text"
+                        style={{ height: '38px', paddingLeft: '38px', paddingRight: '12px' }}
+                        value={modalLevelUser}
+                        onChange={(e) => setModalLevelUser(e.target.value)}
+                      >
+                        <option value="DEVELOPER">DEVELOPER</option>
+                        <option value="SUPERUSER">SUPERUSER</option>
+                        <option value="SENIOR">SENIOR</option>
+                        <option value="MIDDLE">MIDDLE</option>
+                        <option value="JUNIOR">JUNIOR</option>
+                      </select>
+                    </div>
                   </div>
 
-                  <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '16px' }}>
-                    <label htmlFor="modal-passwd">
+                  <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+                    <label htmlFor="modal-passwd" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>
                       {modalMode === 'add' ? 'Password' : 'Password Baru (Kosongkan jika tidak diubah)'}
                     </label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <i className="pi pi-lock" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
                       <input
                         type={showModalPass ? 'text' : 'password'}
                         id="modal-passwd"
                         className="form-input-text"
-                        style={{ paddingRight: '40px', width: '100%' }}
+                        style={{ paddingLeft: '38px', paddingRight: '40px', width: '100%' }}
                         required={modalMode === 'add'}
                         value={modalPasswd}
                         onChange={(e) => setModalPasswd(e.target.value)}
+                        placeholder={modalMode === 'add' ? 'Masukkan password...' : 'Ketik password baru...'}
                       />
                       <i 
                         className={`pi ${showModalPass ? 'pi-eye-slash' : 'pi-eye'}`} 
@@ -1408,31 +1448,59 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '20px', justifyContent: 'center' }}>
-                    <input
-                      type="checkbox"
-                      id="modal-disable"
-                      style={{ cursor: 'pointer', width: '16px', height: '16px', margin: 0 }}
-                      checked={modalDisableUser === 'Y'}
-                      onChange={(e) => setModalDisableUser(e.target.checked ? 'Y' : 'N')}
-                    />
-                    <label htmlFor="modal-disable" style={{ cursor: 'pointer', fontSize: '0.95rem', fontWeight: 500, color: 'var(--text-main)', margin: 0 }}>
-                      Nonaktifkan User (DISABLE_USER = Y)
-                    </label>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px solid var(--border-light)', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#334155' }}>Status Keaktifan Akun</span>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                        {modalDisableUser === 'Y' ? 'Akun dinonaktifkan (Tidak bisa login)' : 'Akun aktif (Dapat mengakses sistem)'}
+                      </span>
+                    </div>
+                    <div 
+                      onClick={() => setModalDisableUser(prev => prev === 'Y' ? 'N' : 'Y')}
+                      style={{
+                        width: '46px',
+                        height: '24px',
+                        borderRadius: '12px',
+                        backgroundColor: modalDisableUser === 'Y' ? '#ef4444' : '#10b981',
+                        padding: '2px',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.25s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: modalDisableUser === 'Y' ? 'flex-end' : 'flex-start',
+                        boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', transition: 'all 0.25s' }}></div>
+                    </div>
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
-                    <button type="button" className="btn btn-outline" onClick={() => setShowUserModal(false)} disabled={saving}>
+                    <button 
+                      type="button" 
+                      className="btn btn-outline" 
+                      onClick={() => setShowUserModal(false)} 
+                      disabled={saving}
+                      style={{ padding: '10px 20px', borderRadius: '8px' }}
+                    >
                       Batal
                     </button>
-                    <button type="submit" className="btn btn-primary" disabled={saving}>
+                    <button 
+                      type="submit" 
+                      className="btn btn-primary" 
+                      disabled={saving}
+                      style={{ padding: '10px 24px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
                       {saving ? (
                         <>
-                          <i className="pi pi-spin pi-spinner" style={{ marginRight: '8px' }}></i>
+                          <i className="pi pi-spin pi-spinner"></i>
                           Menyimpan...
                         </>
                       ) : (
-                        'Simpan User'
+                        <>
+                          <i className="pi pi-save"></i>
+                          Simpan User
+                        </>
                       )}
                     </button>
                   </div>
