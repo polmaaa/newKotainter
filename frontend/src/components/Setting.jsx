@@ -35,14 +35,9 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   const [fsoPostgresDatabase, setFsoPostgresDatabase] = useState('fsm');
 
   // Accordion & Password toggle states
-  const [openAccordion, setOpenAccordion] = useState({
-    oracle: true,
-    postgres: false,
-    fsoOracle: false,
-    fsoPostgres: false
-  });
+  const [activeAccordion, setActiveAccordion] = useState(null); // 'oracle', 'postgres', 'fsoOracle', 'fsoPostgres', or null (all closed)
   const toggleAccordion = (key) => {
-    setOpenAccordion(prev => ({ ...prev, [key]: !prev[key] }));
+    setActiveAccordion(prev => prev === key ? null : key);
   };
   const [showOraclePass, setShowOraclePass] = useState(false);
   const [showPostgresPass, setShowPostgresPass] = useState(false);
@@ -741,7 +736,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                   style={{ 
                     padding: '12px 16px', 
                     backgroundColor: '#f8fafc', 
-                    borderBottom: openAccordion.oracle ? '1px solid var(--border-light)' : 'none', 
+                    borderBottom: activeAccordion === 'oracle' ? '1px solid var(--border-light)' : 'none', 
                     display: 'flex', 
                     justifyContent: 'space-between', 
                     alignItems: 'center', 
@@ -821,14 +816,14 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                       </button>
                     </div>
                     <i 
-                      className={`pi ${openAccordion.oracle ? 'pi-chevron-down' : 'pi-chevron-right'}`} 
+                      className={`pi ${activeAccordion === 'oracle' ? 'pi-chevron-down' : 'pi-chevron-right'}`} 
                       style={{ color: '#64748b', fontSize: '0.85rem', cursor: 'pointer' }}
                       onClick={(e) => { e.stopPropagation(); toggleAccordion('oracle'); }}
                     />
                   </div>
                 </div>
                 
-                {openAccordion.oracle && (
+                {activeAccordion === 'oracle' && (
                   <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#ffffff' }}>
                     <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <label htmlFor="oracle-tns">Oracle TNS Connection String</label>
@@ -884,7 +879,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                   style={{ 
                     padding: '12px 16px', 
                     backgroundColor: '#f8fafc', 
-                    borderBottom: openAccordion.postgres ? '1px solid var(--border-light)' : 'none', 
+                    borderBottom: activeAccordion === 'postgres' ? '1px solid var(--border-light)' : 'none', 
                     display: 'flex', 
                     justifyContent: 'space-between', 
                     alignItems: 'center', 
@@ -896,10 +891,10 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                     <i className="pi pi-server" style={{ color: 'var(--postgres)', fontSize: '1.1rem' }}></i>
                     <span style={{ fontWeight: 600, color: '#1e293b', fontSize: '0.95rem' }}>Database POSTGRE (UTAMA)</span>
                   </div>
-                  <i className={`pi ${openAccordion.postgres ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
+                  <i className={`pi ${activeAccordion === 'postgres' ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
                 </div>
 
-                {openAccordion.postgres && (
+                {activeAccordion === 'postgres' && (
                   <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#ffffff' }}>
                     <div className="form-row">
                       <label htmlFor="pg-host">Host / IP Address</label>
@@ -978,7 +973,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                   style={{ 
                     padding: '12px 16px', 
                     backgroundColor: '#f8fafc', 
-                    borderBottom: openAccordion.fsoOracle ? '1px solid var(--border-light)' : 'none', 
+                    borderBottom: activeAccordion === 'fsoOracle' ? '1px solid var(--border-light)' : 'none', 
                     display: 'flex', 
                     justifyContent: 'space-between', 
                     alignItems: 'center', 
@@ -1058,14 +1053,14 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                       </button>
                     </div>
                     <i 
-                      className={`pi ${openAccordion.fsoOracle ? 'pi-chevron-down' : 'pi-chevron-right'}`} 
+                      className={`pi ${activeAccordion === 'fsoOracle' ? 'pi-chevron-down' : 'pi-chevron-right'}`} 
                       style={{ color: '#64748b', fontSize: '0.85rem', cursor: 'pointer' }}
                       onClick={(e) => { e.stopPropagation(); toggleAccordion('fsoOracle'); }}
                     />
                   </div>
                 </div>
 
-                {openAccordion.fsoOracle && (
+                {activeAccordion === 'fsoOracle' && (
                   <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#ffffff' }}>
                     <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <label htmlFor="fso-oracle-tns">FSO Oracle TNS Connection String</label>
@@ -1121,7 +1116,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                   style={{ 
                     padding: '12px 16px', 
                     backgroundColor: '#f8fafc', 
-                    borderBottom: openAccordion.fsoPostgres ? '1px solid var(--border-light)' : 'none', 
+                    borderBottom: activeAccordion === 'fsoPostgres' ? '1px solid var(--border-light)' : 'none', 
                     display: 'flex', 
                     justifyContent: 'space-between', 
                     alignItems: 'center', 
@@ -1133,10 +1128,10 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                     <i className="pi pi-server" style={{ color: '#0f766e', fontSize: '1.1rem' }}></i>
                     <span style={{ fontWeight: 600, color: '#1e293b', fontSize: '0.95rem' }}>Database FSO POSTGRE</span>
                   </div>
-                  <i className={`pi ${openAccordion.fsoPostgres ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
+                  <i className={`pi ${activeAccordion === 'fsoPostgres' ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
                 </div>
 
-                {openAccordion.fsoPostgres && (
+                {activeAccordion === 'fsoPostgres' && (
                   <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#ffffff' }}>
                     <div className="form-row">
                       <label htmlFor="fso-pg-host">Host / IP Address</label>
