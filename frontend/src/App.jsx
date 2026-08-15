@@ -31,6 +31,22 @@ export default function App() {
     site_name: 'NewKotainter',
     site_description: 'v2.0 REST API & Workspace Terpadu'
   });
+  const [dbConfig, setDbConfig] = useState(null);
+
+  const loadDbConfig = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/db_config/get_config?_=${Date.now()}`, {
+        method: 'GET',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      const result = await response.json();
+      if (response.ok && result.status === 'success') {
+        setDbConfig(result.data);
+      }
+    } catch (err) {
+      console.error('Gagal mengambil konfigurasi database:', err);
+    }
+  };
 
   const fetchSystemInfo = async () => {
     try {
@@ -70,6 +86,7 @@ export default function App() {
           }
           loadLogs();
           checkDbStatus();
+          loadDbConfig();
         }
       } catch (err) {
         console.error('Sesi login belum aktif:', err);
@@ -109,10 +126,18 @@ export default function App() {
       });
       const result = await response.json();
       if (response.ok && result.status === 'success') {
-        const statusDb = result.data ? result.data : { oracle: false, postgresql: false };
+        const statusDb = result.data ? result.data : { oracle: false, postgresql: false, fso_oracle: false, fso_postgres: false };
         setDbStatus(statusDb);
         if (alertUser) {
-          alert(`Status Database Terkini:\n- Oracle: ${statusDb.oracle ? 'ONLINE' : 'OFFLINE'}\n- PostgreSQL: ${statusDb.postgresql ? 'ONLINE' : 'OFFLINE'}`);
+          const statusText = `📡 STATUS KONEKSI DATABASE TERKINI:
+------------------------------------------
+1. Oracle (Utama): ${statusDb.oracle ? '🟢 ONLINE' : '🔴 OFFLINE'}
+2. PostgreSQL (Utama): ${statusDb.postgresql ? '🟢 ONLINE' : '🔴 OFFLINE'}
+3. FSO Oracle: ${statusDb.fso_oracle ? '🟢 ONLINE' : '🔴 OFFLINE'}
+4. FSO PostgreSQL: ${statusDb.fso_postgres ? '🟢 ONLINE' : '🔴 OFFLINE'}
+------------------------------------------
+Semua konfigurasi database aktif telah divalidasi.`;
+          alert(statusText);
         }
       }
     } catch (err) {
@@ -130,6 +155,7 @@ export default function App() {
       setTransitionState('');
       loadLogs();
       checkDbStatus();
+      loadDbConfig();
     }, 300);
   };
 
@@ -189,6 +215,20 @@ export default function App() {
     }
   };
 
+  const getOraclePresetName = (tns) => {
+    if (!tns) return 'Kustom';
+    if (tns.indexOf('10.14.159.10') !== -1) return 'Truno';
+    if (tns.indexOf('10.14.158.10') !== -1) return 'Gandul';
+    return 'Kustom';
+  };
+
+  const getFsoOraclePresetName = (tns) => {
+    if (!tns) return 'Kustom';
+    if (tns.indexOf('10.14.212.11') !== -1) return 'Truno';
+    if (tns.indexOf('10.14.211.11') !== -1) return 'Gandul';
+    return 'Kustom';
+  };
+
   const renderTabContent = () => {
     switch (activeTabId) {
       case 'dashboard':
@@ -199,6 +239,8 @@ export default function App() {
             loading={loadingLogs} 
             onRefresh={loadLogs} 
             onViewDetails={setSelectedLog} 
+            oraclePresetName={dbConfig ? getOraclePresetName(dbConfig.oracle_tns) : '...'}
+            fsoOraclePresetName={dbConfig ? getFsoOraclePresetName(dbConfig.fso_oracle_tns) : '...'}
           />
         );
       case 'save_log':
@@ -212,10 +254,14 @@ export default function App() {
         return (
           <Setting 
             user={user}
-            onCheckConnection={() => checkDbStatus(true)} 
+            onCheckConnection={() => {
+              checkDbStatus(true);
+              loadDbConfig();
+            }} 
             apiBaseUrl={API_BASE_URL}
             onUpdateSystemSettings={(name, desc) => {
               setSystemSettings({ site_name: name, site_description: desc });
+              loadDbConfig();
             }}
           />
         );

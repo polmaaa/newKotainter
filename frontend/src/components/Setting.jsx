@@ -66,7 +66,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
       try {
         // 1. Load DB & Site Config (Only if privileged)
         if (isPrivileged) {
-          const response = await fetch(`${apiBaseUrl}/api/db_config/get_config`, {
+          const response = await fetch(`${apiBaseUrl}/api/db_config/get_config?_=${Date.now()}`, {
             method: 'GET',
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
           });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDetails }) {
+export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDetails, oraclePresetName, fsoOraclePresetName }) {
   const [searchVal, setSearchVal] = useState('');
   const [dbVal, setDbVal] = useState('');
   const [statusVal, setStatusVal] = useState('');
@@ -103,14 +103,22 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
         </div>
         
         {/* Status Koneksi DB Aktif */}
-        <div className="db-status-bar">
-          <div className="db-indicator">
+        <div className="db-status-bar" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div className="db-indicator" title="Database Utama Oracle">
             <span className={`indicator-dot ${(dbStatus && dbStatus.oracle) ? 'online' : 'offline'}`} id="status-dot-oracle"></span>
-            <span>Oracle Train</span>
+            <span>Oracle: {oraclePresetName || '...'}</span>
           </div>
-          <div className="db-indicator">
+          <div className="db-indicator" title="Database Utama PostgreSQL">
             <span className={`indicator-dot ${(dbStatus && dbStatus.postgresql) ? 'online' : 'offline'}`} id="status-dot-postgres"></span>
-            <span>PostgreSQL dev</span>
+            <span>Postgre</span>
+          </div>
+          <div className="db-indicator" title="Database FSO Oracle">
+            <span className={`indicator-dot ${(dbStatus && dbStatus.fso_oracle) ? 'online' : 'offline'}`} id="status-dot-fso-oracle"></span>
+            <span>FSO Oracle: {fsoOraclePresetName || '...'}</span>
+          </div>
+          <div className="db-indicator" title="Database FSO PostgreSQL">
+            <span className={`indicator-dot ${(dbStatus && dbStatus.fso_postgres) ? 'online' : 'offline'}`} id="status-dot-fso-postgres"></span>
+            <span>FSO Postgre</span>
           </div>
         </div>
       </div>

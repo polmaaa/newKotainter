@@ -5,6 +5,8 @@ class Mlogs extends CI_Model {
 
     private $db_oracle = null;
     private $db_postgres = null;
+    private $db_fso_oracle = null;
+    private $db_fso_postgres = null;
 
     public function __construct() {
         parent::__construct();
@@ -36,6 +38,26 @@ class Mlogs extends CI_Model {
         } catch (Exception $e) {
             $this->db_postgres = null;
         }
+
+        // 3. Inisialisasi Database FSO Oracle (oci8)
+        try {
+            $this->db_fso_oracle = @$this->load->database('fso_oracle', TRUE);
+            if (!$this->db_fso_oracle || !$this->db_fso_oracle->conn_id) {
+                $this->db_fso_oracle = null;
+            }
+        } catch (Exception $e) {
+            $this->db_fso_oracle = null;
+        }
+
+        // 4. Inisialisasi Database FSO PostgreSQL (postgre)
+        try {
+            $this->db_fso_postgres = @$this->load->database('fso_postgres', TRUE);
+            if (!$this->db_fso_postgres || !$this->db_fso_postgres->conn_id) {
+                $this->db_fso_postgres = null;
+            }
+        } catch (Exception $e) {
+            $this->db_fso_postgres = null;
+        }
     }
 
     /**
@@ -43,8 +65,10 @@ class Mlogs extends CI_Model {
      */
     public function get_db_status() {
         return array(
-            'oracle'     => $this->db_oracle !== null,
-            'postgresql' => $this->db_postgres !== null
+            'oracle'       => $this->db_oracle !== null,
+            'postgresql'   => $this->db_postgres !== null,
+            'fso_oracle'   => $this->db_fso_oracle !== null,
+            'fso_postgres' => $this->db_fso_postgres !== null
         );
     }
 
