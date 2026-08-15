@@ -1408,14 +1408,17 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                     </div>
                   </div>
 
-                  <div className="form-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '20px', justifyContent: 'center' }}>
                     <input
                       type="checkbox"
                       id="modal-disable"
+                      style={{ cursor: 'pointer', width: '16px', height: '16px', margin: 0 }}
                       checked={modalDisableUser === 'Y'}
                       onChange={(e) => setModalDisableUser(e.target.checked ? 'Y' : 'N')}
                     />
-                    <label htmlFor="modal-disable">Nonaktifkan User (DISABLE_USER = Y)</label>
+                    <label htmlFor="modal-disable" style={{ cursor: 'pointer', fontSize: '0.95rem', fontWeight: 500, color: 'var(--text-main)', margin: 0 }}>
+                      Nonaktifkan User (DISABLE_USER = Y)
+                    </label>
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
