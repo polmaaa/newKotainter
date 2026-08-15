@@ -34,6 +34,21 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   const [fsoPostgresPassword, setFsoPostgresPassword] = useState('fsm@2026');
   const [fsoPostgresDatabase, setFsoPostgresDatabase] = useState('fsm');
 
+  // Accordion & Password toggle states
+  const [openAccordion, setOpenAccordion] = useState({
+    oracle: true,
+    postgres: false,
+    fsoOracle: false,
+    fsoPostgres: false
+  });
+  const toggleAccordion = (key) => {
+    setOpenAccordion(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+  const [showOraclePass, setShowOraclePass] = useState(false);
+  const [showPostgresPass, setShowPostgresPass] = useState(false);
+  const [showFsoOraclePass, setShowFsoOraclePass] = useState(false);
+  const [showFsoPostgresPass, setShowFsoPostgresPass] = useState(false);
+
   // User Management states (Superadmin / Developer)
   const [usersList, setUsersList] = useState([]);
   const [searchVal, setSearchVal] = useState('');
@@ -662,247 +677,380 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
       {isPrivileged && activeSubTab === 'database' && (
         <div className="content-card" style={{ maxWidth: '100%' }}>
           <form onSubmit={handleSaveConfig}>
-            <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>
               
               {/* Grup 1: Database ORACLE */}
-              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#fafafa' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ margin: 0, color: 'var(--oracle)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <i className="pi pi-server"></i> Database ORACLE
-                  </h3>
-                  <select 
-                    style={{ padding: '4px 8px', fontSize: '0.85rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}
-                    value={oraclePreset}
-                    onChange={(e) => handleOraclePresetChange(e.target.value)}
-                  >
-                    <option value="custom">-- Pilih Preset / Kustom --</option>
-                    <option value="truno">Versi Truno</option>
-                    <option value="gandul">Versi Gandul</option>
-                  </select>
+              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#ffffff' }}>
+                <div 
+                  onClick={() => toggleAccordion('oracle')}
+                  style={{ 
+                    padding: '12px 16px', 
+                    backgroundColor: '#f8fafc', 
+                    borderBottom: openAccordion.oracle ? '1px solid var(--border-light)' : 'none', 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    cursor: 'pointer',
+                    userSelect: 'none'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <i className="pi pi-server" style={{ color: 'var(--oracle)', fontSize: '1.1rem' }}></i>
+                    <span style={{ fontWeight: 600, color: '#1e293b', fontSize: '0.95rem' }}>Database ORACLE (UTAMA)</span>
+                    <span style={{ 
+                      fontSize: '0.75rem', 
+                      padding: '2px 8px', 
+                      borderRadius: '12px', 
+                      backgroundColor: '#e0f2fe', 
+                      color: '#0369a1',
+                      fontWeight: 500
+                    }}>
+                      {oraclePreset === 'truno' ? 'Versi Truno' : (oraclePreset === 'gandul' ? 'Versi Gandul' : 'Kustom')}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <select 
+                      style={{ padding: '4px 8px', fontSize: '0.85rem', borderRadius: '4px', border: '1px solid var(--border-color)', backgroundColor: '#ffffff' }}
+                      value={oraclePreset}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => handleOraclePresetChange(e.target.value)}
+                    >
+                      <option value="custom">-- Pilih Preset / Kustom --</option>
+                      <option value="truno">Versi Truno</option>
+                      <option value="gandul">Versi Gandul</option>
+                    </select>
+                    <i className={`pi ${openAccordion.oracle ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
+                  </div>
                 </div>
                 
-                <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label htmlFor="oracle-tns">Oracle TNS Connection String</label>
-                  <textarea
-                    id="oracle-tns"
-                    className="form-input-text"
-                    style={{ height: '140px', resize: 'vertical', fontFamily: 'monospace', fontSize: '0.8rem' }}
-                    required
-                    value={oracleTns}
-                    onChange={(e) => { setOracleTns(e.target.value); setOraclePreset('custom'); }}
-                  />
-                </div>
+                {openAccordion.oracle && (
+                  <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#ffffff' }}>
+                    <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <label htmlFor="oracle-tns">Oracle TNS Connection String</label>
+                      <textarea
+                        id="oracle-tns"
+                        className="form-input-text"
+                        style={{ height: '140px', resize: 'vertical', fontFamily: 'monospace', fontSize: '0.8rem' }}
+                        required
+                        value={oracleTns}
+                        onChange={(e) => { setOracleTns(e.target.value); setOraclePreset('custom'); }}
+                      />
+                    </div>
 
-                <div className="form-row">
-                  <label htmlFor="oracle-user">Username (Skema)</label>
-                  <input
-                    type="text"
-                    id="oracle-user"
-                    className="form-input-text"
-                    required
-                    value={oracleUsername}
-                    onChange={(e) => setOracleUsername(e.target.value)}
-                  />
-                </div>
+                    <div className="form-row">
+                      <label htmlFor="oracle-user">Username (Skema)</label>
+                      <input
+                        type="text"
+                        id="oracle-user"
+                        className="form-input-text"
+                        required
+                        value={oracleUsername}
+                        onChange={(e) => setOracleUsername(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-row">
-                  <label htmlFor="oracle-pass">Password</label>
-                  <input
-                    type="text"
-                    id="oracle-pass"
-                    className="form-input-text"
-                    required
-                    value={oraclePassword}
-                    onChange={(e) => setOraclePassword(e.target.value)}
-                  />
-                </div>
+                    <div className="form-row">
+                      <label htmlFor="oracle-pass">Password</label>
+                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <input
+                          type={showOraclePass ? 'text' : 'password'}
+                          id="oracle-pass"
+                          className="form-input-text"
+                          style={{ paddingRight: '40px', width: '100%' }}
+                          required
+                          value={oraclePassword}
+                          onChange={(e) => setOraclePassword(e.target.value)}
+                        />
+                        <i 
+                          className={`pi ${showOraclePass ? 'pi-eye-slash' : 'pi-eye'}`} 
+                          style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                          onClick={() => setShowOraclePass(!showOraclePass)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Grup 2: Database POSTGRE */}
-              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#fafafa' }}>
-                <h3 style={{ margin: 0, color: 'var(--postgres)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <i className="pi pi-server"></i> Database POSTGRE
-                </h3>
-
-                <div className="form-row">
-                  <label htmlFor="pg-host">Host / IP Address</label>
-                  <input
-                    type="text"
-                    id="pg-host"
-                    className="form-input-text"
-                    required
-                    value={postgresHost}
-                    onChange={(e) => setPostgresHost(e.target.value)}
-                  />
+              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#ffffff' }}>
+                <div 
+                  onClick={() => toggleAccordion('postgres')}
+                  style={{ 
+                    padding: '12px 16px', 
+                    backgroundColor: '#f8fafc', 
+                    borderBottom: openAccordion.postgres ? '1px solid var(--border-light)' : 'none', 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    cursor: 'pointer',
+                    userSelect: 'none'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <i className="pi pi-server" style={{ color: 'var(--postgres)', fontSize: '1.1rem' }}></i>
+                    <span style={{ fontWeight: 600, color: '#1e293b', fontSize: '0.95rem' }}>Database POSTGRE (UTAMA)</span>
+                  </div>
+                  <i className={`pi ${openAccordion.postgres ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
                 </div>
 
-                <div className="form-row">
-                  <label htmlFor="pg-port">Port</label>
-                  <input
-                    type="number"
-                    id="pg-port"
-                    className="form-input-text"
-                    required
-                    value={postgresPort}
-                    onChange={(e) => setPostgresPort(e.target.value)}
-                  />
-                </div>
+                {openAccordion.postgres && (
+                  <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#ffffff' }}>
+                    <div className="form-row">
+                      <label htmlFor="pg-host">Host / IP Address</label>
+                      <input
+                        type="text"
+                        id="pg-host"
+                        className="form-input-text"
+                        required
+                        value={postgresHost}
+                        onChange={(e) => setPostgresHost(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-row">
-                  <label htmlFor="pg-db">Database Name</label>
-                  <input
-                    type="text"
-                    id="pg-db"
-                    className="form-input-text"
-                    required
-                    value={postgresDatabase}
-                    onChange={(e) => setPostgresDatabase(e.target.value)}
-                  />
-                </div>
+                    <div className="form-row">
+                      <label htmlFor="pg-port">Port</label>
+                      <input
+                        type="number"
+                        id="pg-port"
+                        className="form-input-text"
+                        required
+                        value={postgresPort}
+                        onChange={(e) => setPostgresPort(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-row">
-                  <label htmlFor="pg-user">Username</label>
-                  <input
-                    type="text"
-                    id="pg-user"
-                    className="form-input-text"
-                    required
-                    value={postgresUsername}
-                    onChange={(e) => setPostgresUsername(e.target.value)}
-                  />
-                </div>
+                    <div className="form-row">
+                      <label htmlFor="pg-db">Database Name</label>
+                      <input
+                        type="text"
+                        id="pg-db"
+                        className="form-input-text"
+                        required
+                        value={postgresDatabase}
+                        onChange={(e) => setPostgresDatabase(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-row">
-                  <label htmlFor="pg-pass">Password</label>
-                  <input
-                    type="text"
-                    id="pg-pass"
-                    className="form-input-text"
-                    value={postgresPassword}
-                    onChange={(e) => setPostgresPassword(e.target.value)}
-                  />
-                </div>
+                    <div className="form-row">
+                      <label htmlFor="pg-user">Username</label>
+                      <input
+                        type="text"
+                        id="pg-user"
+                        className="form-input-text"
+                        required
+                        value={postgresUsername}
+                        onChange={(e) => setPostgresUsername(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <label htmlFor="pg-pass">Password</label>
+                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <input
+                          type={showPostgresPass ? 'text' : 'password'}
+                          id="pg-pass"
+                          className="form-input-text"
+                          style={{ paddingRight: '40px', width: '100%' }}
+                          value={postgresPassword}
+                          onChange={(e) => setPostgresPassword(e.target.value)}
+                        />
+                        <i 
+                          className={`pi ${showPostgresPass ? 'pi-eye-slash' : 'pi-eye'}`} 
+                          style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                          onClick={() => setShowPostgresPass(!showPostgresPass)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               
               {/* Grup 3: Database FSO ORACLE */}
-              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#fafafa' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ margin: 0, color: '#047857', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <i className="pi pi-server"></i> Database FSO ORACLE
-                  </h3>
-                  <select 
-                    style={{ padding: '4px 8px', fontSize: '0.85rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}
-                    value={fsoOraclePreset}
-                    onChange={(e) => handleFsoOraclePresetChange(e.target.value)}
-                  >
-                    <option value="custom">-- Pilih Preset / Kustom --</option>
-                    <option value="truno">Versi Truno</option>
-                    <option value="gandul">Versi Gandul</option>
-                  </select>
+              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#ffffff' }}>
+                <div 
+                  onClick={() => toggleAccordion('fsoOracle')}
+                  style={{ 
+                    padding: '12px 16px', 
+                    backgroundColor: '#f8fafc', 
+                    borderBottom: openAccordion.fsoOracle ? '1px solid var(--border-light)' : 'none', 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    cursor: 'pointer',
+                    userSelect: 'none'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <i className="pi pi-server" style={{ color: '#047857', fontSize: '1.1rem' }}></i>
+                    <span style={{ fontWeight: 600, color: '#1e293b', fontSize: '0.95rem' }}>Database FSO ORACLE</span>
+                    <span style={{ 
+                      fontSize: '0.75rem', 
+                      padding: '2px 8px', 
+                      borderRadius: '12px', 
+                      backgroundColor: '#d1fae5', 
+                      color: '#065f46',
+                      fontWeight: 500
+                    }}>
+                      {fsoOraclePreset === 'truno' ? 'Versi Truno' : (fsoOraclePreset === 'gandul' ? 'Versi Gandul' : 'Kustom')}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <select 
+                      style={{ padding: '4px 8px', fontSize: '0.85rem', borderRadius: '4px', border: '1px solid var(--border-color)', backgroundColor: '#ffffff' }}
+                      value={fsoOraclePreset}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => handleFsoOraclePresetChange(e.target.value)}
+                    >
+                      <option value="custom">-- Pilih Preset / Kustom --</option>
+                      <option value="truno">Versi Truno</option>
+                      <option value="gandul">Versi Gandul</option>
+                    </select>
+                    <i className={`pi ${openAccordion.fsoOracle ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
+                  </div>
                 </div>
 
-                <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label htmlFor="fso-oracle-tns">FSO Oracle TNS Connection String</label>
-                  <textarea
-                    id="fso-oracle-tns"
-                    className="form-input-text"
-                    style={{ height: '140px', resize: 'vertical', fontFamily: 'monospace', fontSize: '0.8rem' }}
-                    required
-                    value={fsoOracleTns}
-                    onChange={(e) => { setFsoOracleTns(e.target.value); setFsoOraclePreset('custom'); }}
-                  />
-                </div>
+                {openAccordion.fsoOracle && (
+                  <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#ffffff' }}>
+                    <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <label htmlFor="fso-oracle-tns">FSO Oracle TNS Connection String</label>
+                      <textarea
+                        id="fso-oracle-tns"
+                        className="form-input-text"
+                        style={{ height: '140px', resize: 'vertical', fontFamily: 'monospace', fontSize: '0.8rem' }}
+                        required
+                        value={fsoOracleTns}
+                        onChange={(e) => { setFsoOracleTns(e.target.value); setFsoOraclePreset('custom'); }}
+                      />
+                    </div>
 
-                <div className="form-row">
-                  <label htmlFor="fso-oracle-user">Username</label>
-                  <input
-                    type="text"
-                    id="fso-oracle-user"
-                    className="form-input-text"
-                    required
-                    value={fsoOracleUsername}
-                    onChange={(e) => setFsoOracleUsername(e.target.value)}
-                  />
-                </div>
+                    <div className="form-row">
+                      <label htmlFor="fso-oracle-user">Username</label>
+                      <input
+                        type="text"
+                        id="fso-oracle-user"
+                        className="form-input-text"
+                        required
+                        value={fsoOracleUsername}
+                        onChange={(e) => setFsoOracleUsername(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-row">
-                  <label htmlFor="fso-oracle-pass">Password</label>
-                  <input
-                    type="text"
-                    id="fso-oracle-pass"
-                    className="form-input-text"
-                    required
-                    value={fsoOraclePassword}
-                    onChange={(e) => setFsoOraclePassword(e.target.value)}
-                  />
-                </div>
+                    <div className="form-row">
+                      <label htmlFor="fso-oracle-pass">Password</label>
+                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <input
+                          type={showFsoOraclePass ? 'text' : 'password'}
+                          id="fso-oracle-pass"
+                          className="form-input-text"
+                          style={{ paddingRight: '40px', width: '100%' }}
+                          required
+                          value={fsoOraclePassword}
+                          onChange={(e) => setFsoOraclePassword(e.target.value)}
+                        />
+                        <i 
+                          className={`pi ${showFsoOraclePass ? 'pi-eye-slash' : 'pi-eye'}`} 
+                          style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                          onClick={() => setShowFsoOraclePass(!showFsoOraclePass)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Grup 4: Database FSO POSTGRE */}
-              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#fafafa' }}>
-                <h3 style={{ margin: 0, color: '#0f766e', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <i className="pi pi-server"></i> Database FSO POSTGRE
-                </h3>
-
-                <div className="form-row">
-                  <label htmlFor="fso-pg-host">Host / IP Address</label>
-                  <input
-                    type="text"
-                    id="fso-pg-host"
-                    className="form-input-text"
-                    required
-                    value={fsoPostgresHost}
-                    onChange={(e) => setFsoPostgresHost(e.target.value)}
-                  />
+              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#ffffff' }}>
+                <div 
+                  onClick={() => toggleAccordion('fsoPostgres')}
+                  style={{ 
+                    padding: '12px 16px', 
+                    backgroundColor: '#f8fafc', 
+                    borderBottom: openAccordion.fsoPostgres ? '1px solid var(--border-light)' : 'none', 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    cursor: 'pointer',
+                    userSelect: 'none'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <i className="pi pi-server" style={{ color: '#0f766e', fontSize: '1.1rem' }}></i>
+                    <span style={{ fontWeight: 600, color: '#1e293b', fontSize: '0.95rem' }}>Database FSO POSTGRE</span>
+                  </div>
+                  <i className={`pi ${openAccordion.fsoPostgres ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
                 </div>
 
-                <div className="form-row">
-                  <label htmlFor="fso-pg-port">Port</label>
-                  <input
-                    type="number"
-                    id="fso-pg-port"
-                    className="form-input-text"
-                    required
-                    value={fsoPostgresPort}
-                    onChange={(e) => setFsoPostgresPort(e.target.value)}
-                  />
-                </div>
+                {openAccordion.fsoPostgres && (
+                  <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#ffffff' }}>
+                    <div className="form-row">
+                      <label htmlFor="fso-pg-host">Host / IP Address</label>
+                      <input
+                        type="text"
+                        id="fso-pg-host"
+                        className="form-input-text"
+                        required
+                        value={fsoPostgresHost}
+                        onChange={(e) => setFsoPostgresHost(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-row">
-                  <label htmlFor="fso-pg-db">Database Name</label>
-                  <input
-                    type="text"
-                    id="fso-pg-db"
-                    className="form-input-text"
-                    required
-                    value={fsoPostgresDatabase}
-                    onChange={(e) => setFsoPostgresDatabase(e.target.value)}
-                  />
-                </div>
+                    <div className="form-row">
+                      <label htmlFor="fso-pg-port">Port</label>
+                      <input
+                        type="number"
+                        id="fso-pg-port"
+                        className="form-input-text"
+                        required
+                        value={fsoPostgresPort}
+                        onChange={(e) => setFsoPostgresPort(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-row">
-                  <label htmlFor="fso-pg-user">Username</label>
-                  <input
-                    type="text"
-                    id="fso-pg-user"
-                    className="form-input-text"
-                    required
-                    value={fsoPostgresUsername}
-                    onChange={(e) => setFsoPostgresUsername(e.target.value)}
-                  />
-                </div>
+                    <div className="form-row">
+                      <label htmlFor="fso-pg-db">Database Name</label>
+                      <input
+                        type="text"
+                        id="fso-pg-db"
+                        className="form-input-text"
+                        required
+                        value={fsoPostgresDatabase}
+                        onChange={(e) => setFsoPostgresDatabase(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-row">
-                  <label htmlFor="fso-pg-pass">Password</label>
-                  <input
-                    type="text"
-                    id="fso-pg-pass"
-                    className="form-input-text"
-                    required
-                    value={fsoPostgresPassword}
-                    onChange={(e) => setFsoPostgresPassword(e.target.value)}
-                  />
-                </div>
+                    <div className="form-row">
+                      <label htmlFor="fso-pg-user">Username</label>
+                      <input
+                        type="text"
+                        id="fso-pg-user"
+                        className="form-input-text"
+                        required
+                        value={fsoPostgresUsername}
+                        onChange={(e) => setFsoPostgresUsername(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <label htmlFor="fso-pg-pass">Password</label>
+                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <input
+                          type={showFsoPostgresPass ? 'text' : 'password'}
+                          id="fso-pg-pass"
+                          className="form-input-text"
+                          required
+                          value={fsoPostgresPassword}
+                          onChange={(e) => setFsoPostgresPassword(e.target.value)}
+                        />
+                        <i 
+                          className={`pi ${showFsoPostgresPass ? 'pi-eye-slash' : 'pi-eye'}`} 
+                          style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                          onClick={() => setShowFsoPostgresPass(!showFsoPostgresPass)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
             </div>
