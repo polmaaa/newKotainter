@@ -78,15 +78,13 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
             
             // Oracle
             const oTns = data.oracle_tns || '';
-            const oUser = data.oracle_username || '';
-            const oPass = data.oracle_password || '';
             setOracleTns(oTns);
-            setOracleUsername(oUser);
-            setOraclePassword(oPass);
+            setOracleUsername(data.oracle_username || '');
+            setOraclePassword(data.oracle_password || '');
             const oTnsLower = oTns.toLowerCase();
-            if ((oTnsLower.includes('ap2tdr') || oTnsLower.includes('10.14.159.10')) && oPass === 'Desember' && oUser === 'DTKS') {
+            if (oTnsLower.includes('ap2tdr') || oTnsLower.includes('10.14.159.10')) {
               setOraclePreset('truno');
-            } else if ((oTnsLower.includes('ap2t') || oTnsLower.includes('10.14.158.10')) && oPass === 'Desember123' && oUser === 'DTKS') {
+            } else if (oTnsLower.includes('ap2t') || oTnsLower.includes('10.14.158.10')) {
               setOraclePreset('gandul');
             } else {
               setOraclePreset('custom');
@@ -101,15 +99,13 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
 
             // FSO Oracle
             const fsoTns = data.fso_oracle_tns || '';
-            const fsoUser = data.fso_oracle_username || '';
-            const fsoPass = data.fso_oracle_password || '';
             setFsoOracleTns(fsoTns);
-            setFsoOracleUsername(fsoUser);
-            setFsoOraclePassword(fsoPass);
+            setFsoOracleUsername(data.fso_oracle_username || '');
+            setFsoOraclePassword(data.fso_oracle_password || '');
             const fsoTnsLower = fsoTns.toLowerCase();
-            if ((fsoTnsLower.includes('fsodr') || fsoTnsLower.includes('10.14.212.11')) && fsoPass === 'Opharapp@FSO' && fsoUser === 'OPHARAPPFSO') {
+            if (fsoTnsLower.includes('fsodr') || fsoTnsLower.includes('10.14.212.11')) {
               setFsoOraclePreset('truno');
-            } else if ((fsoTnsLower.includes('fso') || fsoTnsLower.includes('10.14.211.11')) && fsoPass === 'Opharapp@FSO' && fsoUser === 'OPHARAPPFSO') {
+            } else if (fsoTnsLower.includes('fso') || fsoTnsLower.includes('10.14.211.11')) {
               setFsoOraclePreset('gandul');
             } else {
               setFsoOraclePreset('custom');
@@ -196,8 +192,8 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
       (SERVICE_NAME=ap2tdr)
     )
   )`);
-      setOracleUsername('DTKS');
-      setOraclePassword('Desember_TEST_607');
+      setOracleUsername('POLMASIHOTANG');
+      setOraclePassword('P@ssw0rd666');
     } else if (preset === 'gandul') {
       setOracleTns(`(DESCRIPTION=
     (ADDRESS_LIST=

@@ -66,8 +66,8 @@ $tnsname_fso_oracle = '(DESCRIPTION =
 $db['oracle'] = array(
 	'dsn'      => '',
 	'hostname' => $tnsname_oracle,
-	'username' => 'DTKS',
-	'password' => 'Desember_TEST_607',
+	'username' => 'POLMASIHOTANG',
+	'password' => 'P@ssw0rd666',
 	'database' => '',
 	'dbdriver' => 'oci8',
 	'dbprefix' => '',
