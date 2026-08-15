@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 
-export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sidebarOpen }) {
+export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sidebarOpen, siteName }) {
   const [openSubmenus, setOpenSubmenus] = useState({
     pelayanan: false,
-    users: false,
     sistem: false
   });
 
@@ -31,7 +30,7 @@ export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sideba
         {/* Brand logo */}
         <div className="sidebar-brand">
           <div className="brand-icon"><i className="pi pi-shield"></i></div>
-          <span className="brand-name">NewKotainter</span>
+          <span className="brand-name">{siteName || 'NewKotainter'}</span>
         </div>
 
         {/* Menu Accordion / Tree */}
@@ -77,37 +76,6 @@ export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sideba
             </ul>
           </li>
 
-          {/* Collapsible Parent Menu: Manajemen User */}
-          <li>
-            <div 
-              className="sidebar-menu-parent" 
-              onClick={() => toggleSubmenu('users')}
-            >
-              <span className="menu-label">
-                <i className="pi pi-users"></i> Manajemen User
-              </span>
-              <i className={`pi pi-chevron-down toggle-icon ${openSubmenus.users ? 'rotated' : ''}`} style={{ transition: 'transform 0.2s', transform: openSubmenus.users ? 'rotate(180deg)' : 'none' }}></i>
-            </div>
-            <ul className={`sidebar-submenu ${openSubmenus.users ? 'open' : ''}`} style={{ display: openSubmenus.users ? 'block' : 'none' }}>
-              <li>
-                <div 
-                  className={`sidebar-menu-item ${activeTabId === 'users_ap2t' ? 'active' : ''}`} 
-                  onClick={() => onOpenTab('users_ap2t', 'User New AP2T')}
-                >
-                  User New AP2T
-                </div>
-              </li>
-              <li>
-                <div 
-                  className={`sidebar-menu-item ${activeTabId === 'role_permissions' ? 'active' : ''}`} 
-                  onClick={() => onOpenTab('role_permissions', 'Hak Akses & Role')}
-                >
-                  Hak Akses & Role
-                </div>
-              </li>
-            </ul>
-          </li>
-
           {/* Collapsible Parent Menu: Analitik & Sistem */}
           <li>
             <div 
@@ -147,16 +115,6 @@ export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sideba
             </ul>
           </li>
 
-          {/* Single Item: Pengaturan DB */}
-          <li>
-            <div 
-              className={`sidebar-menu-item ${activeTabId === 'db_config' ? 'active' : ''}`} 
-              onClick={() => onOpenTab('db_config', 'Pengaturan DB')}
-            >
-              <i className="pi pi-cog"></i> Pengaturan DB
-            </div>
-          </li>
-
           {/* Single Item: Bantuan & FAQ */}
           <li>
             <div 
@@ -164,6 +122,16 @@ export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sideba
               onClick={() => onOpenTab('bantuan', 'Bantuan & FAQ')}
             >
               <i className="pi pi-question-circle"></i> Bantuan & FAQ
+            </div>
+          </li>
+
+          {/* Single Item: Setting (Diletakkan di bagian paling bawah, di atas profil) */}
+          <li>
+            <div 
+              className={`sidebar-menu-item ${activeTabId === 'setting' ? 'active' : ''}`} 
+              onClick={() => onOpenTab('setting', 'Setting')}
+            >
+              <i className="pi pi-cog"></i> Setting
             </div>
           </li>
         </ul>

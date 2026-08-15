@@ -123,4 +123,125 @@ class Muser extends CI_Model {
             );
         }
     }
+
+    // ================= GET ALL USERS =================
+    public function get_all_users() {
+        if (!$this->db_oracle) {
+            // Jika database offline, return data statis/simulasi
+            return array(
+                array('id_user' => 'polma', 'nama_user' => 'POLMA SIHOTANG (EMERGENSI)', 'level_user' => 'DEVELOPER', 'disable_user' => 'N'),
+                array('id_user' => 'PS.PUSAT.POLMA', 'nama_user' => 'POLMA SIHOTANG', 'level_user' => 'DEVELOPER', 'disable_user' => 'N'),
+                array('id_user' => 'PS.PUSAT.LUTFI', 'nama_user' => 'LUTFI INDIARTO WIRAYUDA', 'level_user' => 'SUPERUSER', 'disable_user' => 'N'),
+                array('id_user' => 'PS.PUSAT.IDHAM', 'nama_user' => 'IDHAM RIZKY SAPALA', 'level_user' => 'SENIOR', 'disable_user' => 'N')
+            );
+        }
+
+        try {
+            $query = $this->db_oracle->query("SELECT ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER FROM DTKS_USERTAB ORDER BY NAMA_USER ASC");
+            if ($query) {
+                $results = $query->result_array();
+                $normalized = array();
+                foreach ($results as $row) {
+                    $item = array();
+                    foreach ($row as $key => $val) {
+                        $item[strtolower($key)] = $val;
+                    }
+                    $normalized[] = $item;
+                }
+                return $normalized;
+            }
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage());
+        }
+        return array();
+    }
+
+    // ================= SAVE USER =================
+    public function save_user($data) {
+        if (!$this->db_oracle) {
+            return false;
+        }
+
+        $id_user = $data['id_user'];
+        $nama_user = $data['nama_user'];
+        $level_user = $data['level_user'];
+        $disable_user = isset($data['disable_user']) ? $data['disable_user'] : 'N';
+        $passwd = isset($data['passwd']) && $data['passwd'] !== '' ? md5($data['passwd']) : null;
+
+        // Cek apakah user sudah ada
+        $check = $this->db_oracle->query("SELECT ID_USER FROM DTKS_USERTAB WHERE UPPER(ID_USER) = UPPER(?)", array($id_user));
+        if ($check && $check->num_rows() > 0) {
+            // Update
+            if ($passwd) {
+                $sql = "UPDATE DTKS_USERTAB SET NAMA_USER = ?, LEVEL_USER = ?, DISABLE_USER = ?, PASSWD = ? WHERE UPPER(ID_USER) = UPPER(?)";
+                $params = array($nama_user, $level_user, $disable_user, $passwd, $id_user);
+            } else {
+                $sql = "UPDATE DTKS_USERTAB SET NAMA_USER = ?, LEVEL_USER = ?, DISABLE_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
+                $params = array($nama_user, $level_user, $disable_user, $id_user);
+            }
+            return $this->db_oracle->query($sql, $params);
+        } else {
+            // Insert
+            $sql = "INSERT INTO DTKS_USERTAB (ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER, PASSWD) VALUES (?, ?, ?, ?, ?)";
+            return $this->db_oracle->query($sql, array($id_user, $nama_user, $level_user, $disable_user, $passwd ? $passwd : md5('123456')));
+        }
+    }
+
+    // ================= TOGGLE DISABLE STATUS =================
+    public function toggle_status($id_user) {
+        if (!$this->db_oracle) {
+            return false;
+        }
+        
+        $query = $this->db_oracle->query("SELECT DISABLE_USER FROM DTKS_USERTAB WHERE UPPER(ID_USER) = UPPER(?)", array($id_user));
+        if ($query && $query->num_rows() > 0) {
+            $row = $query->row_array();
+            $new_status = strtoupper($row['DISABLE_USER']) === 'Y' ? 'N' : 'Y';
+            $sql = "UPDATE DTKS_USERTAB SET DISABLE_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
+            return $this->db_oracle->query($sql, array($new_status, $id_user));
+        }
+        return false;
+    }
+
+    // ================= DELETE USER =================
+    public function delete_user($id_user) {
+        if (!$this->db_oracle) {
+            return false;
+        }
+        $sql = "DELETE FROM DTKS_USERTAB WHERE UPPER(ID_USER) = UPPER(?)";
+        return $this->db_oracle->query($sql, array($id_user));
+    }
+
+    // ================= UPDATE PROFILE MANDIRI =================
+    public function update_self_profile($id_user, $data) {
+        $new_username = $data['id_user']; // untuk ganti username/id
+        $nama_user = $data['nama_user'];
+        $passwd = isset($data['passwd']) && $data['passwd'] !== '' ? md5($data['passwd']) : null;
+
+        if (!$this->db_oracle) {
+            // Jika db offline dan user adalah polma, simpan saja (berhasil semu)
+            if (strtolower($id_user) === 'polma') {
+                $this->session->set_userdata('id_user', $new_username);
+                $this->session->set_userdata('nama_user', $nama_user);
+                return true;
+            }
+            return false;
+        }
+
+        if ($passwd) {
+            $sql = "UPDATE DTKS_USERTAB SET ID_USER = ?, NAMA_USER = ?, PASSWD = ? WHERE UPPER(ID_USER) = UPPER(?)";
+            $params = array($new_username, $nama_user, $passwd, $id_user);
+        } else {
+            $sql = "UPDATE DTKS_USERTAB SET ID_USER = ?, NAMA_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
+            $params = array($new_username, $nama_user, $id_user);
+        }
+
+        $result = $this->db_oracle->query($sql, $params);
+        if ($result && $this->session->userdata('id_user') === $id_user) {
+            // Update session data
+            $this->session->set_userdata('id_user', $new_username);
+            $this->session->set_userdata('nama_user', $nama_user);
+        }
+        return $result;
+    }
 }

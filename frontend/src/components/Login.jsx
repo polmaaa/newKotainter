@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function Login({ apiBaseUrl, onLoginSuccess }) {
+export default function Login({ apiBaseUrl, onLoginSuccess, siteName, siteDescription }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -49,8 +49,8 @@ export default function Login({ apiBaseUrl, onLoginSuccess }) {
       <div className="login-card">
         <div className="login-header">
           <div className="login-logo"><i className="pi pi-shield"></i></div>
-          <h1 className="login-title">NewKotainter</h1>
-          <p className="login-subtitle">Masuk ke API & Workspace Terpadu</p>
+          <h1 className="login-title">{siteName || 'NewKotainter'}</h1>
+          <p className="login-subtitle">{siteDescription || 'Masuk ke API & Workspace Terpadu'}</p>
         </div>
 
         {error && (

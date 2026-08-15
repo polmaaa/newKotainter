@@ -15,16 +15,27 @@ class Db_config extends MY_Controller {
             return $this->response(405, 'error', 'Method Not Allowed');
         }
 
-        // Baca file database.php secara langsung untuk mengambil variabel
+        // Baca file database.php
         $db_file = APPPATH . 'config/database.php';
         if (!file_exists($db_file)) {
             return $this->response(500, 'error', 'File konfigurasi database tidak ditemukan.');
         }
 
-        // Include file secara lokal untuk mengambil variabel $db dan $tnsname_oracle
         include($db_file);
 
+        // Baca file system_settings.json
+        $settings_file = APPPATH . 'config/system_settings.json';
+        $site_name = 'NewKotainter';
+        $site_description = 'v2.0 REST API & Workspace Terpadu';
+        if (file_exists($settings_file)) {
+            $settings = json_decode(file_get_contents($settings_file), true);
+            if (isset($settings['site_name'])) $site_name = $settings['site_name'];
+            if (isset($settings['site_description'])) $site_description = $settings['site_description'];
+        }
+
         $data = array(
+            'site_name'         => $site_name,
+            'site_description'  => $site_description,
             'oracle_tns'        => isset($tnsname_oracle) ? $tnsname_oracle : '',
             'oracle_username'   => isset($db['oracle']['username']) ? $db['oracle']['username'] : '',
             'oracle_password'   => isset($db['oracle']['password']) ? $db['oracle']['password'] : '',
@@ -35,7 +46,7 @@ class Db_config extends MY_Controller {
             'postgres_database' => isset($db['postgres']['database']) ? $db['postgres']['database'] : ''
         );
 
-        return $this->response(200, 'success', 'Berhasil memuat konfigurasi database.', $data);
+        return $this->response(200, 'success', 'Berhasil memuat konfigurasi database dan sistem.', $data);
     }
 
     // ================= SAVE CONFIGURATION =================
@@ -48,6 +59,20 @@ class Db_config extends MY_Controller {
         $stream_clean = $this->security->xss_clean($this->input->raw_input_stream);
         $json_data = json_decode($stream_clean, true);
 
+        // 1. Ambil & simpan setelan umum website
+        $site_name        = isset($json_data['site_name']) ? trim($json_data['site_name']) : '';
+        $site_description = isset($json_data['site_description']) ? trim($json_data['site_description']) : '';
+
+        if (!empty($site_name)) {
+            $settings_file = APPPATH . 'config/system_settings.json';
+            $settings_data = array(
+                'site_name'        => $site_name,
+                'site_description' => $site_description
+            );
+            @file_put_contents($settings_file, json_encode($settings_data, JSON_PRETTY_PRINT));
+        }
+
+        // 2. Ambil & simpan setelan database.php
         $oracle_tns        = isset($json_data['oracle_tns']) ? trim($json_data['oracle_tns']) : '';
         $oracle_username   = isset($json_data['oracle_username']) ? trim($json_data['oracle_username']) : '';
         $oracle_password   = isset($json_data['oracle_password']) ? trim($json_data['oracle_password']) : '';
@@ -122,7 +147,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ";
 
         if (file_put_contents($db_file, $template) !== false) {
-            return $this->response(200, 'success', 'Konfigurasi database berhasil disimpan!');
+            return $this->response(200, 'success', 'Konfigurasi database dan setelan website berhasil disimpan!');
         } else {
             return $this->response(500, 'error', 'Gagal menulis file konfigurasi database.php.');
         }

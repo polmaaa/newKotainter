@@ -4,10 +4,9 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import TicketForm from './components/TicketForm';
-import DbConfig from './components/DbConfig';
+import Setting from './components/Setting';
 import Help from './components/Help';
 import DetailModal from './components/DetailModal';
-import UsersGrid from './components/UsersGrid';
 
 const API_BASE_URL = import.meta.env.DEV ? '/api' : '/newkotainter/api';
 
@@ -28,10 +27,36 @@ export default function App() {
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [dbStatus, setDbStatus] = useState({ oracle: false, postgresql: false });
   const [selectedLog, setSelectedLog] = useState(null);
+  const [systemSettings, setSystemSettings] = useState({
+    site_name: 'NewKotainter',
+    site_description: 'v2.0 REST API & Workspace Terpadu'
+  });
+
+  const fetchSystemInfo = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/system_info`, {
+        method: 'GET',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      const result = await response.json();
+      if (response.ok && result.status === 'success' && result.data) {
+        setSystemSettings(result.data);
+      }
+    } catch (err) {
+      console.error('Gagal memuat info sistem publik:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (systemSettings && systemSettings.site_name) {
+      document.title = systemSettings.site_name;
+    }
+  }, [systemSettings]);
 
   // Check auth session on mount
   useEffect(() => {
-    async function checkAuth() {
+    async function init() {
+      await fetchSystemInfo();
       try {
         const response = await fetch(`${API_BASE_URL}/auth/me`, {
           method: 'GET',
@@ -39,7 +64,10 @@ export default function App() {
         });
         const result = await response.json();
         if (response.ok && result.status === 'success') {
-          setUser(result.data || { id_user: 'User', nama_user: 'User', level_user: 'Visitor' });
+          setUser(result.data.user || { id_user: 'User', nama_user: 'User', level_user: 'Visitor' });
+          if (result.data.system_settings) {
+            setSystemSettings(result.data.system_settings);
+          }
           loadLogs();
           checkDbStatus();
         }
@@ -49,7 +77,7 @@ export default function App() {
         setCheckingAuth(false);
       }
     }
-    checkAuth();
+    init();
   }, []);
 
   const loadLogs = async () => {
@@ -92,10 +120,13 @@ export default function App() {
     }
   };
 
-  const handleLoginSuccess = (userData) => {
+  const handleLoginSuccess = (loginData) => {
     setTransitionState('logging-in');
     setTimeout(() => {
-      setUser(userData || { id_user: 'User', nama_user: 'User', level_user: 'Visitor' });
+      setUser(loginData.user || { id_user: 'User', nama_user: 'User', level_user: 'Visitor' });
+      if (loginData.system_settings) {
+        setSystemSettings(loginData.system_settings);
+      }
       setTransitionState('');
       loadLogs();
       checkDbStatus();
@@ -148,12 +179,11 @@ export default function App() {
     switch (tabId) {
       case 'dashboard': return 'home';
       case 'save_log': return 'plus-circle';
-      case 'users_ap2t': return 'users';
       case 'role_permissions': return 'key';
       case 'crm': return 'chart-line';
       case 'ap2t_staging': return 'server';
       case 'fso': return 'folder';
-      case 'db_config': return 'cog';
+      case 'setting': return 'cog';
       case 'bantuan': return 'question-circle';
       default: return 'folder';
     }
@@ -178,17 +208,19 @@ export default function App() {
             onSuccess={loadLogs} 
           />
         );
-      case 'db_config':
+      case 'setting':
         return (
-          <DbConfig 
+          <Setting 
+            user={user}
             onCheckConnection={() => checkDbStatus(true)} 
             apiBaseUrl={API_BASE_URL}
+            onUpdateSystemSettings={(name, desc) => {
+              setSystemSettings({ site_name: name, site_description: desc });
+            }}
           />
         );
       case 'bantuan':
         return <Help />;
-      case 'users_ap2t':
-        return <UsersGrid />;
       default:
         // Submenu templates
         const activeTab = tabs.find(t => t.id === activeTabId);
@@ -228,7 +260,7 @@ export default function App() {
     <>
       {showLogin && (
         <div className={transitionState === 'logging-out' ? 'fade-in-auth' : (transitionState === 'logging-in' ? 'fade-out-auth' : '')}>
-          <Login apiBaseUrl={API_BASE_URL} onLoginSuccess={handleLoginSuccess} />
+          <Login apiBaseUrl={API_BASE_URL} onLoginSuccess={handleLoginSuccess} siteName={systemSettings.site_name} siteDescription={systemSettings.site_description} />
         </div>
       )}
       
@@ -243,6 +275,7 @@ export default function App() {
             onOpenTab={handleOpenTab} 
             onLogout={handleLogout} 
             sidebarOpen={sidebarOpen} 
+            siteName={systemSettings.site_name}
           />
           
           <div className="workspace">

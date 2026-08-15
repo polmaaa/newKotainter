@@ -3,12 +3,34 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Auth extends MY_Controller {
 
-    // Login dan logout dapat diakses tanpa login
+    // Auth controller dapat diakses secara publik (login / system_info)
     protected $protected = false;
 
     public function __construct() {
         parent::__construct();
         $this->load->model('muser');
+    }
+
+    // Helper untuk membaca pengaturan website
+    private function _get_system_settings() {
+        $settings_file = APPPATH . 'config/system_settings.json';
+        if (file_exists($settings_file)) {
+            $json = file_get_contents($settings_file);
+            return json_decode($json, true);
+        }
+        return array(
+            'site_name'        => 'NewKotainter',
+            'site_description' => 'v2.0 REST API & Workspace Terpadu'
+        );
+    }
+
+    // ================= SYSTEM INFO (Public) =================
+    public function system_info() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            return $this->response(405, 'error', 'Method Not Allowed');
+        }
+        $settings = $this->_get_system_settings();
+        return $this->response(200, 'success', 'Berhasil memuat info sistem.', $settings);
     }
 
     // ================= LOGIN =================
@@ -43,10 +65,15 @@ class Auth extends MY_Controller {
             );
             $this->session->set_userdata($usersession);
 
+            $settings = $this->_get_system_settings();
+
             return $this->response(200, 'success', 'Login berhasil', array(
-                'id_user'    => $user_data['id_user'],
-                'nama_user'  => $user_data['nama_user'],
-                'level_user' => $user_data['level_user']
+                'user'            => array(
+                    'id_user'    => $user_data['id_user'],
+                    'nama_user'  => $user_data['nama_user'],
+                    'level_user' => $user_data['level_user']
+                ),
+                'system_settings' => $settings
             ));
         } else {
             return $this->response(401, 'error', $auth_result['message']);
@@ -59,10 +86,15 @@ class Auth extends MY_Controller {
             return $this->response(401, 'error', 'Unauthenticated');
         }
 
+        $settings = $this->_get_system_settings();
+
         return $this->response(200, 'success', 'Authenticated', array(
-            'id_user'    => $this->session->userdata('id_user'),
-            'nama_user'  => $this->session->userdata('nama_user'),
-            'level_user' => $this->session->userdata('level_user')
+            'user'            => array(
+                'id_user'    => $this->session->userdata('id_user'),
+                'nama_user'  => $this->session->userdata('nama_user'),
+                'level_user' => $this->session->userdata('level_user')
+            ),
+            'system_settings' => $settings
         ));
     }
 
