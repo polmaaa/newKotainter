@@ -77,9 +77,17 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
             setSiteDescription(data.site_description || '');
             
             // Oracle
-            setOracleTns(data.oracle_tns || '');
+            const oTns = data.oracle_tns || '';
+            setOracleTns(oTns);
             setOracleUsername(data.oracle_username || '');
             setOraclePassword(data.oracle_password || '');
+            if (oTns.indexOf('10.14.159.10') !== -1) {
+              setOraclePreset('truno');
+            } else if (oTns.indexOf('10.14.158.10') !== -1) {
+              setOraclePreset('gandul');
+            } else {
+              setOraclePreset('custom');
+            }
             
             // Postgres
             setPostgresHost(data.postgres_host || '');
@@ -89,9 +97,17 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
             setPostgresDatabase(data.postgres_database || '');
 
             // FSO Oracle
-            setFsoOracleTns(data.fso_oracle_tns || '');
+            const fsoTns = data.fso_oracle_tns || '';
+            setFsoOracleTns(fsoTns);
             setFsoOracleUsername(data.fso_oracle_username || '');
             setFsoOraclePassword(data.fso_oracle_password || '');
+            if (fsoTns.indexOf('10.14.212.11') !== -1) {
+              setFsoOraclePreset('truno');
+            } else if (fsoTns.indexOf('10.14.211.11') !== -1) {
+              setFsoOraclePreset('gandul');
+            } else {
+              setFsoOraclePreset('custom');
+            }
 
             // FSO Postgres (fallback to defaults if empty)
             setFsoPostgresHost(data.fso_postgres_host || '10.99.20.11');

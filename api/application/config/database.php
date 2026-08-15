@@ -12,39 +12,18 @@ $tnsname_oracle = '(DESCRIPTION=
         (HOST=10.14.159.10)
         (PORT=1521)
       )
+    )
+    (CONNECT_DATA=
+      (SERVER=dedicated)
+      (SERVICE_NAME=ap2tdr)
+    )
+  )';
+$tnsname_fso_oracle = '(DESCRIPTION=
+    (LOAD_BALANCE=yes)
+    (ADDRESS_LIST=
       (ADDRESS=
         (PROTOCOL=TCP)
-        (HOST=10.14.159.11)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.12)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.13)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.14)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.15)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.16)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.17)
+        (HOST=10.14.159.10)
         (PORT=1521)
       )
     )
@@ -53,21 +32,12 @@ $tnsname_oracle = '(DESCRIPTION=
       (SERVICE_NAME=ap2tdr)
     )
   )';
-$tnsname_fso_oracle = '(DESCRIPTION =
-    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.14.212.11)(PORT = 1521))
-    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.14.212.12)(PORT = 1521))
-    (LOAD_BALANCE = yes)
-    (CONNECT_DATA =
-      (SERVER = DEDICATED)
-      (SERVICE_NAME = FSODR)
-    )
-  )';
 
 $db['oracle'] = array(
 	'dsn'      => '',
 	'hostname' => $tnsname_oracle,
 	'username' => 'DTKS',
-	'password' => 'Desember123',
+	'password' => 'Desember',
 	'database' => '',
 	'dbdriver' => 'oci8',
 	'dbprefix' => '',
