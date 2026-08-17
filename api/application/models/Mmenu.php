@@ -113,7 +113,7 @@ class Mmenu extends CI_Model {
         }
 
         $id_menu     = !empty($data['id_menu']) ? intval($data['id_menu']) : null;
-        $parent_menu = !empty($data['parent_menu']) ? intval($data['parent_menu']) : null;
+        $parent_menu = !empty($data['parent_menu']) ? $data['parent_menu'] : null;
         $menu_name   = $data['menu_name'];
         $oracle      = !empty($data['oracle']) ? $data['oracle'] : null;
         $postgre     = !empty($data['postgre']) ? $data['postgre'] : null;

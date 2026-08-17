@@ -11,7 +11,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
   
   // Form states
   const [menuId, setMenuId] = useState(''); // Numeric ID (used for editing only, generated in add mode)
-  const [menuParent, setMenuParent] = useState('');
+  const [menuParent, setMenuParent] = useState(''); // Manual text input
   const [menuName, setMenuName] = useState('');
   const [menuOracle, setMenuOracle] = useState('');
   const [menuPostgre, setMenuPostgre] = useState('');
@@ -133,7 +133,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
         },
         body: JSON.stringify({
           id_menu: modalMode === 'edit' ? menuId : null,
-          parent_menu: menuParent || null,
+          parent_menu: menuParent.trim() || null,
           menu_name: menuName.trim(),
           oracle: menuOracle.trim() || null,
           postgre: menuPostgre.trim() || null,
@@ -184,8 +184,6 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
     }
   };
 
-  const parentOptions = menus.filter(m => !m.parent_menu && m.id_menu !== menuId);
-
   return (
     <div className="setting-menu-panel">
       <div className="panel-title-area" style={{ marginBottom: '20px' }}>
@@ -221,7 +219,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
               <thead>
                 <tr style={{ borderBottom: '2px solid var(--border-light)', backgroundColor: '#f8fafc' }}>
                   <th style={{ padding: '12px 8px', fontWeight: 600, width: '80px' }}>ID Menu</th>
-                  <th style={{ padding: '12px 8px', fontWeight: 600, width: '150px' }}>Menu Induk (Parent)</th>
+                  <th style={{ padding: '12px 8px', fontWeight: 600, width: '200px' }}>Menu Induk (Parent)</th>
                   <th style={{ padding: '12px 8px', fontWeight: 600 }}>Nama Menu</th>
                   <th style={{ padding: '12px 8px', fontWeight: 600 }}>Oracle (link/route)</th>
                   <th style={{ padding: '12px 8px', fontWeight: 600 }}>Postgre (link/route)</th>
@@ -233,7 +231,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
               <tbody>
                 {menus.length === 0 ? (
                   <tr>
-                    <td colSpan="8" style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
+                    <td colSpan="8" style={{ textalign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
                       Belum ada data menu terkonfigurasi.
                     </td>
                   </tr>
@@ -241,13 +239,13 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
                   menus.map(menu => (
                     <tr key={menu.id_menu} style={{ borderBottom: '1px solid var(--border-light)' }}>
                       <td style={{ padding: '12px 8px', fontWeight: 600, fontFamily: 'monospace', color: 'var(--text-main)' }}>{menu.id_menu}</td>
-                      <td style={{ padding: '12px 8px', color: menu.parent_menu ? 'var(--text-main)' : 'var(--text-muted)' }}>
+                      <td style={{ padding: '12px 8px', fontWeight: 500, color: 'var(--text-main)' }}>
                         {menu.parent_menu ? (
-                          <span style={{ backgroundColor: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontSize: '0.8rem', fontFamily: 'monospace' }}>
-                            ID: {menu.parent_menu}
+                          <span style={{ backgroundColor: '#f0fdfa', color: '#0f766e', border: '1px solid #ccfbf1', padding: '4px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600 }}>
+                            {menu.parent_menu}
                           </span>
                         ) : (
-                          <span style={{ fontSize: '0.8rem', fontStyle: 'italic' }}>Utama</span>
+                          <span style={{ fontSize: '0.8rem', fontStyle: 'italic', color: 'var(--text-muted)' }}>Utama / Standalone</span>
                         )}
                       </td>
                       <td style={{ padding: '12px 8px', fontWeight: 600, color: '#0f766e' }}>{menu.menu_name}</td>
@@ -347,38 +345,20 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
 
             <form onSubmit={handleSubmit}>
               
-              {/* ID Menu (Otomatis / Numeric) */}
+              {/* Menu Induk (Parent) - Manual Text Input */}
               <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-                <label style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>ID Menu</label>
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <i className="pi pi-tag" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
-                  <input
-                    type="text"
-                    className="form-input-text"
-                    style={{ paddingLeft: '38px', fontFamily: 'monospace', backgroundColor: '#f1f5f9' }}
-                    disabled
-                    value={modalMode === 'add' ? 'Terisi Otomatis (Auto-Increment)' : menuId}
-                  />
-                </div>
-              </div>
-
-              {/* Menu Induk (Parent) */}
-              <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-                <label htmlFor="menu-parent-select" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Menu Induk</label>
+                <label htmlFor="menu-parent-input" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Menu Induk</label>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <i className="pi pi-folder" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
-                  <select
-                    id="menu-parent-select"
+                  <input
+                    type="text"
+                    id="menu-parent-input"
                     className="form-input-text"
-                    style={{ height: '38px', paddingLeft: '38px' }}
+                    style={{ paddingLeft: '38px' }}
                     value={menuParent}
                     onChange={(e) => setMenuParent(e.target.value)}
-                  >
-                    <option value="">- Utama (Tidak Ada Induk) -</option>
-                    {parentOptions.map(p => (
-                      <option key={p.id_menu} value={p.id_menu}>{p.menu_name} (ID: {p.id_menu})</option>
-                    ))}
-                  </select>
+                    placeholder="Contoh: PELAYANAN PELANGGAN (opsional)"
+                  />
                 </div>
               </div>
 
