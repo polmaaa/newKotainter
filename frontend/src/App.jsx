@@ -313,8 +313,8 @@ export default function App() {
     return 'Kustom';
   };
 
-  const renderTabContent = () => {
-    switch (activeTabId) {
+  const renderTabContent = (tabId) => {
+    switch (tabId) {
       case 'dashboard':
         return (
           <Dashboard 
@@ -364,12 +364,12 @@ export default function App() {
             user={user}
             apiBaseUrl={API_BASE_URL}
             showToast={showToast}
-            isPostgres={activeTabId.toLowerCase() === 'updatepnj_pg'}
+            isPostgres={tabId.toLowerCase() === 'updatepnj_pg'}
           />
         );
       default:
         // Submenu templates
-        const activeTab = tabs.find(t => t.id === activeTabId);
+        const activeTab = tabs.find(t => t.id === tabId);
         const title = activeTab ? activeTab.title : '';
         return (
           <div>
@@ -537,12 +537,18 @@ export default function App() {
               )}
             </div>
             
-            <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto' }}>
+            <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto', position: 'relative' }}>
               {/* Tab Content Panels Container */}
-              <div className="tab-panels" id="tab-panels">
-                <div className="tab-panel active">
-                  {renderTabContent()}
-                </div>
+              <div className="tab-panels" id="tab-panels" style={{ width: '100%', height: '100%' }}>
+                {tabs.map(tab => (
+                  <div 
+                    key={tab.id} 
+                    className={`tab-panel ${activeTabId === tab.id ? 'active' : ''}`}
+                    style={{ display: activeTabId === tab.id ? 'block' : 'none', width: '100%', height: '100%' }}
+                  >
+                    {renderTabContent(tab.id)}
+                  </div>
+                ))}
               </div>
             </main>
           </div>
