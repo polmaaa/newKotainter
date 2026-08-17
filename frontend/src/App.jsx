@@ -267,7 +267,9 @@ export default function App() {
       case 'setting': return 'cog';
       case 'bantuan': return 'question-circle';
       case 'UpdatePnj':
-      case 'UpdatePnj_pg': return 'user-edit';
+      case 'UpdatePNJ':
+      case 'UpdatePnj_pg':
+      case 'UpdatePNJ_pg': return 'user-edit';
       default: return 'folder';
     }
   };
@@ -329,13 +331,15 @@ export default function App() {
       case 'bantuan':
         return <Help />;
       case 'UpdatePnj':
+      case 'UpdatePNJ':
       case 'UpdatePnj_pg':
+      case 'UpdatePNJ_pg':
         return (
           <UpdatePnj 
             user={user}
             apiBaseUrl={API_BASE_URL}
             showToast={showToast}
-            isPostgres={activeTabId === 'UpdatePnj_pg'}
+            isPostgres={activeTabId.toLowerCase() === 'updatepnj_pg'}
           />
         );
       default:
