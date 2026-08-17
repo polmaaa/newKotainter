@@ -307,6 +307,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
                       type="text"
                       value={pnj101}
                       onChange={(e) => setPnj101(e.target.value)}
+                      maxLength={2}
                       style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.85rem' }}
                     />
                   </div>
@@ -316,6 +317,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
                       type="text"
                       value={nobang101}
                       onChange={(e) => setNobang101(e.target.value)}
+                      maxLength={3}
                       style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.85rem' }}
                     />
                   </div>
@@ -325,6 +327,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
                       type="text"
                       value={ket101}
                       onChange={(e) => setKet101(e.target.value)}
+                      maxLength={3}
                       style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.85rem' }}
                     />
                   </div>
@@ -343,6 +346,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
                       type="text"
                       value={pnjPemohon}
                       onChange={(e) => setPnjPemohon(e.target.value)}
+                      maxLength={2}
                       style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.85rem' }}
                     />
                   </div>
@@ -352,6 +356,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
                       type="text"
                       value={nobangPemohon}
                       onChange={(e) => setNobangPemohon(e.target.value)}
+                      maxLength={3}
                       style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.85rem' }}
                     />
                   </div>
@@ -361,6 +366,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
                       type="text"
                       value={ketPemohon}
                       onChange={(e) => setKetPemohon(e.target.value)}
+                      maxLength={3}
                       style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.85rem' }}
                     />
                   </div>
@@ -379,6 +385,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
                       type="text"
                       value={pnj106}
                       onChange={(e) => setPnj106(e.target.value)}
+                      maxLength={2}
                       style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.85rem' }}
                     />
                   </div>
@@ -388,6 +395,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
                       type="text"
                       value={nobang106}
                       onChange={(e) => setNobang106(e.target.value)}
+                      maxLength={3}
                       style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.85rem' }}
                     />
                   </div>
@@ -397,6 +405,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
                       type="text"
                       value={ket106}
                       onChange={(e) => setKet106(e.target.value)}
+                      maxLength={3}
                       style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.85rem' }}
                     />
                   </div>
