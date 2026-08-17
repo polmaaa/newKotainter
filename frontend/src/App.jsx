@@ -7,6 +7,7 @@ import TicketForm from './components/TicketForm';
 import Setting from './components/Setting';
 import Help from './components/Help';
 import DetailModal from './components/DetailModal';
+import UpdatePnj from './components/UpdatePnj';
 
 const API_BASE_URL = import.meta.env.DEV ? '/api' : '/newkotainter/api';
 
@@ -265,6 +266,8 @@ export default function App() {
       case 'fso': return 'folder';
       case 'setting': return 'cog';
       case 'bantuan': return 'question-circle';
+      case 'UpdatePnj':
+      case 'UpdatePnj_pg': return 'user-edit';
       default: return 'folder';
     }
   };
@@ -325,6 +328,16 @@ export default function App() {
         );
       case 'bantuan':
         return <Help />;
+      case 'UpdatePnj':
+      case 'UpdatePnj_pg':
+        return (
+          <UpdatePnj 
+            user={user}
+            apiBaseUrl={API_BASE_URL}
+            showToast={showToast}
+            isPostgres={activeTabId === 'UpdatePnj_pg'}
+          />
+        );
       default:
         // Submenu templates
         const activeTab = tabs.find(t => t.id === activeTabId);

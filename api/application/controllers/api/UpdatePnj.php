@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class InsertDataBLTHMUT_pg extends MY_Controller {
+class UpdatePnj extends MY_Controller {
 
     protected $protected = true; // Auth protected via session
 
@@ -22,7 +22,7 @@ class InsertDataBLTHMUT_pg extends MY_Controller {
             return $this->response(400, 'error', 'Parameter noagenda dan tiket wajib diisi!');
         }
 
-        $result = $this->mpnj->get_data_pnj_postgres($noagenda, $tiket);
+        $result = $this->mpnj->get_data_pnj_oracle($noagenda, $tiket);
         if ($result['status'] === 'success') {
             return $this->response(200, 'success', $result['message'], $result['data']);
         } else {
@@ -60,7 +60,7 @@ class InsertDataBLTHMUT_pg extends MY_Controller {
             return $this->response(400, 'error', 'No Agenda dan No Tiket wajib diisi!');
         }
 
-        $result = $this->mpnj->save_pnj_postgres($params);
+        $result = $this->mpnj->save_pnj_oracle($params);
         if ($result['status'] === 'success') {
             return $this->response(200, 'success', $result['message']);
         } else {
@@ -89,7 +89,7 @@ class InsertDataBLTHMUT_pg extends MY_Controller {
             return $this->response(400, 'error', 'No Agenda dan No Tiket wajib diisi!');
         }
 
-        $result = $this->mpnj->save_koreksi_tarif_postgres($params);
+        $result = $this->mpnj->save_koreksi_tarif_oracle($params);
         if ($result['status'] === 'success') {
             return $this->response(200, 'success', $result['message']);
         } else {
