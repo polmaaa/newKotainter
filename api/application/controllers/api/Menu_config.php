@@ -34,7 +34,7 @@ class Menu_config extends MY_Controller {
 
         $json_data = json_decode($this->input->raw_input_stream, true);
 
-        $id_menu     = isset($json_data['id_menu']) ? trim($json_data['id_menu']) : '';
+        $id_menu     = isset($json_data['id_menu']) && $json_data['id_menu'] !== '' && $json_data['id_menu'] !== null ? intval($json_data['id_menu']) : null;
         $parent_menu = isset($json_data['parent_menu']) ? trim($json_data['parent_menu']) : null;
         $menu_name   = isset($json_data['menu_name']) ? trim($json_data['menu_name']) : '';
         $oracle      = isset($json_data['oracle']) ? trim($json_data['oracle']) : null;
@@ -42,8 +42,8 @@ class Menu_config extends MY_Controller {
         $aktive      = isset($json_data['aktive']) ? trim($json_data['aktive']) : 'Y';
         $role_menu   = isset($json_data['role_menu']) ? trim($json_data['role_menu']) : '';
 
-        if (empty($id_menu) || empty($menu_name)) {
-            return $this->response(400, 'error', 'ID Menu dan Nama Menu wajib diisi!');
+        if (empty($menu_name)) {
+            return $this->response(400, 'error', 'Nama Menu wajib diisi!');
         }
 
         $data = array(
