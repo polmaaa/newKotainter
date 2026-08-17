@@ -124,29 +124,7 @@ export default function App() {
     }
   }, [systemSettings]);
 
-  // Auto-close tabs when switching database mode if the menu is not valid in the new mode
-  useEffect(() => {
-    if (dynamicMenus.length === 0) return;
-    setTabs(prevTabs => {
-      const filtered = prevTabs.filter(tab => {
-        if (tab.id === 'dashboard' || tab.id === 'setting' || tab.id === 'bantuan') {
-          return true;
-        }
-        const menu = dynamicMenus.find(m => m.oracle === tab.id || m.postgre === tab.id);
-        if (!menu) return false;
-        if (dbMode === 'oracle') {
-          return menu.oracle !== null && menu.oracle !== undefined && menu.oracle.trim() !== '';
-        } else {
-          return menu.postgre !== null && menu.postgre !== undefined && menu.postgre.trim() !== '';
-        }
-      });
-      const activeExists = filtered.some(tab => tab.id === activeTabId);
-      if (!activeExists) {
-        setActiveTabId('dashboard');
-      }
-      return filtered;
-    });
-  }, [dbMode, dynamicMenus, activeTabId]);
+
 
   // Check auth session on mount
   useEffect(() => {
@@ -314,10 +292,37 @@ export default function App() {
   };
 
   const renderTabContent = (tabId) => {
+    // 1. Check if it is a dynamic menu and see if it is configured for the current dbMode
+    const menu = dynamicMenus.find(m => m.oracle === tabId || m.postgre === tabId);
+    if (menu) {
+      const isOracleAvailable = menu.oracle !== null && menu.oracle !== undefined && menu.oracle.trim() !== '';
+      const isPostgreAvailable = menu.postgre !== null && menu.postgre !== undefined && menu.postgre.trim() !== '';
+      const isCurrentAvailable = dbMode === 'oracle' ? isOracleAvailable : isPostgreAvailable;
+
+      if (!isCurrentAvailable) {
+        return (
+          <div key={`not-available-${tabId}-${dbMode}`} style={{ padding: '24px' }}>
+            <div className="panel-title-area">
+              <h2 className="panel-title" style={{ color: '#b91c1c', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <i className="pi pi-exclamation-triangle"></i> Menu Tidak Tersedia
+              </h2>
+              <p className="panel-subtitle">Modul {menu.menu_name} tidak dikonfigurasi untuk database ini.</p>
+            </div>
+            <div className="content-card" style={{ borderLeft: '4px solid #ef4444', backgroundColor: 'var(--bg-card)', padding: '20px', borderRadius: '8px' }}>
+              <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.95rem' }}>
+                Maaf, menu <strong>{menu.menu_name}</strong> saat ini tidak tersedia atau dinonaktifkan untuk koneksi database <strong>{dbMode === 'oracle' ? 'Oracle' : 'PostgreSQL'}</strong>.
+              </p>
+            </div>
+          </div>
+        );
+      }
+    }
+
     switch (tabId) {
       case 'dashboard':
         return (
           <Dashboard 
+            key={`dashboard-${dbMode}`}
             logs={logs}
             dbStatus={dbStatus} 
             loading={loadingLogs} 
@@ -330,6 +335,7 @@ export default function App() {
       case 'save_log':
         return (
           <TicketForm 
+            key={`save_log-${dbMode}`}
             apiBaseUrl={API_BASE_URL} 
             onSuccess={loadLogs} 
             showToast={showToast}
@@ -338,6 +344,7 @@ export default function App() {
       case 'setting':
         return (
           <Setting 
+            key={`setting-${dbMode}`}
             user={user}
             onCheckConnection={() => {
               checkDbStatus(true);
@@ -354,17 +361,18 @@ export default function App() {
           />
         );
       case 'bantuan':
-        return <Help />;
+        return <Help key={`help-${dbMode}`} />;
       case 'UpdatePnj':
       case 'UpdatePNJ':
       case 'UpdatePnj_pg':
       case 'UpdatePNJ_pg':
         return (
           <UpdatePnj 
+            key={`updatepnj-${dbMode}`}
             user={user}
             apiBaseUrl={API_BASE_URL}
             showToast={showToast}
-            isPostgres={tabId.toLowerCase() === 'updatepnj_pg'}
+            isPostgres={dbMode === 'postgre'}
           />
         );
       default:
@@ -372,7 +380,7 @@ export default function App() {
         const activeTab = tabs.find(t => t.id === tabId);
         const title = activeTab ? activeTab.title : '';
         return (
-          <div>
+          <div key={`fallback-${tabId}-${dbMode}`}>
             <div className="panel-title-area">
               <h2 className="panel-title">{title}</h2>
               <p className="panel-subtitle">Halaman fungsional untuk modul {title}.</p>
