@@ -174,9 +174,19 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
             <i className="pi pi-user-edit" style={{ color: '#0f766e' }}></i> Update PNJ (Koreksi Penanggung Jawab)
           </h2>
           <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            Mencari, mengubah, dan membackup data PNJ / NOBANG NULL ke skema log.
+            Mencari, mengubah, dan membackup data PNJ / NOBANG NULL ke skema log menggunakan koneksi {dbLabel}.
           </p>
         </div>
+        <span style={{ 
+          padding: '6px 12px', 
+          backgroundColor: isPostgres ? '#1e3a8a' : '#115e59', 
+          color: '#ffffff', 
+          borderRadius: '20px', 
+          fontSize: '0.8rem', 
+          fontWeight: 600 
+        }}>
+          Mode DB: {dbLabel}
+        </span>
       </div>
 
       {/* Search form card */}

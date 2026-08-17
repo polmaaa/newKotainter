@@ -124,6 +124,30 @@ export default function App() {
     }
   }, [systemSettings]);
 
+  // Auto-close tabs when switching database mode if the menu is not valid in the new mode
+  useEffect(() => {
+    if (dynamicMenus.length === 0) return;
+    setTabs(prevTabs => {
+      const filtered = prevTabs.filter(tab => {
+        if (tab.id === 'dashboard' || tab.id === 'setting' || tab.id === 'bantuan') {
+          return true;
+        }
+        const menu = dynamicMenus.find(m => m.oracle === tab.id || m.postgre === tab.id);
+        if (!menu) return false;
+        if (dbMode === 'oracle') {
+          return menu.oracle !== null && menu.oracle !== undefined && menu.oracle.trim() !== '';
+        } else {
+          return menu.postgre !== null && menu.postgre !== undefined && menu.postgre.trim() !== '';
+        }
+      });
+      const activeExists = filtered.some(tab => tab.id === activeTabId);
+      if (!activeExists) {
+        setActiveTabId('dashboard');
+      }
+      return filtered;
+    });
+  }, [dbMode, dynamicMenus, activeTabId]);
+
   // Check auth session on mount
   useEffect(() => {
     async function init() {
