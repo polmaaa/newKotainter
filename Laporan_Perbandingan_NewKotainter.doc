@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>Laporan Perbandingan Teknis NewKotainter</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+@page {
+    size: 8.5in 11in;
+    margin: 1.0in 1.0in 1.0in 1.0in;
+    mso-header-margin: .5in;
+    mso-footer-margin: .5in;
+    mso-paper-source: 0;
+}
+body { 
+    font-family: 'Arial', sans-serif; 
+    font-size: 11pt; 
+    line-height: 1.6; 
+    color: #333333; 
+}
+h1 { 
+    font-size: 20pt; 
+    color: #0f766e; 
+    font-weight: bold; 
+    border-bottom: 2px solid #0f766e; 
+    padding-bottom: 5px; 
+    margin-top: 24pt; 
+    margin-bottom: 12pt;
+}
+h2 { 
+    font-size: 15pt; 
+    color: #0f766e; 
+    font-weight: bold; 
+    margin-top: 18pt; 
+    margin-bottom: 9pt;
+}
+h3 { 
+    font-size: 12pt; 
+    color: #334155; 
+    font-weight: bold; 
+    margin-top: 14pt; 
+    margin-bottom: 6pt;
+}
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 12pt; 
+    margin-bottom: 12pt; 
+}
+th { 
+    background-color: #0f766e; 
+    color: #ffffff; 
+    padding: 8px; 
+    border: 1px solid #cbd5e1; 
+    text-align: left; 
+    font-weight: bold; 
+    font-size: 10pt;
+}
+td { 
+    padding: 8px; 
+    border: 1px solid #cbd5e1; 
+    text-align: left; 
+    font-size: 10pt;
+    vertical-align: top;
+}
+tr:nth-child(even) { 
+    background-color: #f8fafc; 
+}
+ul { 
+    margin-top: 6pt; 
+    margin-bottom: 6pt; 
+    padding-left: 20px;
+}
+li { 
+    margin-bottom: 4pt; 
+}
+.note { 
+    background-color: #f1f5f9; 
+    border-left: 4px solid #0f766e; 
+    padding: 12px; 
+    margin-top: 12pt; 
+    margin-bottom: 12pt; 
+}
+.code-block {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 8px;
+    font-size: 9.5pt;
+    margin-top: 6pt;
+    margin-bottom: 6pt;
+    white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+
+<div style="text-align: center; margin-bottom: 30pt;">
+    <h1 style="border-bottom: none; margin-bottom: 5pt; color: #0f766e;">LAPORAN ANALISIS & PERBANDINGAN TEKNIS</h1>
+    <h2 style="margin-top: 0; color: #64748b; font-weight: normal;">Project NewKotainter Staging vs Production (Lutfi)</h2>
+    <hr style="border: 0; border-top: 2px solid #0f766e; width: 30%; margin: 15pt auto 0 auto;">
+</div>
+
+<h2>1. Pendahuluan</h2>
+<p>Laporan ini disusun untuk memberikan gambaran teknis yang komparatif antara <strong>Project NewKotainter</strong> yang sedang kita kembangkan (versi Staging/Active) dengan <strong>Project NewKotainter milik Lutfi</strong> (versi Production) yang berlokasi di direktori <code>C:\xampp\htdocs\lutfi\</code>. Analisis difokuskan pada perbedaan penulisan kode API (backend), arsitektur UI/frontend, integrasi database, dan konfigurasi portabilitas server.</p>
+
+<h2>2. Ringkasan Perbandingan Teknis</h2>
+<table>
+    <thead>
+        <tr>
+            <th style="width: 25%;">Komponen Utama</th>
+            <th style="width: 38%;">Project NewKotainter Kita (Staging/Active)</th>
+            <th style="width: 38%;">Project NewKotainter Lutfi (Production)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Pola Penulisan Input API</strong></td>
+            <td>Menggunakan pembacaan stream input terintegrasi CodeIgniter <code>$this->input->raw_input_stream</code> disertai filter XSS bawaan.</td>
+            <td>Menggunakan pembacaan data stream PHP native <code>file_get_contents('php://input')</code> yang didekorasi lewat fungsi pembantu privat di controller.</td>
+        </tr>
+        <tr>
+            <td><strong>Pola Penulisan Output API</strong></td>
+            <td>Konsisten menggunakan parser internal CodeIgniter <code>$this->output</code> untuk output JSON standar industri.</td>
+            <td>Pada beberapa rute (seperti Auth), menggunakan pengiriman output manual via PHP native <code>header()</code>, <code>echo</code>, dan memutus proses secara paksa menggunakan <code>exit</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>Komunikasi Model ke Controller</strong></td>
+            <td>Model mengembalikan data murni (array/boolean). Logika penentuan kode status HTTP dan format pesan diolah di dalam Controller.</td>
+            <td>Model sudah mengemas status, pesan error, dan data dalam bentuk array standar, sehingga Controller hanya bertugas meneruskannya ke frontend.</td>
+        </tr>
+        <tr>
+            <td><strong>Guard & Session Key</strong></td>
+            <td>Memvalidasi login dengan session key <strong><code>logged</code></strong>. Role user dideklarasikan secara string deskriptif (<code>DEVELOPER</code>, <code>SUPERUSER</code>, dll).</td>
+            <td>Memvalidasi login dengan session key <strong><code>isLogin</code></strong>. Role user dideklarasikan secara string numerik (<code>'1'</code>, <code>'2'</code>, <code>'3'</code>, <code>'5'</code>).</td>
+        </tr>
+        <tr>
+            <td><strong>Target Skema User</strong></td>
+            <td>Kueri login dan manajemen diarahkan ke tabel <strong><code>DTKS.DTKS_USERTAB</code></strong> (skema DTKS).</td>
+            <td>Kueri login diarahkan ke tabel <strong><code>OPHARAPP.OPHAR_USERTAB</code></strong> (skema OPHARAPP).</td>
+        </tr>
+        <tr>
+            <td><strong>Target Skema Log</strong></td>
+            <td>Menulis data log ke kolom <strong><code>PETUGAS</code></strong> dan <strong><code>NOTIKET</code></strong> di tabel <code>OPHARAPP.OPHAR_LOG_PROSES</code>.</td>
+            <td>Menulis data log ke kolom <strong><code>LOGIN</code></strong> dan <strong><code>NO_TIKET</code></strong> di tabel <code>OPHARAPP.OPHAR_LOG_PROSES</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>Pencegahan Error Database</strong></td>
+            <td>Dilengkapi utilitas ping socket (<code>_ping_host</code>) sebelum database di-load. Aman dari hang/timeout jika DB offline.</td>
+            <td>Mengandalkan loading database langsung tanpa deteksi socket. Rentan memicu server timeout 500 jika ada DB yang offline.</td>
+        </tr>
+        <tr>
+            <td><strong>Konfigurasi <code>base_url</code></strong></td>
+            <td>Hardcoded secara statis ke subfolder Apache tertentu di file <code>config.php</code>.</td>
+            <td>Ditulis secara dinamis menggunakan deteksi <code>$_SERVER</code> variable agar fleksibel jika dipindah-pindah.</td>
+        </tr>
+        <tr>
+            <td><strong>Build UI & Library</strong></td>
+            <td>React JS + Custom Vanilla CSS (Premium Style) dengan PrimeIcons. Source code mentah menyatu di dalam project folder (Monorepo).</td>
+            <td>React JS + Ant Design (antd) dengan Ant Design Icons. Folder di server hanya berisi file siap pakai hasil build (production-only).</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3. Analisis Pola Penulisan API</h2>
+
+<h3>3.1. Parsing Request Payload (Body Input)</h3>
+<p>Project kita memanfaatkan mekanisme keamanan input bawaan CodeIgniter untuk mencegah adanya injeksi kode berbahaya, sedangkan versi Lutfi memanfaatkan input stream dasar PHP:</p>
+<ul>
+    <li><strong>Project Kita:</strong>
+        <div class="code-block">$stream_clean = $this->security->xss_clean($this->input->raw_input_stream);
+$json_data = json_decode($stream_clean, true);</div>
+    </li>
+    <li><strong>Project Lutfi:</strong>
+        <div class="code-block">private function _get_json_body() {
+    $raw = file_get_contents('php://input');
+    return $raw ? json_decode($raw, true) : false;
+}</div>
+    </li>
+</ul>
+
+<h3>3.2. Response Formatting</h3>
+<p>Penulisan output JSON pada project kita lebih bersih dan terkelola secara otomatis oleh siklus hidup output buffer CodeIgniter, sedangkan versi Lutfi memutus siklus tersebut dengan paksa menggunakan <code>exit</code>:</p>
+<ul>
+    <li><strong>Project Kita:</strong>
+        <div class="code-block">$this->output
+     ->set_status_header(200)
+     ->set_content_type('application/json')
+     ->set_output(json_encode($data));</div>
+    </li>
+    <li><strong>Project Lutfi:</strong>
+        <div class="code-block">header("HTTP/1.1 200");
+header("Content-Type: application/json");
+echo json_encode($data);
+exit; // Force shutdown</div>
+    </li>
+</ul>
+
+<h2>4. Integrasi Database & Keamanan Koneksi</h2>
+<p>Terdapat perbedaan arsitektur yang sangat penting dalam mengelola koneksi database eksternal:</p>
+<div class="note">
+    <strong>Catatan Keamanan Koneksi (Resiliensi Sistem):</strong><br>
+    Di lingkungan staging/development, seringkali koneksi ke database tertentu (seperti database PostgreSQL AP2T atau FSO) terputus atau offline. Project kita menerapkan metode <strong>Safe Database Check</strong> melalui fungsi <code>_ping_host()</code> dengan batas waktu (timeout) 1 detik sebelum memanggil fungsi database CodeIgniter. 
+    <br><br>
+    Pada project Lutfi, pemanggilan database dilakukan secara langsung (<code>$this->load->database()</code>). Hal ini berisiko membuat seluruh server Apache hang/membeku ketika database yang bersangkutan sedang tidak aktif.
+</div>
+
+<h2>5. UI Build & Struktur Aset Frontend</h2>
+<ul>
+    <li><strong>Desain Tampilan:</strong> Project kita menerapkan custom styling premium berbasis Vanilla CSS, menggunakan tombol segmented control bergaya iOS, sistem notifikasi toast dinamis, dan visualisasi tabs horizontal dengan tombol chevron (Prev/Next) yang otomatis tersembunyi jika tab tidak meluap. Versi Lutfi sepenuhnya mengandalkan library UI <strong>Ant Design (antd)</strong>.</li>
+    <li><strong>Distribusi Aset:</strong> Project kita berstruktur <em>Monorepo</em> di mana source code React mentah diletakkan di dalam folder <code>/frontend/</code> sehingga memudahkan developer melakukan build secara mandiri. Di versi Lutfi, source code frontend dipisah di tempat lain dan hanya berkas hasil build kompilasinya saja yang ditaruh di server Apache.</li>
+</ul>
+
+<h2>6. Kesimpulan & Rekomendasi</h2>
+<p>Untuk menyelaraskan antara versi kita (Staging) dengan milik Lutfi (Production), disarankan untuk mengadopsi penulisan <code>base_url</code> dinamis milik Lutfi agar project kita lebih fleksibel saat dipindahkan ke subfolder lain (seperti folder <code>/polma/</code>) tanpa merusak jalur API. Di sisi lain, fitur keamanan ping database dan model build monorepo yang kita miliki saat ini jauh lebih aman untuk dikembangkan dalam jangka panjang.</p>
+
+<p style="margin-top: 30pt; font-size: 9pt; color: #64748b; text-align: right;">
+    <em>Laporan dibuat secara otomatis oleh Asisten AI Antigravity pada 17 Agustus 2026.</em>
+</p>
+
+</body>
+</html>
