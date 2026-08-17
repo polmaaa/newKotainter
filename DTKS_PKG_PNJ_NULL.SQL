@@ -59,9 +59,15 @@ CREATE OR REPLACE PACKAGE BODY DTKS.PKG_PNJ_NULL AS
 
         IF v_count >= 1 THEN
             OPEN out_data FOR
-            SELECT PNJ_PEMOHON, NOAGENDA, NOBANG_PEMOHON
-            FROM BILL52.TRANS_101_PEMOHON
-            WHERE NOAGENDA = in_noagenda;
+            SELECT 
+                A.PNJ AS PNJ_101, A.NOBANG AS NOBANG_101, A.KETNOBANG AS KETNOBANG_101,
+                B.PNJ_PEMOHON, B.NOBANG_PEMOHON, B.KETNOBANG_PEMOHON,
+                C.PNJ AS PNJ_106, C.NOBANG AS NOBANG_106, C.KETNOBANG AS KETNOBANG_106,
+                B.NOAGENDA
+            FROM BILL52.TRANS_101_PEMOHON B
+            LEFT JOIN BILL52.TRANS_101 A ON A.NOAGENDA = B.NOAGENDA
+            LEFT JOIN BILL52.TRANS_106 C ON C.NOAGENDA = B.NOAGENDA
+            WHERE B.NOAGENDA = in_noagenda;
             
             out_message := 'Sukses';
             RETURN 1;

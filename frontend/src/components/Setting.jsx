@@ -205,8 +205,8 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
       (SERVICE_NAME=ap2tdr)
     )
   )`);
-      setOracleUsername('POLMASIHOTANG');
-      setOraclePassword('P@ssw0rd666');
+      setOracleUsername('DTKS');
+      setOraclePassword('Desember123');
     } else if (preset === 'gandul') {
       setOracleTns(`(DESCRIPTION=
     (ADDRESS_LIST=

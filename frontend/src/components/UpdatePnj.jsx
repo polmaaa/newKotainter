@@ -7,8 +7,9 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
   const [saving, setSaving] = useState(false);
   const [savingKoreksi, setSavingKoreksi] = useState(false);
   const [hasData, setHasData] = useState(false);
+  const [currentData, setCurrentData] = useState(null);
 
-  // Form Fields
+  // Form Fields (Nilai Baru)
   const [pnj101, setPnj101] = useState('');
   const [pnjPemohon, setPnjPemohon] = useState('');
   const [pnj106, setPnj106] = useState('');
@@ -35,6 +36,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
 
     setLoading(true);
     setHasData(false);
+    setCurrentData(null);
     try {
       const response = await fetch(`${apiBaseUrl}/${dbPrefix}/get_data?noagenda=${encodeURIComponent(noagenda.trim())}&tiket=${encodeURIComponent(tiket.trim())}`, {
         method: 'GET',
@@ -44,18 +46,18 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
       if (response.ok && result.status === 'success') {
         const item = result.data && result.data[0] ? result.data[0] : {};
         
-        // Populate fields
+        setCurrentData(item);
+
+        // Prepopulate update fields with retrieved database state
+        setPnj101(item.pnj_101 || '');
         setPnjPemohon(item.pnj_pemohon || '');
+        setPnj106(item.pnj_106 || '');
+        setNobang101(item.nobang_101 || '');
         setNobangPemohon(item.nobang_pemohon || '');
+        setNobang106(item.nobang_106 || '');
+        setKet101(item.ketnobang_101 || '');
         setKetPemohon(item.ketnobang_pemohon || '');
-        
-        // Default other fields with search values if available, else leave blank
-        setPnj101(item.pnj_pemohon || '');
-        setPnj106(item.pnj_pemohon || '');
-        setNobang101(item.nobang_pemohon || '');
-        setNobang106(item.nobang_pemohon || '');
-        setKet101('');
-        setKet106('');
+        setKet106(item.ketnobang_106 || '');
 
         setHasData(true);
         showToast('Data PNJ berhasil ditemukan!', 'success');
@@ -102,6 +104,20 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
       const result = await response.json();
       if (response.ok && result.status === 'success') {
         showToast(result.message || 'Pembaruan data PNJ berhasil disimpan!', 'success');
+        
+        // Refresh the visual table state with newly saved values
+        setCurrentData({
+          pnj_101: pnj101,
+          pnj_pemohon: pnjPemohon,
+          pnj_106: pnj106,
+          nobang_101: nobang101,
+          nobang_pemohon: nobangPemohon,
+          nobang_106: nobang106,
+          ketnobang_101: ket101,
+          ketnobang_pemohon: ketPemohon,
+          ketnobang_106: ket106,
+          noagenda: noagenda
+        });
       } else {
         showToast(result.message || 'Gagal memperbarui data PNJ.', 'error');
       }
@@ -225,15 +241,65 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
       {hasData && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
+          {/* 1. KONDISI DATA SAAT INI (Tabel State) */}
+          <div className="content-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', color: '#0f766e', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--border-light)', paddingBottom: '10px' }}>
+              <i className="pi pi-table"></i> Kondisi Data Saat Ini di Database (Sebelum Update)
+            </h3>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', color: 'var(--text-main)' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid var(--border-color)', backgroundColor: 'rgba(15, 118, 110, 0.05)', textAlign: 'left' }}>
+                    <th style={{ padding: '10px 14px', fontWeight: 600 }}>Tabel Sumber</th>
+                    <th style={{ padding: '10px 14px', fontWeight: 600 }}>Kolom PNJ</th>
+                    <th style={{ padding: '10px 14px', fontWeight: 600 }}>Kolom NOBANG</th>
+                    <th style={{ padding: '10px 14px', fontWeight: 600 }}>Kolom KETNOBANG</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ borderBottom: '1px solid var(--border-light)' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>TRANS_101</td>
+                    <td style={{ padding: '10px 14px' }}>{currentData?.pnj_101 || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>NULL / Kosong</span>}</td>
+                    <td style={{ padding: '10px 14px' }}>{currentData?.nobang_101 || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>NULL / Kosong</span>}</td>
+                    <td style={{ padding: '10px 14px' }}>{currentData?.ketnobang_101 || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>NULL / Kosong</span>}</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--border-light)' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>TRANS_101_PEMOHON</td>
+                    <td style={{ padding: '10px 14px' }}>{currentData?.pnj_pemohon || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>NULL / Kosong</span>}</td>
+                    <td style={{ padding: '10px 14px' }}>{currentData?.nobang_pemohon || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>NULL / Kosong</span>}</td>
+                    <td style={{ padding: '10px 14px' }}>{currentData?.ketnobang_pemohon || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>NULL / Kosong</span>}</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}>TRANS_106</td>
+                    <td style={{ padding: '10px 14px' }}>{currentData?.pnj_106 || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>NULL / Kosong</span>}</td>
+                    <td style={{ padding: '10px 14px' }}>{currentData?.nobang_106 || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>NULL / Kosong</span>}</td>
+                    <td style={{ padding: '10px 14px' }}>{currentData?.ketnobang_106 || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>NULL / Kosong</span>}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          {/* 2. FORMULIR UPDATE DATA PNJ */}
           <form onSubmit={handleSavePnj} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <h3 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)', fontWeight: 600 }}>
+                <i className="pi pi-pencil" style={{ color: '#0f766e', marginRight: '6px' }}></i> Masukkan Nilai Pembaruan Baru (Kondisi Baru)
+              </h3>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                Ubah nilai pada field di bawah ini. Nilai default diambil dari data aktif di database saat pencarian.
+              </p>
+            </div>
+
             {/* Grid of 3 columns for 101, Pemohon, 106 */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
               
               {/* TRANS_101 Section */}
               <div className="content-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: '#0f766e', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px' }}>
-                  <i className="pi pi-file"></i> Data PNJ TRANS_101
-                </h3>
+                <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#0f766e', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px', fontWeight: 600 }}>
+                  <i className="pi pi-file"></i> Update TRANS_101
+                </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>PNJ 101</label>
@@ -267,9 +333,9 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
 
               {/* TRANS_101_PEMOHON Section */}
               <div className="content-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: '#0f766e', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px' }}>
-                  <i className="pi pi-user"></i> Data PNJ PEMOHON
-                </h3>
+                <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#0f766e', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px', fontWeight: 600 }}>
+                  <i className="pi pi-user"></i> Update PEMOHON
+                </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>PNJ PEMOHON</label>
@@ -303,9 +369,9 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
 
               {/* TRANS_106 Section */}
               <div className="content-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: '#0f766e', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px' }}>
-                  <i className="pi pi-file-excel"></i> Data PNJ TRANS_106
-                </h3>
+                <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#0f766e', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px', fontWeight: 600 }}>
+                  <i className="pi pi-file-excel"></i> Update TRANS_106
+                </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>PNJ 106</label>
