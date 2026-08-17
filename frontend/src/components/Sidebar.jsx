@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 
 export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sidebarOpen, siteName }) {
   const [openSubmenus, setOpenSubmenus] = useState({
-    pelayanan: false,
-    sistem: false
+    setting: false
   });
 
   const toggleSubmenu = (key) => {
@@ -43,95 +42,50 @@ export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sideba
             <i className="pi pi-home"></i> Dashboard
           </div>
         </li>
-        
-        {/* Collapsible Parent Menu: Pelayanan Pelanggan */}
-        <li>
-          <div 
-            className="sidebar-menu-parent" 
-            onClick={() => toggleSubmenu('pelayanan')}
-          >
-            <span className="menu-label">
-              <i className="pi pi-ticket"></i> Pelayanan Pelanggan
-            </span>
-            <i className={`pi pi-chevron-down toggle-icon ${openSubmenus.pelayanan ? 'rotated' : ''}`} style={{ transition: 'transform 0.2s', transform: openSubmenus.pelayanan ? 'rotate(180deg)' : 'none' }}></i>
-          </div>
-          <ul className={`sidebar-submenu ${openSubmenus.pelayanan ? 'open' : ''}`} style={{ display: openSubmenus.pelayanan ? 'block' : 'none' }}>
-            <li>
-              <div 
-                className={`sidebar-menu-item ${activeTabId === 'dashboard' ? 'active' : ''}`} 
-                onClick={() => onOpenTab('dashboard', 'Dashboard')}
-              >
-                Daftar Tiket Log
-              </div>
-            </li>
-            <li>
-              <div 
-                className={`sidebar-menu-item ${activeTabId === 'save_log' ? 'active' : ''}`} 
-                onClick={() => onOpenTab('save_log', 'Catat Tiket Baru')}
-              >
-                Buat Tiket Baru
-              </div>
-            </li>
-          </ul>
-        </li>
 
-        {/* Collapsible Parent Menu: Analitik & Sistem */}
-        <li>
-          <div 
-            className="sidebar-menu-parent" 
-            onClick={() => toggleSubmenu('sistem')}
-          >
-            <span className="menu-label">
-              <i className="pi pi-server"></i> Analitik & Sistem
-            </span>
-            <i className={`pi pi-chevron-down toggle-icon ${openSubmenus.sistem ? 'rotated' : ''}`} style={{ transition: 'transform 0.2s', transform: openSubmenus.sistem ? 'rotate(180deg)' : 'none' }}></i>
-          </div>
-          <ul className={`sidebar-submenu ${openSubmenus.sistem ? 'open' : ''}`} style={{ display: openSubmenus.sistem ? 'block' : 'none' }}>
-            <li>
-              <div 
-                className={`sidebar-menu-item ${activeTabId === 'crm' ? 'active' : ''}`} 
-                onClick={() => onOpenTab('crm', 'CRM Analytics')}
-              >
-                CRM Analytics
-              </div>
-            </li>
-            <li>
-              <div 
-                className={`sidebar-menu-item ${activeTabId === 'ap2t_staging' ? 'active' : ''}`} 
-                onClick={() => onOpenTab('ap2t_staging', 'AP2T Staging')}
-              >
-                AP2T Staging
-              </div>
-            </li>
-            <li>
-              <div 
-                className={`sidebar-menu-item ${activeTabId === 'fso' ? 'active' : ''}`} 
-                onClick={() => onOpenTab('fso', 'FSO Logs')}
-              >
-                FSO Logs
-              </div>
-            </li>
-          </ul>
-        </li>
-
-        {/* Single Item: Bantuan & FAQ */}
-        <li>
-          <div 
-            className={`sidebar-menu-item ${activeTabId === 'bantuan' ? 'active' : ''}`} 
-            onClick={() => onOpenTab('bantuan', 'Bantuan & FAQ')}
-          >
-            <i className="pi pi-question-circle"></i> Bantuan & FAQ
-          </div>
-        </li>
-
-        {/* Single Item: Setting (Diletakkan di bagian paling bawah, di atas profil) */}
+        {/* Collapsible Parent Menu: Setting */}
         <li style={{ marginTop: 'auto' }}>
           <div 
-            className={`sidebar-menu-item ${activeTabId === 'setting' ? 'active' : ''}`} 
-            onClick={() => onOpenTab('setting', 'Setting')}
+            className="sidebar-menu-parent" 
+            onClick={() => toggleSubmenu('setting')}
+            style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              padding: '12px 16px', 
+              cursor: 'pointer',
+              color: 'var(--text-muted)',
+              fontSize: '0.95rem',
+              fontWeight: 500
+            }}
           >
-            <i className="pi pi-cog"></i> Setting
+            <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <i className="pi pi-cog"></i> Setting
+            </span>
+            <i className={`pi pi-chevron-down toggle-icon ${openSubmenus.setting ? 'rotated' : ''}`} style={{ transition: 'transform 0.2s', transform: openSubmenus.setting ? 'rotate(180deg)' : 'none', fontSize: '0.8rem' }}></i>
           </div>
+          <ul className={`sidebar-submenu ${openSubmenus.setting ? 'open' : ''}`} style={{ display: openSubmenus.setting ? 'block' : 'none', listStyle: 'none', paddingLeft: '32px', margin: 0 }}>
+            <li style={{ marginBottom: '4px' }}>
+              <div 
+                className={`sidebar-menu-item ${activeTabId === 'setting' ? 'active' : ''}`} 
+                onClick={() => onOpenTab('setting', 'Konfigurasi Sistem')}
+                style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '0.9rem', borderRadius: '6px' }}
+              >
+                Konfigurasi Sistem
+              </div>
+            </li>
+            {(user && (user.level_user === 'DEVELOPER' || user.level_user === 'SUPERUSER')) && (
+              <li>
+                <div 
+                  className={`sidebar-menu-item ${activeTabId === 'setting_menu' ? 'active' : ''}`} 
+                  onClick={() => onOpenTab('setting_menu', 'Setting Menu')}
+                  style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '0.9rem', borderRadius: '6px' }}
+                >
+                  Setting Menu
+                </div>
+              </li>
+            )}
+          </ul>
         </li>
       </ul>
 
