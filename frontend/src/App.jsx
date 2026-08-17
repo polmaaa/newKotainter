@@ -63,6 +63,22 @@ export default function App() {
   const [dbConfig, setDbConfig] = useState(null);
   const [toast, setToast] = useState(null);
   const [checkingDb, setCheckingDb] = useState(false);
+  const [dynamicMenus, setDynamicMenus] = useState([]);
+
+  const loadDynamicMenus = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/menu_config/get_menus`, {
+        method: 'GET',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      const result = await response.json();
+      if (response.ok && result.status === 'success') {
+        setDynamicMenus(result.data || []);
+      }
+    } catch (err) {
+      console.error('Gagal memuat menu dinamis:', err);
+    }
+  };
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -124,6 +140,7 @@ export default function App() {
           loadLogs();
           checkDbStatus();
           loadDbConfig();
+          loadDynamicMenus();
         }
       } catch (err) {
         console.error('Sesi login belum aktif:', err);
@@ -192,6 +209,7 @@ export default function App() {
       loadLogs();
       checkDbStatus();
       loadDbConfig();
+      loadDynamicMenus();
     }, 300);
   };
 
@@ -302,6 +320,7 @@ export default function App() {
             }}
             showToast={showToast}
             checkingDb={checkingDb}
+            onRefreshMenus={loadDynamicMenus}
           />
         );
       case 'bantuan':
@@ -361,6 +380,7 @@ export default function App() {
             onLogout={handleLogout} 
             sidebarOpen={sidebarOpen} 
             siteName={systemSettings.site_name}
+            dynamicMenus={dynamicMenus}
           />
           
           <div className="workspace">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SettingMenu from './SettingMenu';
 
-export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateSystemSettings, showToast, checkingDb }) {
+export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateSystemSettings, showToast, checkingDb, onRefreshMenus }) {
   const isPrivileged = user && (user.level_user === 'DEVELOPER' || user.level_user === 'SUPERUSER');
   const [activeSubTab, setActiveSubTab] = useState(isPrivileged ? 'general' : 'users');
 
@@ -1538,6 +1538,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
           apiBaseUrl={apiBaseUrl} 
           showToast={showToast} 
           user={user} 
+          onRefreshMenus={onRefreshMenus}
         />
       )}
 

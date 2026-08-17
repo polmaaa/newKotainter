@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function SettingMenu({ apiBaseUrl, showToast, user }) {
+export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenus }) {
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -146,6 +146,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
         showToast(result.message || 'Menu berhasil disimpan!', 'success');
         setShowModal(false);
         loadMenus();
+        if (onRefreshMenus) onRefreshMenus();
       } else {
         showToast(result.message || 'Gagal menyimpan menu.', 'error');
       }
@@ -175,6 +176,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
       if (response.ok && result.status === 'success') {
         showToast(result.message || 'Menu berhasil dihapus!', 'success');
         loadMenus();
+        if (onRefreshMenus) onRefreshMenus();
       } else {
         showToast(result.message || 'Gagal menghapus menu.', 'error');
       }
