@@ -7,7 +7,6 @@ import TicketForm from './components/TicketForm';
 import Setting from './components/Setting';
 import Help from './components/Help';
 import DetailModal from './components/DetailModal';
-import SettingMenu from './components/SettingMenu';
 
 const API_BASE_URL = import.meta.env.DEV ? '/api' : '/newkotainter/api';
 
@@ -247,7 +246,6 @@ export default function App() {
       case 'ap2t_staging': return 'server';
       case 'fso': return 'folder';
       case 'setting': return 'cog';
-      case 'setting_menu': return 'sitemap';
       case 'bantuan': return 'question-circle';
       default: return 'folder';
     }
@@ -304,14 +302,6 @@ export default function App() {
             }}
             showToast={showToast}
             checkingDb={checkingDb}
-          />
-        );
-      case 'setting_menu':
-        return (
-          <SettingMenu 
-            apiBaseUrl={API_BASE_URL} 
-            showToast={showToast} 
-            user={user} 
           />
         );
       case 'bantuan':

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SettingMenu from './SettingMenu';
 
 export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateSystemSettings, showToast, checkingDb }) {
   const isPrivileged = user && (user.level_user === 'DEVELOPER' || user.level_user === 'SUPERUSER');
@@ -669,6 +670,26 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
           >
             <i className="pi pi-users"></i> Pengaturan User
           </button>
+          {user && user.level_user === 'DEVELOPER' && (
+            <button 
+              onClick={() => { setActiveSubTab('menu'); setError(''); setSuccess(''); }}
+              className={`sub-tab-btn ${activeSubTab === 'menu' ? 'active' : ''}`}
+              style={{
+                padding: '8px 16px',
+                background: activeSubTab === 'menu' ? '#0f766e' : 'transparent',
+                color: activeSubTab === 'menu' ? '#ffffff' : 'var(--text-muted)',
+                border: 'none',
+                fontWeight: '600',
+                cursor: 'pointer',
+                borderRadius: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <i className="pi pi-sitemap"></i> Setting Menu
+            </button>
+          )}
         </div>
       ) : null}
 
@@ -1511,7 +1532,16 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
         </div>
       )}
 
-      {/* 4. SELF USER SETTINGS (Senior, Middle, Junior) */}
+      {/* 4. DYNAMIC MENU SETTINGS (Developer Only) */}
+      {user && user.level_user === 'DEVELOPER' && activeSubTab === 'menu' && (
+        <SettingMenu 
+          apiBaseUrl={apiBaseUrl} 
+          showToast={showToast} 
+          user={user} 
+        />
+      )}
+
+      {/* 5. SELF USER SETTINGS (Senior, Middle, Junior) */}
       {!isPrivileged && (
         <div className="content-card" style={{ maxWidth: '500px' }}>
           <h3 style={{ marginBottom: '16px', color: '#0f766e', fontSize: '1.1rem' }}>
