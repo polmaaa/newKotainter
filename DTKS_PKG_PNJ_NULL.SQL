@@ -50,24 +50,62 @@ CREATE OR REPLACE PACKAGE BODY DTKS.PKG_PNJ_NULL AS
         out_message   OUT VARCHAR2
     ) RETURN INT IS
         v_count NUMBER;
+        
+        v_pnj_101 VARCHAR2(100) := NULL;
+        v_nobang_101 VARCHAR2(100) := NULL;
+        v_ket_101 VARCHAR2(100) := NULL;
+        
+        v_pnj_pemohon VARCHAR2(100) := NULL;
+        v_nobang_pemohon VARCHAR2(100) := NULL;
+        v_ket_pemohon VARCHAR2(100) := NULL;
+        
+        v_pnj_106 VARCHAR2(100) := NULL;
+        v_nobang_106 VARCHAR2(100) := NULL;
+        v_ket_106 VARCHAR2(100) := NULL;
     BEGIN
-        SELECT COUNT(*) INTO v_count
-        FROM BILL52.TRANS_101_PEMOHON
-        WHERE NOAGENDA = in_noagenda;
+        -- 1. Fetch from TRANS_101_PEMOHON (Main reference table)
+        BEGIN
+            SELECT PNJ_PEMOHON, NOBANG_PEMOHON, KETNOBANG_PEMOHON
+            INTO v_pnj_pemohon, v_nobang_pemohon, v_ket_pemohon
+            FROM BILL52.TRANS_101_PEMOHON
+            WHERE NOAGENDA = in_noagenda;
+            v_count := 1;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                v_count := 0;
+        END;
 
         out_rowcount := v_count;
 
         IF v_count >= 1 THEN
+            -- 2. Fetch from TRANS_101
+            BEGIN
+                SELECT PNJ, NOBANG, KETNOBANG
+                INTO v_pnj_101, v_nobang_101, v_ket_101
+                FROM BILL52.TRANS_101
+                WHERE NOAGENDA = in_noagenda;
+            EXCEPTION
+                WHEN NO_DATA_FOUND THEN NULL;
+            END;
+
+            -- 3. Fetch from TRANS_106
+            BEGIN
+                SELECT PNJ, NOBANG, KETNOBANG
+                INTO v_pnj_106, v_nobang_106, v_ket_106
+                FROM BILL52.TRANS_106
+                WHERE NOAGENDA = in_noagenda;
+            EXCEPTION
+                WHEN NO_DATA_FOUND THEN NULL;
+            END;
+
+            -- 4. Open ref cursor from DUAL using gathered variables (avoids slow joins)
             OPEN out_data FOR
             SELECT 
-                A.PNJ AS PNJ_101, A.NOBANG AS NOBANG_101, A.KETNOBANG AS KETNOBANG_101,
-                B.PNJ_PEMOHON, B.NOBANG_PEMOHON, B.KETNOBANG_PEMOHON,
-                C.PNJ AS PNJ_106, C.NOBANG AS NOBANG_106, C.KETNOBANG AS KETNOBANG_106,
-                B.NOAGENDA
-            FROM BILL52.TRANS_101_PEMOHON B
-            LEFT JOIN BILL52.TRANS_101 A ON A.NOAGENDA = B.NOAGENDA
-            LEFT JOIN BILL52.TRANS_106 C ON C.NOAGENDA = B.NOAGENDA
-            WHERE B.NOAGENDA = in_noagenda;
+                v_pnj_101 AS PNJ_101, v_nobang_101 AS NOBANG_101, v_ket_101 AS KETNOBANG_101,
+                v_pnj_pemohon AS PNJ_PEMOHON, v_nobang_pemohon AS NOBANG_PEMOHON, v_ket_pemohon AS KETNOBANG_PEMOHON,
+                v_pnj_106 AS PNJ_106, v_nobang_106 AS NOBANG_106, v_ket_106 AS KETNOBANG_106,
+                in_noagenda AS NOAGENDA
+            FROM DUAL;
             
             out_message := 'Sukses';
             RETURN 1;

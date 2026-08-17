@@ -253,28 +253,53 @@ class Mpnj extends CI_Model {
         }
 
         try {
-            // Postgres runs directly via query builder
-            $this->db_postgres->select('
-                a.pnj as pnj_101, a.nobang as nobang_101, a.ketnobang as ketnobang_101,
-                b.pnj_pemohon, b.nobang_pemohon, b.ketnobang_pemohon,
-                c.pnj as pnj_106, c.nobang as nobang_106, c.ketnobang as ketnobang_106,
-                b.noagenda
-            ');
-            $this->db_postgres->from('bill52.trans_101_pemohon b');
-            $this->db_postgres->join('bill52.trans_101 a', 'a.noagenda = b.noagenda', 'left');
-            $this->db_postgres->join('bill52.trans_106 c', 'c.noagenda = b.noagenda', 'left');
-            $this->db_postgres->where('b.noagenda', $noagenda);
-            
-            $query = $this->db_postgres->get();
-            if ($query && $query->num_rows() >= 1) {
-                return array(
-                    'status' => 'success',
-                    'message' => 'Sukses',
-                    'data' => $query->result_array()
-                );
-            } else {
+            // 1. Fetch from trans_101_pemohon
+            $q_pemohon = $this->db_postgres->get_where('bill52.trans_101_pemohon', array('noagenda' => $noagenda));
+            if (!$q_pemohon || $q_pemohon->num_rows() === 0) {
                 return array('status' => 'error', 'message' => 'Maaf Data tidak Ditemukan');
             }
+            $pemohon = $q_pemohon->row_array();
+
+            // 2. Fetch from trans_101
+            $pnj_101 = null; $nobang_101 = null; $ketnobang_101 = null;
+            $q_101 = $this->db_postgres->get_where('bill52.trans_101', array('noagenda' => $noagenda));
+            if ($q_101 && $q_101->num_rows() > 0) {
+                $row_101 = $q_101->row_array();
+                $pnj_101 = isset($row_101['pnj']) ? $row_101['pnj'] : null;
+                $nobang_101 = isset($row_101['nobang']) ? $row_101['nobang'] : null;
+                $ketnobang_101 = isset($row_101['ketnobang']) ? $row_101['ketnobang'] : null;
+            }
+
+            // 3. Fetch from trans_106
+            $pnj_106 = null; $nobang_106 = null; $ketnobang_106 = null;
+            $q_106 = $this->db_postgres->get_where('bill52.trans_106', array('noagenda' => $noagenda));
+            if ($q_106 && $q_106->num_rows() > 0) {
+                $row_106 = $q_106->row_array();
+                $pnj_106 = isset($row_106['pnj']) ? $row_106['pnj'] : null;
+                $nobang_106 = isset($row_106['nobang']) ? $row_106['nobang'] : null;
+                $ketnobang_106 = isset($row_106['ketnobang']) ? $row_106['ketnobang'] : null;
+            }
+
+            $data = array(
+                array(
+                    'pnj_101' => $pnj_101,
+                    'nobang_101' => $nobang_101,
+                    'ketnobang_101' => $ketnobang_101,
+                    'pnj_pemohon' => isset($pemohon['pnj_pemohon']) ? $pemohon['pnj_pemohon'] : null,
+                    'nobang_pemohon' => isset($pemohon['nobang_pemohon']) ? $pemohon['nobang_pemohon'] : null,
+                    'ketnobang_pemohon' => isset($pemohon['ketnobang_pemohon']) ? $pemohon['ketnobang_pemohon'] : null,
+                    'pnj_106' => $pnj_106,
+                    'nobang_106' => $nobang_106,
+                    'ketnobang_106' => $ketnobang_106,
+                    'noagenda' => $noagenda
+                )
+            );
+
+            return array(
+                'status' => 'success',
+                'message' => 'Sukses',
+                'data' => $data
+            );
         } catch (Exception $e) {
             return array('status' => 'error', 'message' => $e->getMessage());
         }
