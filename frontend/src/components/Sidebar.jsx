@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sidebarOpen, siteName, dynamicMenus = [] }) {
+export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sidebarOpen, siteName, dynamicMenus = [], dbMode = 'oracle' }) {
   const [openSubmenus, setOpenSubmenus] = useState({});
 
   const toggleSubmenu = (key) => {
@@ -28,10 +28,19 @@ export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sideba
     return allowed.includes(user.level_user.toUpperCase());
   };
 
-  // Get all unique parent menu categories that have at least one allowed active child
+  const getMenuRoute = (m) => {
+    return dbMode === 'postgre' ? m.postgre : m.oracle;
+  };
+
+  const isMenuValidForMode = (m) => {
+    const route = getMenuRoute(m);
+    return route !== null && route !== undefined && route.trim() !== '';
+  };
+
+  // Get all unique parent menu categories that have at least one allowed active child in active DB mode
   const categories = [];
   dynamicMenus.forEach(m => {
-    if (m.parent_menu && m.aktive === 'Y' && isRoleAllowed(m.role_menu)) {
+    if (m.parent_menu && m.aktive === 'Y' && isRoleAllowed(m.role_menu) && isMenuValidForMode(m)) {
       const parentTrimmed = m.parent_menu.trim();
       if (!categories.includes(parentTrimmed)) {
         categories.push(parentTrimmed);
@@ -39,8 +48,8 @@ export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sideba
     }
   });
 
-  // Get all standalone active menus
-  const standaloneMenus = dynamicMenus.filter(m => !m.parent_menu && m.aktive === 'Y' && isRoleAllowed(m.role_menu));
+  // Get all standalone active menus valid for active DB mode
+  const standaloneMenus = dynamicMenus.filter(m => !m.parent_menu && m.aktive === 'Y' && isRoleAllowed(m.role_menu) && isMenuValidForMode(m));
 
   return (
     <aside className={`sidebar ${sidebarOpen ? 'show' : ''}`}>
@@ -88,18 +97,21 @@ export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sideba
               </div>
               <ul className={`sidebar-submenu ${isOpen ? 'open' : ''}`} style={{ display: isOpen ? 'block' : 'none', listStyle: 'none', paddingLeft: '32px', margin: 0 }}>
                 {dynamicMenus
-                  .filter(m => m.parent_menu && m.parent_menu.trim() === categoryName && m.aktive === 'Y' && isRoleAllowed(m.role_menu))
-                  .map(menu => (
-                    <li key={menu.id_menu} style={{ marginBottom: '4px' }}>
-                      <div 
-                        className={`sidebar-menu-item ${activeTabId === menu.oracle ? 'active' : ''}`} 
-                        onClick={() => onOpenTab(menu.oracle, menu.menu_name)}
-                        style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '0.9rem', borderRadius: '6px' }}
-                      >
-                        {menu.menu_name}
-                      </div>
-                    </li>
-                  ))
+                  .filter(m => m.parent_menu && m.parent_menu.trim() === categoryName && m.aktive === 'Y' && isRoleAllowed(m.role_menu) && isMenuValidForMode(m))
+                  .map(menu => {
+                    const route = getMenuRoute(menu);
+                    return (
+                      <li key={menu.id_menu} style={{ marginBottom: '4px' }}>
+                        <div 
+                          className={`sidebar-menu-item ${activeTabId === route ? 'active' : ''}`} 
+                          onClick={() => onOpenTab(route, menu.menu_name)}
+                          style={{ padding: '8px 12px', cursor: 'pointer', fontSize: '0.9rem', borderRadius: '6px' }}
+                        >
+                          {menu.menu_name}
+                        </div>
+                      </li>
+                    );
+                  })
                 }
               </ul>
             </li>
@@ -107,16 +119,19 @@ export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sideba
         })}
 
         {/* Dynamic Standalone Menus */}
-        {standaloneMenus.map(menu => (
-          <li key={menu.id_menu}>
-            <div 
-              className={`sidebar-menu-item ${activeTabId === menu.oracle ? 'active' : ''}`} 
-              onClick={() => onOpenTab(menu.oracle, menu.menu_name)}
-            >
-              <i className="pi pi-file"></i> {menu.menu_name}
-            </div>
-          </li>
-        ))}
+        {standaloneMenus.map(menu => {
+          const route = getMenuRoute(menu);
+          return (
+            <li key={menu.id_menu}>
+              <div 
+                className={`sidebar-menu-item ${activeTabId === route ? 'active' : ''}`} 
+                onClick={() => onOpenTab(route, menu.menu_name)}
+              >
+                <i className="pi pi-file"></i> {menu.menu_name}
+              </div>
+            </li>
+          );
+        })}
 
         {/* Single Item: Setting (Diletakkan di bagian paling bawah, di atas profil) */}
         <li style={{ marginTop: 'auto' }}>

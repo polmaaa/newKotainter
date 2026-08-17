@@ -65,6 +65,7 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const [checkingDb, setCheckingDb] = useState(false);
   const [dynamicMenus, setDynamicMenus] = useState([]);
+  const [dbMode, setDbMode] = useState('oracle');
 
   const loadDynamicMenus = async () => {
     try {
@@ -398,6 +399,7 @@ export default function App() {
             sidebarOpen={sidebarOpen} 
             siteName={systemSettings.site_name}
             dynamicMenus={dynamicMenus}
+            dbMode={dbMode}
           />
           
           <div className="workspace">
@@ -405,6 +407,8 @@ export default function App() {
               user={user} 
               activeTabTitle={activeTabTitle}
               onLogout={handleLogout} 
+              dbMode={dbMode}
+              onDbModeChange={setDbMode}
             />
             
             {/* Dynamic Tabs Bar with Prev/Next buttons (conditional render & no margins) */}
