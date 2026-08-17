@@ -112,32 +112,35 @@ class Mmenu extends CI_Model {
             return false;
         }
 
-        $id_menu     = $data['id_menu'];
-        $parent_menu = !empty($data['parent_menu']) ? $data['parent_menu'] : null;
+        $id_menu     = !empty($data['id_menu']) ? intval($data['id_menu']) : null;
+        $parent_menu = !empty($data['parent_menu']) ? intval($data['parent_menu']) : null;
         $menu_name   = $data['menu_name'];
         $oracle      = !empty($data['oracle']) ? $data['oracle'] : null;
         $postgre     = !empty($data['postgre']) ? $data['postgre'] : null;
         $aktive      = !empty($data['aktive']) ? $data['aktive'] : 'Y';
-        $role_menu   = !empty($data['role_menu']) ? $data['role_menu'] : 'DEVELOPER,SUPERUSER';
+        $role_menu   = !empty($data['role_menu']) ? $data['role_menu'] : 'DEVELOPER';
 
-        // Check if menu already exists
-        $check = $this->db_oracle->query("SELECT ID_MENU FROM " . $this->table_name . " WHERE UPPER(ID_MENU) = UPPER(?)", array($id_menu));
-        if ($check && $check->num_rows() > 0) {
-            // Update
-            $sql = "UPDATE " . $this->table_name . " SET PARENT_MENU = ?, MENU_NAME = ?, ORACLE = ?, POSTGRE = ?, AKTIVE = ?, ROLE_MENU = ? WHERE UPPER(ID_MENU) = UPPER(?)";
-            return $this->db_oracle->query($sql, array($parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu, $id_menu));
-        } else {
-            // Insert
-            $sql = "INSERT INTO " . $this->table_name . " (ID_MENU, PARENT_MENU, MENU_NAME, ORACLE, POSTGRE, AKTIVE, ROLE_MENU) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            return $this->db_oracle->query($sql, array($id_menu, $parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu));
+        if ($id_menu !== null) {
+            // Check if menu already exists (Update mode)
+            $check = $this->db_oracle->query("SELECT ID_MENU FROM " . $this->table_name . " WHERE ID_MENU = ?", array($id_menu));
+            if ($check && $check->num_rows() > 0) {
+                // Update
+                $sql = "UPDATE " . $this->table_name . " SET PARENT_MENU = ?, MENU_NAME = ?, ORACLE = ?, POSTGRE = ?, AKTIVE = ?, ROLE_MENU = ? WHERE ID_MENU = ?";
+                return $this->db_oracle->query($sql, array($parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu, $id_menu));
+            }
         }
+
+        // Insert - Auto-calculate next numeric ID using NVL(MAX(ID_MENU), 0) + 1
+        $sql = "INSERT INTO " . $this->table_name . " (ID_MENU, PARENT_MENU, MENU_NAME, ORACLE, POSTGRE, AKTIVE, ROLE_MENU) 
+                VALUES ((SELECT NVL(MAX(ID_MENU), 0) + 1 FROM " . $this->table_name . "), ?, ?, ?, ?, ?, ?)";
+        return $this->db_oracle->query($sql, array($parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu));
     }
 
     public function delete_menu($id_menu) {
         if (!$this->db_oracle) {
             return false;
         }
-        $sql = "DELETE FROM " . $this->table_name . " WHERE UPPER(ID_MENU) = UPPER(?)";
-        return $this->db_oracle->query($sql, array($id_menu));
+        $sql = "DELETE FROM " . $this->table_name . " WHERE ID_MENU = ?";
+        return $this->db_oracle->query($sql, array(intval($id_menu)));
     }
 }

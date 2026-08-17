@@ -10,13 +10,20 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   
   // Form states
-  const [menuId, setMenuId] = useState('');
+  const [menuId, setMenuId] = useState(''); // Numeric ID (used for editing only, generated in add mode)
   const [menuParent, setMenuParent] = useState('');
   const [menuName, setMenuName] = useState('');
   const [menuOracle, setMenuOracle] = useState('');
   const [menuPostgre, setMenuPostgre] = useState('');
   const [menuAktive, setMenuAktive] = useState('Y');
-  const [menuRole, setMenuRole] = useState('DEVELOPER,SUPERUSER,SENIOR,MIDDLE,JUNIOR');
+  
+  // Role access state (Category selection style)
+  const [selectedRoles, setSelectedRoles] = useState(['DEVELOPER']);
+  const allRoles = ['DEVELOPER', 'SUPERUSER', 'SENIOR', 'MIDDLE', 'JUNIOR'];
+
+  // Tracking if user manually edited the oracle/postgre fields
+  const [isOracleManuallyEdited, setIsOracleManuallyEdited] = useState(false);
+  const [isPostgreManuallyEdited, setIsPostgreManuallyEdited] = useState(false);
 
   useEffect(() => {
     loadMenus();
@@ -51,7 +58,9 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
     setMenuOracle('');
     setMenuPostgre('');
     setMenuAktive('Y');
-    setMenuRole('DEVELOPER,SUPERUSER,SENIOR,MIDDLE,JUNIOR');
+    setSelectedRoles(['DEVELOPER']);
+    setIsOracleManuallyEdited(false);
+    setIsPostgreManuallyEdited(false);
     setShowModal(true);
   };
 
@@ -63,14 +72,54 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
     setMenuOracle(menu.oracle || '');
     setMenuPostgre(menu.postgre || '');
     setMenuAktive(menu.aktive || 'Y');
-    setMenuRole(menu.role_menu || '');
+    
+    // Parse roles from comma-separated string to array
+    const roles = menu.role_menu 
+      ? menu.role_menu.split(',').map(r => r.trim().toUpperCase()) 
+      : [];
+    setSelectedRoles(roles);
+    
+    setIsOracleManuallyEdited(true);
+    setIsPostgreManuallyEdited(true);
     setShowModal(true);
+  };
+
+  const handleNameChange = (e) => {
+    const val = e.target.value;
+    setMenuName(val);
+
+    // Auto-generate Oracle and PostgreSQL controllers if in add mode and not manually changed
+    if (modalMode === 'add') {
+      const cleaned = val.replace(/[^a-zA-Z0-9]/g, '');
+      
+      if (!isOracleManuallyEdited) {
+        setMenuOracle(cleaned);
+      }
+      if (!isPostgreManuallyEdited) {
+        setMenuPostgre(cleaned ? `${cleaned}_pg` : '');
+      }
+    }
+  };
+
+  const toggleRoleSelection = (role) => {
+    setSelectedRoles(prev => {
+      if (prev.includes(role)) {
+        return prev.filter(r => r !== role);
+      } else {
+        return [...prev, role];
+      }
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!menuId.trim() || !menuName.trim()) {
-      showToast('ID Menu dan Nama Menu wajib diisi!', 'warning');
+    if (!menuName.trim()) {
+      showToast('Nama Menu wajib diisi!', 'warning');
+      return;
+    }
+
+    if (selectedRoles.length === 0) {
+      showToast('Pilih minimal satu Role Pengakses!', 'warning');
       return;
     }
 
@@ -83,13 +132,13 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
           'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify({
-          id_menu: menuId.trim(),
+          id_menu: modalMode === 'edit' ? menuId : null,
           parent_menu: menuParent || null,
           menu_name: menuName.trim(),
           oracle: menuOracle.trim() || null,
           postgre: menuPostgre.trim() || null,
           aktive: menuAktive,
-          role_menu: menuRole.trim()
+          role_menu: selectedRoles.join(',')
         })
       });
       const result = await response.json();
@@ -109,11 +158,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
   };
 
   const handleDelete = async (id) => {
-    if (id === 'dashboard' || id === 'setting' || id === 'setting_menu') {
-      showToast('Menu utama sistem tidak boleh dihapus!', 'warning');
-      return;
-    }
-    if (!window.confirm(`Apakah Anda yakin ingin menghapus menu "${id}"?`)) {
+    if (!window.confirm(`Apakah Anda yakin ingin menghapus menu ID ${id}?`)) {
       return;
     }
 
@@ -175,14 +220,14 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
             <table className="log-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid var(--border-light)', backgroundColor: '#f8fafc' }}>
-                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>ID Menu</th>
-                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>Menu Induk (Parent)</th>
+                  <th style={{ padding: '12px 8px', fontWeight: 600, width: '80px' }}>ID Menu</th>
+                  <th style={{ padding: '12px 8px', fontWeight: 600, width: '150px' }}>Menu Induk (Parent)</th>
                   <th style={{ padding: '12px 8px', fontWeight: 600 }}>Nama Menu</th>
-                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>Oracle Endpoint</th>
-                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>PostgreSQL Endpoint</th>
-                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>Status</th>
+                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>Oracle (link/route)</th>
+                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>Postgre (link/route)</th>
+                  <th style={{ padding: '12px 8px', fontWeight: 600, width: '100px' }}>Status</th>
                   <th style={{ padding: '12px 8px', fontWeight: 600 }}>Akses Role</th>
-                  <th style={{ padding: '12px 8px', fontWeight: 600, textAlign: 'center' }}>Aksi</th>
+                  <th style={{ padding: '12px 8px', fontWeight: 600, textAlign: 'center', width: '100px' }}>Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -195,11 +240,11 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
                 ) : (
                   menus.map(menu => (
                     <tr key={menu.id_menu} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                      <td style={{ padding: '12px 8px', fontWeight: 500, fontFamily: 'monospace', color: 'var(--text-main)' }}>{menu.id_menu}</td>
+                      <td style={{ padding: '12px 8px', fontWeight: 600, fontFamily: 'monospace', color: 'var(--text-main)' }}>{menu.id_menu}</td>
                       <td style={{ padding: '12px 8px', color: menu.parent_menu ? 'var(--text-main)' : 'var(--text-muted)' }}>
                         {menu.parent_menu ? (
                           <span style={{ backgroundColor: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontSize: '0.8rem', fontFamily: 'monospace' }}>
-                            {menu.parent_menu}
+                            ID: {menu.parent_menu}
                           </span>
                         ) : (
                           <span style={{ fontSize: '0.8rem', fontStyle: 'italic' }}>Utama</span>
@@ -244,7 +289,6 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
                             className="btn btn-outline"
                             onClick={() => handleDelete(menu.id_menu)}
                             style={{ padding: '6px 10px', fontSize: '0.8rem', borderRadius: '6px', color: 'var(--error)', borderColor: 'var(--error-bg)' }}
-                            disabled={menu.id_menu === 'dashboard' || menu.id_menu === 'setting' || menu.id_menu === 'setting_menu'}
                           >
                             <i className="pi pi-trash"></i>
                           </button>
@@ -275,7 +319,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
               padding: '28px', 
               borderRadius: '16px', 
               width: '90%', 
-              maxWidth: '480px', 
+              maxWidth: '500px', 
               boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', 
               border: '1px solid var(--border-light)',
               animation: 'modalScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
@@ -302,26 +346,25 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
             </div>
 
             <form onSubmit={handleSubmit}>
+              
+              {/* ID Menu (Otomatis / Numeric) */}
               <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-                <label htmlFor="menu-id-input" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>ID Menu</label>
+                <label style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>ID Menu</label>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <i className="pi pi-tag" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
                   <input
                     type="text"
-                    id="menu-id-input"
                     className="form-input-text"
-                    style={{ paddingLeft: '38px', fontFamily: 'monospace' }}
-                    required
-                    disabled={modalMode === 'edit'}
-                    value={menuId}
-                    onChange={(e) => setMenuId(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''))}
-                    placeholder="Contoh: billing_info, token_lpb"
+                    style={{ paddingLeft: '38px', fontFamily: 'monospace', backgroundColor: '#f1f5f9' }}
+                    disabled
+                    value={modalMode === 'add' ? 'Terisi Otomatis (Auto-Increment)' : menuId}
                   />
                 </div>
               </div>
 
+              {/* Menu Induk (Parent) */}
               <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-                <label htmlFor="menu-parent-select" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Menu Induk (Parent)</label>
+                <label htmlFor="menu-parent-select" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Menu Induk</label>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <i className="pi pi-folder" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
                   <select
@@ -333,12 +376,13 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
                   >
                     <option value="">- Utama (Tidak Ada Induk) -</option>
                     {parentOptions.map(p => (
-                      <option key={p.id_menu} value={p.id_menu}>{p.menu_name} ({p.id_menu})</option>
+                      <option key={p.id_menu} value={p.id_menu}>{p.menu_name} (ID: {p.id_menu})</option>
                     ))}
                   </select>
                 </div>
               </div>
 
+              {/* Nama Menu */}
               <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
                 <label htmlFor="menu-name-input" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Nama Menu</label>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
@@ -350,14 +394,15 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
                     style={{ paddingLeft: '38px' }}
                     required
                     value={menuName}
-                    onChange={(e) => setMenuName(e.target.value)}
-                    placeholder="Nama label menu..."
+                    onChange={handleNameChange}
+                    placeholder="Masukkan nama menu (contoh: Insert Data BLTHMUT)"
                   />
                 </div>
               </div>
 
+              {/* Oracle (link/route) */}
               <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-                <label htmlFor="menu-oracle-input" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Oracle Controller (Link/Route)</label>
+                <label htmlFor="menu-oracle-input" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Oracle (link/route)</label>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <i className="pi pi-link" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
                   <input
@@ -366,14 +411,18 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
                     className="form-input-text"
                     style={{ paddingLeft: '38px', fontFamily: 'monospace' }}
                     value={menuOracle}
-                    onChange={(e) => setMenuOracle(e.target.value)}
-                    placeholder="Contoh: api/billing (opsional)"
+                    onChange={(e) => {
+                      setMenuOracle(e.target.value);
+                      setIsOracleManuallyEdited(true);
+                    }}
+                    placeholder="Contoh: InsertDataBLTHMUT"
                   />
                 </div>
               </div>
 
+              {/* Postgre (link/route) */}
               <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-                <label htmlFor="menu-postgre-input" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>PostgreSQL Controller (Link/Route)</label>
+                <label htmlFor="menu-postgre-input" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Postgre (link/route)</label>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <i className="pi pi-link" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
                   <input
@@ -382,25 +431,46 @@ export default function SettingMenu({ apiBaseUrl, showToast, user }) {
                     className="form-input-text"
                     style={{ paddingLeft: '38px', fontFamily: 'monospace' }}
                     value={menuPostgre}
-                    onChange={(e) => setMenuPostgre(e.target.value)}
-                    placeholder="Contoh: api/billing_pg (opsional)"
+                    onChange={(e) => {
+                      setMenuPostgre(e.target.value);
+                      setIsPostgreManuallyEdited(true);
+                    }}
+                    placeholder="Contoh: InsertDataBLTHMUT_pg"
                   />
                 </div>
               </div>
 
-              <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-                <label htmlFor="menu-role-input" style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Role Pengakses (Pisahkan koma)</label>
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <i className="pi pi-users" style={{ position: 'absolute', left: '12px', color: '#94a3b8', fontSize: '0.95rem' }}></i>
-                  <input
-                    type="text"
-                    id="menu-role-input"
-                    className="form-input-text"
-                    style={{ paddingLeft: '38px' }}
-                    value={menuRole}
-                    onChange={(e) => setMenuRole(e.target.value)}
-                    placeholder="Contoh: DEVELOPER,SUPERUSER,SENIOR"
-                  />
+              {/* Role Pengakses (Category selection style) */}
+              <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+                <label style={{ fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>Role Pengakses</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
+                  {allRoles.map(role => {
+                    const isSelected = selectedRoles.includes(role);
+                    return (
+                      <div
+                        key={role}
+                        onClick={() => toggleRoleSelection(role)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '6px 14px',
+                          borderRadius: '20px',
+                          border: isSelected ? '1.5px solid #0f766e' : '1.5px solid var(--border-light)',
+                          backgroundColor: isSelected ? '#f0fdfa' : 'transparent',
+                          color: isSelected ? '#0f766e' : 'var(--text-muted)',
+                          cursor: 'pointer',
+                          fontSize: '0.82rem',
+                          fontWeight: 600,
+                          userSelect: 'none',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <i className={`pi ${isSelected ? 'pi-check-circle' : 'pi-circle'}`} style={{ fontSize: '0.85rem' }}></i>
+                        <span>{role}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
