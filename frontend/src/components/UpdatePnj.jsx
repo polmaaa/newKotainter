@@ -425,36 +425,6 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
               </button>
             </div>
           </form>
-
-          {/* Koreksi Tarif Quick Action */}
-          <div className="content-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#b91c1c', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <i className="pi pi-bolt"></i> Quick Action: Remaja Koreksi Tarif
-            </h3>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Proses ini akan mencadangkan mutasi aktif ke `TRANS_MUTASI_KOREKSI_LOG` dan memperbarui data petugas/tanggal peremajaan dari data PDL.
-            </p>
-            <div>
-              <button
-                type="button"
-                className="btn btn-danger"
-                disabled={savingKoreksi}
-                onClick={handleSaveKoreksiTarif}
-                style={{ padding: '10px 20px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#dc2626', borderColor: '#dc2626', color: '#fff' }}
-              >
-                {savingKoreksi ? (
-                  <>
-                    <i className="pi pi-spin pi-spinner"></i> Memproses...
-                  </>
-                ) : (
-                  <>
-                    <i className="pi pi-refresh"></i> Jalankan Remaja Koreksi Tarif
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
         </div>
       )}
     </div>
