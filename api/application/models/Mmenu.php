@@ -54,19 +54,7 @@ class Mmenu extends CI_Model {
         try {
             $this->db_oracle = @$this->load->database('oracle', TRUE);
             if ($this->db_oracle && $this->db_oracle->conn_id) {
-                // Check if DTKS.DTKS_MENU table is accessible (at least for SELECT)
-                $table_check = @$this->db_oracle->query("SELECT 1 FROM DTKS.DTKS_MENU WHERE ROWNUM = 1");
-                if ($table_check) {
-                    $this->table_name = 'DTKS.DTKS_MENU';
-                } else {
-                    // Try local schema fallback
-                    $table_own_check = @$this->db_oracle->query("SELECT 1 FROM DTKS_MENU WHERE ROWNUM = 1");
-                    if ($table_own_check) {
-                        $this->table_name = 'DTKS_MENU';
-                    } else {
-                        $this->table_name = 'DTKS_MENU';
-                    }
-                }
+                $this->table_name = 'DTKS.DTKS_MENU';
             } else {
                 $this->db_oracle = null;
             }
@@ -76,58 +64,13 @@ class Mmenu extends CI_Model {
         $this->db->db_debug = $db_debug_default;
     }
 
-    private function _create_local_table_if_not_exists() {
-        if (!$this->db_oracle) return;
-        $check = @$this->db_oracle->query("SELECT 1 FROM DTKS_MENU WHERE ROWNUM = 1");
-        if (!$check) {
-            $sql = "CREATE TABLE DTKS_MENU (
-                ID_MENU NUMBER NOT NULL,
-                PARENT_MENU VARCHAR2(100),
-                MENU_NAME VARCHAR2(100) NOT NULL,
-                ORACLE VARCHAR2(255),
-                POSTGRE VARCHAR2(255),
-                AKTIVE CHAR(1) DEFAULT 'Y' NOT NULL,
-                ROLE_MENU VARCHAR2(255),
-                CREATE_AT TIMESTAMP DEFAULT SYSTIMESTAMP,
-                CONSTRAINT PK_LOCAL_DTKS_MENU PRIMARY KEY (ID_MENU),
-                CONSTRAINT CHK_LOCAL_MENU_AKTIVE CHECK (AKTIVE IN ('Y', 'N'))
-            )";
-            @$this->db_oracle->query($sql);
-        }
-    }
-
-    private function _execute_save($table, $id_menu, $parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu) {
-        if ($id_menu !== null) {
-            $check = $this->db_oracle->query("SELECT ID_MENU FROM " . $table . " WHERE ID_MENU = ?", array($id_menu));
-            if ($check && $check->num_rows() > 0) {
-                $sql = "UPDATE " . $table . " SET PARENT_MENU = ?, MENU_NAME = ?, ORACLE = ?, POSTGRE = ?, AKTIVE = ?, ROLE_MENU = ? WHERE ID_MENU = ?";
-                return @$this->db_oracle->query($sql, array($parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu, $id_menu));
-            }
-        }
-
-        $sql = "INSERT INTO " . $table . " (ID_MENU, PARENT_MENU, MENU_NAME, ORACLE, POSTGRE, AKTIVE, ROLE_MENU) 
-                VALUES ((SELECT NVL(MAX(ID_MENU), 0) + 1 FROM " . $table . "), ?, ?, ?, ?, ?, ?)";
-        return @$this->db_oracle->query($sql, array($parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu));
-    }
-
     public function get_all_menus() {
         if (!$this->db_oracle) {
-            // Simulated default menu list if offline
-            return array(
-                array('id_menu' => 1, 'parent_menu' => 'PELAYANAN PELANGGAN', 'menu_name' => 'Insert Data BLTHMUT', 'oracle' => 'InsertDataBLTHMUT', 'postgre' => 'InsertDataBLTHMUT_pg', 'aktive' => 'Y', 'role_menu' => 'DEVELOPER,SUPERUSER')
-            );
+            return array();
         }
 
         try {
-            // First check if cached table_name works
-            $query = @$this->db_oracle->query("SELECT ID_MENU, PARENT_MENU, MENU_NAME, ORACLE, POSTGRE, AKTIVE, ROLE_MENU, TO_CHAR(CREATE_AT, 'YYYY-MM-DD HH24:MI:SS') as CREATE_AT FROM " . $this->table_name . " ORDER BY CREATE_AT ASC");
-            
-            // If failed and table name was DTKS.DTKS_MENU, try local DTKS_MENU fallback
-            if (!$query && $this->table_name === 'DTKS.DTKS_MENU') {
-                $this->table_name = 'DTKS_MENU';
-                $query = @$this->db_oracle->query("SELECT ID_MENU, PARENT_MENU, MENU_NAME, ORACLE, POSTGRE, AKTIVE, ROLE_MENU, TO_CHAR(CREATE_AT, 'YYYY-MM-DD HH24:MI:SS') as CREATE_AT FROM DTKS_MENU ORDER BY CREATE_AT ASC");
-            }
-
+            $query = $this->db_oracle->query("SELECT ID_MENU, PARENT_MENU, MENU_NAME, ORACLE, POSTGRE, AKTIVE, ROLE_MENU, TO_CHAR(CREATE_AT, 'YYYY-MM-DD HH24:MI:SS') as CREATE_AT FROM " . $this->table_name . " ORDER BY CREATE_AT ASC");
             if ($query) {
                 $results = $query->result_array();
                 $normalized = array();
@@ -159,43 +102,24 @@ class Mmenu extends CI_Model {
         $aktive      = !empty($data['aktive']) ? $data['aktive'] : 'Y';
         $role_menu   = !empty($data['role_menu']) ? $data['role_menu'] : 'DEVELOPER';
 
-        $db_debug_default = $this->db_oracle->db_debug;
-        $this->db_oracle->db_debug = FALSE;
-
-        // Try writing to primary table
-        $success = $this->_execute_save($this->table_name, $id_menu, $parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu);
-
-        // If failed due to write permissions (e.g. ORA-01031) or missing table, fallback to local table
-        if (!$success && $this->table_name === 'DTKS.DTKS_MENU') {
-            $this->_create_local_table_if_not_exists();
-            $success = $this->_execute_save('DTKS_MENU', $id_menu, $parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu);
-            if ($success) {
-                $this->table_name = 'DTKS_MENU'; // Fallback cached
+        if ($id_menu !== null) {
+            $check = $this->db_oracle->query("SELECT ID_MENU FROM " . $this->table_name . " WHERE ID_MENU = ?", array($id_menu));
+            if ($check && $check->num_rows() > 0) {
+                $sql = "UPDATE " . $this->table_name . " SET PARENT_MENU = ?, MENU_NAME = ?, ORACLE = ?, POSTGRE = ?, AKTIVE = ?, ROLE_MENU = ? WHERE ID_MENU = ?";
+                return $this->db_oracle->query($sql, array($parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu, $id_menu));
             }
         }
 
-        $this->db_oracle->db_debug = $db_debug_default;
-        return $success;
+        $sql = "INSERT INTO " . $this->table_name . " (ID_MENU, PARENT_MENU, MENU_NAME, ORACLE, POSTGRE, AKTIVE, ROLE_MENU) 
+                VALUES ((SELECT NVL(MAX(ID_MENU), 0) + 1 FROM " . $this->table_name . "), ?, ?, ?, ?, ?, ?)";
+        return $this->db_oracle->query($sql, array($parent_menu, $menu_name, $oracle, $postgre, $aktive, $role_menu));
     }
 
     public function delete_menu($id_menu) {
         if (!$this->db_oracle) {
             return false;
         }
-
-        $db_debug_default = $this->db_oracle->db_debug;
-        $this->db_oracle->db_debug = FALSE;
-
         $sql = "DELETE FROM " . $this->table_name . " WHERE ID_MENU = ?";
-        $success = @$this->db_oracle->query($sql, array(intval($id_menu)));
-
-        if (!$success && $this->table_name === 'DTKS.DTKS_MENU') {
-            $this->table_name = 'DTKS_MENU';
-            $sql = "DELETE FROM DTKS_MENU WHERE ID_MENU = ?";
-            $success = @$this->db_oracle->query($sql, array(intval($id_menu)));
-        }
-
-        $this->db_oracle->db_debug = $db_debug_default;
-        return $success;
+        return $this->db_oracle->query($sql, array(intval($id_menu)));
     }
 }

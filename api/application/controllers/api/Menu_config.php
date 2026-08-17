@@ -60,7 +60,11 @@ class Menu_config extends MY_Controller {
         if ($success) {
             return $this->response(200, 'success', 'Menu berhasil disimpan!');
         } else {
-            return $this->response(500, 'error', 'Gagal menyimpan menu ke database.');
+            $db_error = $this->db->error();
+            $err_msg = isset($db_error['message']) && !empty($db_error['message']) 
+                ? 'Oracle Error: ' . $db_error['message'] 
+                : 'Gagal menyimpan menu ke database. Pastikan tabel DTKS.DTKS_MENU ada dan memiliki kolom PARENT_MENU bertipe VARCHAR2.';
+            return $this->response(500, 'error', $err_msg);
         }
     }
 
@@ -85,7 +89,11 @@ class Menu_config extends MY_Controller {
         if ($success) {
             return $this->response(200, 'success', 'Menu berhasil dihapus!');
         } else {
-            return $this->response(500, 'error', 'Gagal menghapus menu.');
+            $db_error = $this->db->error();
+            $err_msg = isset($db_error['message']) && !empty($db_error['message']) 
+                ? 'Oracle Error: ' . $db_error['message'] 
+                : 'Gagal menghapus menu.';
+            return $this->response(500, 'error', $err_msg);
         }
     }
 }
