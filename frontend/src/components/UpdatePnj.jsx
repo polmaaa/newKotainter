@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = false }) {
+export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = false, menuName = 'Update PNJ' }) {
   const [noagenda, setNoagenda] = useState('');
   const [tiket, setTiket] = useState('');
   const [loading, setLoading] = useState(false);
@@ -171,10 +171,10 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
       <div className="title-area" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h2 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <i className="pi pi-user-edit" style={{ color: '#0f766e' }}></i> Update PNJ (Koreksi Penanggung Jawab)
+            <i className="pi pi-user-edit" style={{ color: '#0f766e' }}></i> {menuName}
           </h2>
           <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            Mencari, mengubah, dan membackup data PNJ / NOBANG NULL ke skema log menggunakan koneksi {dbLabel}.
+            Mencari, mengubah, dan membackup data {menuName} / NOBANG NULL ke skema log menggunakan koneksi {dbLabel}.
           </p>
         </div>
         <span style={{ 

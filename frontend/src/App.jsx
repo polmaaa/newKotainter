@@ -373,6 +373,7 @@ export default function App() {
             apiBaseUrl={API_BASE_URL}
             showToast={showToast}
             isPostgres={dbMode === 'postgre'}
+            menuName={menu ? menu.menu_name : 'Update PNJ'}
           />
         );
       default:
