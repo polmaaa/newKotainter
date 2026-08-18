@@ -8,6 +8,7 @@ import Setting from './components/Setting';
 import Help from './components/Help';
 import DetailModal from './components/DetailModal';
 import UpdatePnj from './components/UpdatePnj';
+import UbahKodeUnit from './components/UbahKodeUnit';
 
 const API_BASE_URL = import.meta.env.DEV ? '/api' : '/newkotainter/api';
 
@@ -273,6 +274,8 @@ export default function App() {
       case 'UpdatePNJ':
       case 'UpdatePnj_pg':
       case 'UpdatePNJ_pg': return 'user-edit';
+      case 'UbahKodeUnit':
+      case 'UbahKodeUnit_pg': return 'user-edit';
       default: return 'folder';
     }
   };
@@ -374,6 +377,18 @@ export default function App() {
             showToast={showToast}
             isPostgres={dbMode === 'postgre'}
             menuName={menu ? menu.menu_name : 'Update PNJ'}
+          />
+        );
+      case 'UbahKodeUnit':
+      case 'UbahKodeUnit_pg':
+        return (
+          <UbahKodeUnit 
+            key={`ubahkodeunit-${dbMode}`}
+            user={user}
+            apiBaseUrl={API_BASE_URL}
+            showToast={showToast}
+            isPostgres={dbMode === 'postgre'}
+            menuName={menu ? menu.menu_name : 'Ubah Kode Unit'}
           />
         );
       default:
