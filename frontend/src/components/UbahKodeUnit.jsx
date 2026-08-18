@@ -280,11 +280,10 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
                       style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem', height: '42px' }}
                     >
                       <option value="">-- Pilih Level User --</option>
-                      <option value="DEVELOPER">DEVELOPER</option>
-                      <option value="SUPERUSER">SUPERUSER</option>
-                      <option value="SENIOR">SENIOR</option>
-                      <option value="MIDDLE">MIDDLE</option>
-                      <option value="JUNIOR">JUNIOR</option>
+                      <option value="UPI">UPI</option>
+                      <option value="AP">AP</option>
+                      <option value="UP">UP</option>
+                      <option value="PUSAT">PUSAT</option>
                     </select>
                   </div>
 

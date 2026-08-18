@@ -21,3 +21,6 @@
 [2026-08-17 14:59:10] Search - Agenda: '535929921203151511' | Tiket: '123' | Rowcount: '1' | Message: 'Sukses'
 [2026-08-17 14:59:36] Save Oracle - Agenda: '535929921203151511' | MsgError: 'Sukses' | Rowcount: '1'
 [2026-08-18 04:51:09] Search - Agenda: '535929921203151511' | Tiket: '123' | Rowcount: '1' | Message: 'Sukses'
+[2026-08-18 11:38:26] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-18 11:38:55] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 1
+[2026-08-18 11:41:29] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 83
