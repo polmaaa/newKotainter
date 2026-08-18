@@ -145,7 +145,12 @@ class Mpnj extends CI_Model {
     }
 
     public function save_pnj_oracle($params) {
+        $log_file = APPPATH . 'logs/update_pnj_debug.log';
+        $noagenda = isset($params['noagenda']) ? $params['noagenda'] : '';
+        @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Oracle Init - Agenda: '$noagenda'\n", FILE_APPEND);
+
         if (!$this->db_oracle) {
+            @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Oracle Error - Database Oracle offline.\n", FILE_APPEND);
             return array('status' => 'error', 'message' => 'Database Oracle offline.');
         }
 
@@ -185,10 +190,13 @@ class Mpnj extends CI_Model {
             $exec = @oci_execute($stmt);
             if (!$exec) {
                 $err = oci_error($stmt);
+                @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Oracle Exec Error - Agenda: '$noagenda' | Error: " . $err['message'] . "\n", FILE_APPEND);
                 return array('status' => 'error', 'message' => 'Oracle Exec Error: ' . $err['message']);
             }
             
             oci_free_statement($stmt);
+            
+            @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Oracle - Agenda: '$noagenda' | MsgError: '$msgerror' | Rowcount: '$rowcount'\n", FILE_APPEND);
             
             if (trim($msgerror) === 'Sukses') {
                 return array('status' => 'success', 'message' => 'Pembaruan data PNJ berhasil disimpan.');
@@ -196,6 +204,7 @@ class Mpnj extends CI_Model {
                 return array('status' => 'error', 'message' => $msgerror);
             }
         } catch (Exception $e) {
+            @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Oracle Exception - Agenda: '$noagenda' | Msg: " . $e->getMessage() . "\n", FILE_APPEND);
             return array('status' => 'error', 'message' => $e->getMessage());
         }
     }
@@ -306,12 +315,16 @@ class Mpnj extends CI_Model {
     }
 
     public function save_pnj_postgres($params) {
+        $log_file = APPPATH . 'logs/update_pnj_debug.log';
+        $noagenda = isset($params['noagenda']) ? $params['noagenda'] : '';
+        @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Postgres Init - Agenda: '$noagenda'\n", FILE_APPEND);
+
         if (!$this->db_postgres) {
+            @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Postgres Error - Database PostgreSQL offline.\n", FILE_APPEND);
             return array('status' => 'error', 'message' => 'Database PostgreSQL offline.');
         }
 
         $db = $this->db_postgres;
-        $noagenda = $params['noagenda'];
 
         try {
             $db->trans_begin();
@@ -321,6 +334,7 @@ class Mpnj extends CI_Model {
             $count = $db->count_all_results('bill52.trans_101');
             if ($count === 0) {
                 $db->trans_rollback();
+                @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Postgres Error - Agenda: '$noagenda' | Data tidak ditemukan!\n", FILE_APPEND);
                 return array('status' => 'error', 'message' => 'Data tidak ditemukan!');
             }
 
@@ -386,13 +400,16 @@ class Mpnj extends CI_Model {
 
             if ($db->trans_status() === FALSE) {
                 $db->trans_rollback();
+                @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Postgres Error - trans_status is FALSE\n", FILE_APPEND);
                 return array('status' => 'error', 'message' => 'Gagal Update Data PNJ OR NOBANG OR KETNOBANG!');
             } else {
                 $db->trans_commit();
+                @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Postgres Success - Agenda: '$noagenda'\n", FILE_APPEND);
                 return array('status' => 'success', 'message' => 'Sukses');
             }
         } catch (Exception $e) {
             $db->trans_rollback();
+            @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Postgres Exception - Agenda: '$noagenda' | Msg: " . $e->getMessage() . "\n", FILE_APPEND);
             return array('status' => 'error', 'message' => $e->getMessage());
         }
     }
