@@ -207,7 +207,7 @@ class Mmanajemenuser extends CI_Model {
                 a.jabatan,
                 a.alamat_user,
                 a.leveluser,
-                string_agg(b.id_group, ',') AS role,
+                (SELECT string_agg(id_group, ',') FROM secman.usrgroup WHERE id_user = a.id_user) AS role,
                 a.email1,
                 a.no_telp1,
                 a.disable_user,
@@ -216,7 +216,6 @@ class Mmanajemenuser extends CI_Model {
                 a.tglakhirijin
             ");
             $db->from('secman.usertab a');
-            $db->join('secman.usrgroup b', 'a.id_user = b.id_user', 'left');
             
             if (!empty($id_user) && !empty($unitup)) {
                 $db->group_start()
@@ -231,11 +230,6 @@ class Mmanajemenuser extends CI_Model {
                 return array('status' => 'error', 'message' => 'Masukkan pencarian ID User atau Kode Unit!');
             }
 
-            $db->group_by("
-                a.unitup, a.id_user, a.nama_user, a.jabatan, a.alamat_user, 
-                a.leveluser, a.email1, a.no_telp1, a.disable_user, 
-                a.salahpassword, a.passwd, a.tglakhirijin
-            ");
             $db->order_by('a.unitup', 'ASC');
 
             $query = $db->get();

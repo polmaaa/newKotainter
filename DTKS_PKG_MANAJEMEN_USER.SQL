@@ -14,10 +14,6 @@ CREATE OR REPLACE PACKAGE DTKS.pkg_manajemen_user AS
         out_message      OUT VARCHAR2
     );
 
-    FUNCTION f$getuserroleaktif (
-        in_id_user IN VARCHAR2
-    ) RETURN VARCHAR2;
-
     FUNCTION f$get_info_user (
         in_id_user   IN  VARCHAR2,
         in_unitup    IN  VARCHAR2
@@ -36,84 +32,6 @@ END pkg_manajemen_user;
 
 CREATE OR REPLACE PACKAGE BODY DTKS.pkg_manajemen_user IS
 
-    FUNCTION f$getuserroleaktif (in_id_user IN VARCHAR2) RETURN VARCHAR2 IS
-        sRet VARCHAR2(1000) := '';
-    BEGIN
-        FOR my IN (SELECT id_user, id_group
-                   FROM DTKS.usrgroup
-                   WHERE id_user = in_id_user)
-        LOOP
-            IF my.id_group = 'ADMINF1' THEN
-                sRet := sRet || 'ADMINF1,';
-            ELSIF my.id_group = 'ADMINF23' THEN
-                sRet := sRet || 'ADMINF23,';
-            ELSIF my.id_group = 'ADMINF456' THEN
-                sRet := sRet || 'ADMINF456,';
-            ELSIF my.id_group = 'ADMINPPJ' THEN
-                sRet := sRet || 'ADMINPPJ,';
-            ELSIF my.id_group = 'ADMIN_KAWASAN' THEN
-                sRet := sRet || 'ADMIN_KAWASAN,';
-            ELSIF my.id_group = 'ADMIN_NEDYSIS' THEN
-                sRet := sRet || 'ADMIN_NEDYSIS,';
-            ELSIF my.id_group = 'ADMIN_TAMPER' THEN
-                sRet := sRet || 'ADMIN_TAMPER,';
-            ELSIF my.id_group = 'ADMIN_TMP' THEN
-                sRet := sRet || 'ADMIN_TMP,';
-            ELSIF my.id_group = 'ADMIN_VALIDASI_UJL' THEN
-                sRet := sRet || 'ADMIN_VALIDASI_UJL,';
-            ELSIF my.id_group = 'BPANGSUR' THEN
-                sRet := sRet || 'BPANGSUR,';
-            ELSIF my.id_group = 'CATERF23' THEN
-                sRet := sRet || 'CATERF23,';
-            ELSIF my.id_group = 'DIVAGA' THEN
-                sRet := sRet || 'DIVAGA,';
-            ELSIF my.id_group = 'DMAN' THEN
-                sRet := sRet || 'DMAN,';
-            ELSIF my.id_group = 'DMPEMASARAN_ROLE' THEN
-                sRet := sRet || 'DMPEMASARAN_ROLE,';
-            ELSIF my.id_group = 'GERAI' THEN
-                sRet := sRet || 'GERAI,';
-            ELSIF my.id_group = 'INFOLAP' THEN
-                sRet := sRet || 'INFOLAP,';
-            ELSIF my.id_group = 'LOKETF1' THEN
-                sRet := sRet || 'LOKETF1,';
-            ELSIF my.id_group = 'MANAGER' THEN
-                sRet := sRet || 'MANAGER,';
-            ELSIF my.id_group = 'P2TL' THEN
-                sRet := sRet || 'P2TL,';
-            ELSIF my.id_group = 'PENAGIHAN' THEN
-                sRet := sRet || 'PENAGIHAN,';
-            ELSIF my.id_group = 'SAP' THEN
-                sRet := sRet || 'SAP,';
-            ELSIF my.id_group = 'SATKER' THEN
-                sRet := sRet || 'SATKER,';
-            ELSIF my.id_group = 'SECMAN' THEN
-                sRet := sRet || 'SECMAN,';
-            ELSIF my.id_group = 'TEKNIKF1' THEN
-                sRet := sRet || 'TEKNIKF1,';
-            ELSIF my.id_group = 'WASKIT' THEN
-                sRet := sRet || 'WASKIT,';
-            ELSIF my.id_group = 'ADMIN_FSO' THEN
-                sRet := sRet || 'ADMIN_FSO,';
-            ELSIF my.id_group = 'ADMIN_SAR' THEN
-                sRet := sRet || 'ADMIN_SAR,';
-            ELSIF my.id_group = 'ASMAN' THEN
-                sRet := sRet || 'ASMAN_PA,';
-            ELSIF my.id_group = 'ADMIN_CMT' THEN
-                sRet := sRet || 'ADMIN_CMT,';
-            ELSIF my.id_group = 'ADMIN_IMEI_CMT' THEN
-                sRet := sRet || 'ADMIN_IMEI_CMT,';
-            ELSIF my.id_group = 'ADMIN_MON_CMT' THEN
-                sRet := sRet || 'ADMIN_MON_CMT,';
-            ELSIF my.id_group = 'EDISON' THEN
-                sRet := sRet || 'EDISON,';
-            ELSIF my.id_group = 'MANAGER_ROLE' THEN
-                sRet := sRet || 'MANAGER_ROLE,';
-            END IF;
-        END LOOP;
-        RETURN sRet;
-    END f$getuserroleaktif;
-
     PROCEDURE proc_get_info_user (
         in_id_user    IN  VARCHAR2,
         in_unitup     IN  VARCHAR2,
@@ -130,39 +48,28 @@ CREATE OR REPLACE PACKAGE BODY DTKS.pkg_manajemen_user IS
         crut SYS_REFCURSOR;
     BEGIN
         OPEN crut FOR
-            SELECT unitup kodeunit,
+            SELECT a.unitup kodeunit,
                    a.id_user,
-                   nama_user,
-                   jabatan,
-                   alamat_user,
-                   leveluser,
-                   RTRIM(f$getuserroleaktif(a.id_user), ',') role,
-                   email1,
-                   no_telp1,
-                   disable_user,
-                   salahpassword,
-                   passwd,
-                   tglakhirijin
-            FROM DTKS.usertab a, DTKS.usrgroup b
-            WHERE a.id_user = b.id_user(+)     
-              AND (
+                   a.nama_user,
+                   a.jabatan,
+                   a.alamat_user,
+                   a.leveluser,
+                   (SELECT LISTAGG(id_group, ',') WITHIN GROUP (ORDER BY id_group) 
+                    FROM DTKS.usrgroup 
+                    WHERE id_user = a.id_user) role,
+                   a.email1,
+                   a.no_telp1,
+                   a.disable_user,
+                   a.salahpassword,
+                   a.passwd,
+                   a.tglakhirijin
+            FROM DTKS.usertab a
+            WHERE (
                   (in_id_user IS NOT NULL AND a.id_user = in_id_user)
                   OR
                   (in_id_user IS NULL AND in_unitup IS NOT NULL AND a.unitup = in_unitup)
               )
-            GROUP BY unitup,
-                     a.id_user,
-                     nama_user,
-                     leveluser,
-                     jabatan,
-                     alamat_user,
-                     email1,
-                     no_telp1,
-                     disable_user,
-                     salahpassword,
-                     passwd,
-                     tglakhirijin
-            ORDER BY unitup;
+            ORDER BY a.unitup;
 
         RETURN crut;
     END f$get_info_user;
@@ -204,6 +111,7 @@ CREATE OR REPLACE PACKAGE BODY DTKS.pkg_manajemen_user IS
         v_hasil       INT;
         p_unitup      VARCHAR2(6 BYTE);
         p_leveluser   VARCHAR2(5 BYTE);
+        v_roles       VARCHAR2(1000);
     BEGIN
         SELECT COUNT(*)
         INTO v_hasil
@@ -245,6 +153,12 @@ CREATE OR REPLACE PACKAGE BODY DTKS.pkg_manajemen_user IS
             userupdate = in_user_login
         WHERE id_user = in_id_user;
 
+        -- Get aggregated roles inline
+        SELECT LISTAGG(id_group, ',') WITHIN GROUP (ORDER BY id_group)
+        INTO v_roles
+        FROM DTKS.usrgroup
+        WHERE id_user = in_id_user;
+
         INSERT INTO DTKS.log_update_user (
             tanggal, upi, id_user, nama_user, unitup_lama, unitup_baru, 
             leveluser_lama, leveluser_baru, role_lama, role_baru, nama_file, petugas
@@ -258,8 +172,8 @@ CREATE OR REPLACE PACKAGE BODY DTKS.pkg_manajemen_user IS
             in_kode_unit unitup_baru,
             p_leveluser leveluser_lama,
             in_leveluser leveluser_baru,
-            f$getuserroleaktif(id_user) role_lama,
-            f$getuserroleaktif(id_user) role_baru,
+            v_roles role_lama,
+            v_roles role_baru,
             in_namafile nama_file,
             in_user_login petugas
         FROM DTKS.usertab
