@@ -272,30 +272,77 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
                     />
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', gridColumn: '1 / -1' }}>
                     <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Level User Baru</label>
-                    <select
-                      value={levelUserBaru}
-                      onChange={(e) => setLevelUserBaru(e.target.value)}
-                      style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem', height: '42px' }}
-                    >
-                      <option value="">-- Pilih Level User --</option>
-                      <option value="UPI">UPI</option>
-                      <option value="AP">AP</option>
-                      <option value="UP">UP</option>
-                      <option value="PUSAT">PUSAT</option>
-                    </select>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                      {['UPI', 'AP', 'UP', 'PUSAT'].map((level) => {
+                        const isSelected = levelUserBaru === level;
+                        return (
+                          <button
+                            key={level}
+                            type="button"
+                            onClick={() => setLevelUserBaru(level)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              padding: '8px 20px',
+                              borderRadius: '24px',
+                              border: isSelected ? '1px solid #0f766e' : '1px solid var(--border-color)',
+                              backgroundColor: isSelected ? 'rgba(15, 118, 110, 0.05)' : 'var(--bg-input)',
+                              color: isSelected ? '#0f766e' : 'var(--text-main)',
+                              fontWeight: 600,
+                              fontSize: '0.85rem',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              outline: 'none'
+                            }}
+                          >
+                            <i className={isSelected ? "pi pi-check-circle" : "pi pi-circle"} style={{ fontSize: '0.9rem', color: isSelected ? '#0f766e' : '#94a3b8' }}></i>
+                            {level}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Nama File Dokumen Pendukung (Log)</label>
-                    <input
-                      type="text"
-                      value={namaFile}
-                      onChange={(e) => setNamaFile(e.target.value)}
-                      placeholder="Contoh: SK_Mutasi_User_2026.pdf"
-                      style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
-                    />
+                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Dokumen Pendukung (Log)</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <label 
+                        htmlFor="file-upload-supporting" 
+                        style={{ 
+                          padding: '10px 16px', 
+                          borderRadius: '8px', 
+                          border: '1px dashed #0f766e', 
+                          backgroundColor: 'rgba(15, 118, 110, 0.03)', 
+                          color: '#0f766e', 
+                          fontSize: '0.85rem', 
+                          fontWeight: 600, 
+                          cursor: 'pointer', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '8px',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <i className="pi pi-upload"></i> Pilih File
+                      </label>
+                      <input 
+                        type="file" 
+                        id="file-upload-supporting" 
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            setNamaFile(file.name);
+                          }
+                        }}
+                        style={{ display: 'none' }} 
+                      />
+                      <span style={{ fontSize: '0.85rem', color: namaFile ? 'var(--text-main)' : 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '250px' }}>
+                        {namaFile || 'Belum ada file terpilih'}
+                      </span>
+                    </div>
                   </div>
 
                 </div>
