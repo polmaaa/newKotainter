@@ -405,6 +405,21 @@ class Mpnj extends CI_Model {
             } else {
                 $db->trans_commit();
                 @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Save Postgres Success - Agenda: '$noagenda'\n", FILE_APPEND);
+                
+                // Write OPHARAPP.DTKS_LOG_PROSES on Oracle via reusable helper
+                try {
+                    $this->load->model('mlogs');
+                    $this->mlogs->insert_dtks_log(
+                        $params['tiket'], 
+                        'Update PNJ', 
+                        'noagenda: ' . $noagenda, 
+                        '0', 
+                        $params['plogin']
+                    );
+                } catch (Exception $log_ex) {
+                    // Ignore logger failure
+                }
+
                 return array('status' => 'success', 'message' => 'Sukses');
             }
         } catch (Exception $e) {
@@ -474,6 +489,21 @@ class Mpnj extends CI_Model {
                 return array('status' => 'error', 'message' => 'Gagal Update Data Koreksi Tarif!');
             } else {
                 $db->trans_commit();
+                
+                // Write OPHARAPP.DTKS_LOG_PROSES on Oracle via reusable helper
+                try {
+                    $this->load->model('mlogs');
+                    $this->mlogs->insert_dtks_log(
+                        $params['tiket'], 
+                        'UPDATE REMAJA KOREKSI TARIF', 
+                        'noagenda: ' . $noagenda, 
+                        '0', 
+                        $params['plogin']
+                    );
+                } catch (Exception $log_ex) {
+                    // Ignore logger failure
+                }
+
                 return array('status' => 'success', 'message' => 'Sukses');
             }
         } catch (Exception $e) {

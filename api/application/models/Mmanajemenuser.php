@@ -90,7 +90,7 @@ class Mmanajemenuser extends CI_Model {
 
         try {
             $conn = $this->db_oracle->conn_id;
-            $sql = "BEGIN DTKS.pkg_manajemen_user.proc_get_info_user(:in_id_user, :in_unitup, :out_data); END;";
+            $sql = "BEGIN OPHARAPP.DTKS_MANAJEMEN_USER.proc_get_info_user(:in_id_user, :in_unitup, :out_data); END;";
             
             $stmt = oci_parse($conn, $sql);
             $cursor = oci_new_cursor($conn);
@@ -151,7 +151,7 @@ class Mmanajemenuser extends CI_Model {
         try {
             $conn = $this->db_oracle->conn_id;
             $sql = "BEGIN 
-                        DTKS.pkg_manajemen_user.proc_set_kode_unit(
+                        OPHARAPP.DTKS_MANAJEMEN_USER.proc_set_kode_unit(
                             :in_id_user, :in_kode_unit, :in_leveluser, 
                             :in_user_login, :in_namafile, :out_message
                         ); 
@@ -326,6 +326,21 @@ class Mmanajemenuser extends CI_Model {
             } else {
                 $db->trans_commit();
                 @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Unit Postgres Success - User: '$id_user'\n", FILE_APPEND);
+                
+                // Write OPHARAPP.DTKS_LOG_PROSES on Oracle via reusable helper
+                try {
+                    $this->load->model('mlogs');
+                    $this->mlogs->insert_dtks_log(
+                        $params['nama_file'], 
+                        'Ubah Kode Unit', 
+                        'id_user: ' . $id_user, 
+                        $params['kode_unit'], 
+                        $params['user_login']
+                    );
+                } catch (Exception $log_ex) {
+                    // Ignore logger failure
+                }
+
                 return array('status' => 'success', 'message' => 'Kode unit user berhasil diubah.');
             }
 
