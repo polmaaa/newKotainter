@@ -252,16 +252,20 @@ class Mlogs extends CI_Model {
 
         if ($this->db_oracle) {
             try {
-                // Strip non-numeric from no_tiket if it's string, default to timestamp if empty
+                // Strip non-numeric from no_tiket if it's string, default to timestamp if empty (max 8 digits for NUMBER(8) column)
                 $clean_tiket = preg_replace('/[^0-9]/', '', $no_tiket);
                 if (empty($clean_tiket)) {
-                    $clean_tiket = date('ymdHis');
+                    $clean_tiket = substr(date('ymdHis'), -8);
+                } else {
+                    $clean_tiket = substr($clean_tiket, 0, 8);
                 }
 
-                // Strip non-numeric from unitupi
+                // Strip non-numeric from unitupi (max 2 digits for NUMBER(2) column)
                 $clean_unitupi = preg_replace('/[^0-9]/', '', $unitupi);
                 if (empty($clean_unitupi)) {
                     $clean_unitupi = '0';
+                } else {
+                    $clean_unitupi = substr($clean_unitupi, 0, 2);
                 }
 
                 $sql = "INSERT INTO OPHARAPP.DTKS_LOG_PROSES 
