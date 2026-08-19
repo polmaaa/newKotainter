@@ -80,6 +80,24 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
     setCurrentPage(page);
   };
 
+  const getPageNumbers = () => {
+    const pageLimit = 5;
+    let pages = [];
+    if (totalPages <= pageLimit) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      let start = Math.max(1, currentPage - 2);
+      let end = Math.min(totalPages, currentPage + 2);
+      if (start === 1) {
+        end = pageLimit;
+      } else if (end === totalPages) {
+        start = totalPages - pageLimit + 1;
+      }
+      for (let i = start; i <= end; i++) pages.push(i);
+    }
+    return pages;
+  };
+
   const handleResetFilters = () => {
     setSearchVal('');
     setDbVal('');
@@ -313,7 +331,7 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
                 <i className="pi pi-angle-left"></i>
               </div>
               
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+              {getPageNumbers().map(p => (
                 <div 
                   key={p} 
                   className={`pagination-btn ${currentPage === p ? 'active' : ''}`} 

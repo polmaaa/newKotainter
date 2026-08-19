@@ -12,7 +12,7 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage] = useState(5);
+  const [rowsPerPage] = useState(10);
 
   // Edit Form Fields
   const [kodeUnitBaru, setKodeUnitBaru] = useState('');
@@ -33,6 +33,24 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
   const setPage = (page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
+  };
+
+  const getPageNumbers = () => {
+    const pageLimit = 5;
+    let pages = [];
+    if (totalPages <= pageLimit) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      let start = Math.max(1, currentPage - 2);
+      let end = Math.min(totalPages, currentPage + 2);
+      if (start === 1) {
+        end = pageLimit;
+      } else if (end === totalPages) {
+        start = totalPages - pageLimit + 1;
+      }
+      for (let i = start; i <= end; i++) pages.push(i);
+    }
+    return pages;
   };
 
   const handleSearch = async (e) => {
@@ -287,7 +305,7 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
                     <i className="pi pi-angle-left"></i>
                   </div>
                   
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                  {getPageNumbers().map(p => (
                     <div 
                       key={p} 
                       className={`pagination-btn ${currentPage === p ? 'active' : ''}`} 
