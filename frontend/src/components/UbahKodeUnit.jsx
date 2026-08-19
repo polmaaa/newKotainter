@@ -10,6 +10,10 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
   const [userDataList, setUserDataList] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage] = useState(5);
+
   // Edit Form Fields
   const [kodeUnitBaru, setKodeUnitBaru] = useState('');
   const [levelUserBaru, setLevelUserBaru] = useState('');
@@ -18,6 +22,18 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
 
   const dbPrefix = isPostgres ? 'api/UbahKodeUnit_pg' : 'api/UbahKodeUnit';
   const dbLabel = isPostgres ? 'PostgreSQL' : 'Oracle';
+
+  // Pagination calculations
+  const totalRows = userDataList.length;
+  const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = Math.min(startIndex + rowsPerPage, totalRows);
+  const paginatedData = userDataList.slice(startIndex, endIndex);
+
+  const setPage = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -29,6 +45,7 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
     setLoading(true);
     setUserDataList([]);
     setSelectedUser(null);
+    setCurrentPage(1);
     try {
       const url = `${apiBaseUrl}/${dbPrefix}/get_data?id_user=${encodeURIComponent(searchIdUser.trim())}&unitup=${encodeURIComponent(searchUnitup.trim())}`;
       const response = await fetch(url, {
@@ -210,7 +227,7 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
                   </tr>
                 </thead>
                 <tbody>
-                  {userDataList.map((usr) => {
+                  {paginatedData.map((usr) => {
                     const isSelected = selectedUser && selectedUser.id_user === usr.id_user;
                     const statusText = usr.disable_user === 0 || usr.disable_user === '0' ? 'Aktif' : 'Nonaktif';
                     const statusColor = usr.disable_user === 0 || usr.disable_user === '0' ? '#10b981' : '#ef4444';
@@ -249,6 +266,52 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
                 </tbody>
               </table>
             </div>
+
+            {/* Table Pagination Controls */}
+            {totalRows > rowsPerPage && (
+              <div className="pagination-container" style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                <div className="pagination-info" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  Menampilkan data ke {startIndex + 1} - {endIndex} dari total {totalRows}
+                </div>
+                <div className="pagination-controls" style={{ display: 'flex', gap: '4px' }}>
+                  <div 
+                    className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`} 
+                    onClick={() => setPage(1)}
+                  >
+                    <i className="pi pi-angle-double-left"></i>
+                  </div>
+                  <div 
+                    className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`} 
+                    onClick={() => setPage(currentPage - 1)}
+                  >
+                    <i className="pi pi-angle-left"></i>
+                  </div>
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                    <div 
+                      key={p} 
+                      className={`pagination-btn ${currentPage === p ? 'active' : ''}`} 
+                      onClick={() => setPage(p)}
+                    >
+                      {p}
+                    </div>
+                  ))}
+                  
+                  <div 
+                    className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`} 
+                    onClick={() => setPage(currentPage + 1)}
+                  >
+                    <i className="pi pi-angle-right"></i>
+                  </div>
+                  <div 
+                    className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`} 
+                    onClick={() => setPage(totalPages)}
+                  >
+                    <i className="pi pi-angle-double-right"></i>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Form Pembaruan Unit */}

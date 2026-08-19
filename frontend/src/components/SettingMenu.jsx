@@ -25,6 +25,10 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
   const [isOracleManuallyEdited, setIsOracleManuallyEdited] = useState(false);
   const [isPostgreManuallyEdited, setIsPostgreManuallyEdited] = useState(false);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage] = useState(10);
+
   useEffect(() => {
     loadMenus();
   }, []);
@@ -48,6 +52,18 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
     } finally {
       setLoading(false);
     }
+  };
+
+  // Pagination calculations
+  const totalRows = menus.length;
+  const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = Math.min(startIndex + rowsPerPage, totalRows);
+  const paginatedData = menus.slice(startIndex, endIndex);
+
+  const setPage = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
   };
 
   const handleOpenAdd = () => {
@@ -216,6 +232,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
             <span>Memuat konfigurasi menu...</span>
           </div>
         ) : (
+          <>
           <div style={{ overflowX: 'auto' }}>
             <table className="log-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
               <thead>
@@ -230,7 +247,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
                   <th style={{ padding: '12px 8px', fontWeight: 600, textAlign: 'center', width: '100px' }}>Aksi</th>
                 </tr>
               </thead>
-              <tbody>
+               <tbody>
                 {menus.length === 0 ? (
                   <tr>
                     <td colSpan="8" style={{ textalign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
@@ -238,7 +255,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
                     </td>
                   </tr>
                 ) : (
-                  menus.map(menu => (
+                  paginatedData.map(menu => (
                     <tr key={menu.id_menu} style={{ borderBottom: '1px solid var(--border-light)' }}>
                       <td style={{ padding: '12px 8px', fontWeight: 600, fontFamily: 'monospace', color: 'var(--text-main)' }}>{menu.id_menu}</td>
                       <td style={{ padding: '12px 8px', fontWeight: 500, color: 'var(--text-main)' }}>
@@ -300,6 +317,53 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
               </tbody>
             </table>
           </div>
+
+          {/* Table Pagination Controls */}
+          {totalRows > rowsPerPage && (
+            <div className="pagination-container" style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+              <div className="pagination-info" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                Menampilkan menu ke {startIndex + 1} - {endIndex} dari total {totalRows}
+              </div>
+              <div className="pagination-controls" style={{ display: 'flex', gap: '4px' }}>
+                <div 
+                  className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`} 
+                  onClick={() => setPage(1)}
+                >
+                  <i className="pi pi-angle-double-left"></i>
+                </div>
+                <div 
+                  className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`} 
+                  onClick={() => setPage(currentPage - 1)}
+                >
+                  <i className="pi pi-angle-left"></i>
+                </div>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                  <div 
+                    key={p} 
+                    className={`pagination-btn ${currentPage === p ? 'active' : ''}`} 
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </div>
+                ))}
+                
+                <div 
+                  className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`} 
+                  onClick={() => setPage(currentPage + 1)}
+                >
+                  <i className="pi pi-angle-right"></i>
+                </div>
+                <div 
+                  className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`} 
+                  onClick={() => setPage(totalPages)}
+                >
+                  <i className="pi pi-angle-double-right"></i>
+                </div>
+              </div>
+            </div>
+          )}
+          </>
         )}
       </div>
 

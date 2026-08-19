@@ -52,6 +52,10 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   const [searchVal, setSearchVal] = useState('');
   const [showUserModal, setShowUserModal] = useState(false);
   const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage] = useState(10);
   
   // Modal user form states
   const [modalIdUser, setModalIdUser] = useState('');
@@ -544,6 +548,18 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
       levelStr.toLowerCase().includes(searchVal.toLowerCase())
     );
   });
+
+  // User list pagination calculations
+  const totalRows = filteredUsers.length;
+  const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = Math.min(startIndex + rowsPerPage, totalRows);
+  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+
+  const setPage = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   if (loading) {
     return (
@@ -1232,7 +1248,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                   className="input-text"
                   placeholder="Cari user, unit, level..."
                   value={searchVal}
-                  onChange={(e) => setSearchVal(e.target.value)}
+                  onChange={(e) => { setSearchVal(e.target.value); setCurrentPage(1); }}
                 />
               </div>
             </div>
@@ -1254,14 +1270,14 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.length === 0 ? (
+                  {paginatedUsers.length === 0 ? (
                     <tr>
                       <td colSpan="5" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }}>
                         Tidak ada data pengguna yang terdaftar di Oracle.
                       </td>
                     </tr>
                   ) : (
-                    filteredUsers.map(u => (
+                    paginatedUsers.map(u => (
                       <tr key={u.id_user}>
                         <td><strong>{u.id_user}</strong></td>
                         <td>{u.nama_user}</td>
@@ -1307,6 +1323,52 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                 </tbody>
               </table>
             </div>
+
+            {/* Table Pagination Controls */}
+            {totalRows > rowsPerPage && (
+              <div className="pagination-container" style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', padding: '0 16px 16px 16px' }}>
+                <div className="pagination-info" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  Menampilkan user ke {startIndex + 1} - {endIndex} dari total {totalRows}
+                </div>
+                <div className="pagination-controls" style={{ display: 'flex', gap: '4px' }}>
+                  <div 
+                    className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`} 
+                    onClick={() => setPage(1)}
+                  >
+                    <i className="pi pi-angle-double-left"></i>
+                  </div>
+                  <div 
+                    className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`} 
+                    onClick={() => setPage(currentPage - 1)}
+                  >
+                    <i className="pi pi-angle-left"></i>
+                  </div>
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                    <div 
+                      key={p} 
+                      className={`pagination-btn ${currentPage === p ? 'active' : ''}`} 
+                      onClick={() => setPage(p)}
+                    >
+                      {p}
+                    </div>
+                  ))}
+                  
+                  <div 
+                    className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`} 
+                    onClick={() => setPage(currentPage + 1)}
+                  >
+                    <i className="pi pi-angle-right"></i>
+                  </div>
+                  <div 
+                    className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`} 
+                    onClick={() => setPage(totalPages)}
+                  >
+                    <i className="pi pi-angle-double-right"></i>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* User Form Modal */}
