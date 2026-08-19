@@ -3,7 +3,7 @@ import SettingMenu from './SettingMenu';
 
 export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateSystemSettings, showToast, checkingDb, onRefreshMenus }) {
   const isPrivileged = user && (user.level_user === 'DEVELOPER' || user.level_user === 'SUPERUSER');
-  const [activeSubTab, setActiveSubTab] = useState(isPrivileged ? 'general' : 'users');
+  const [activeSubTab, setActiveSubTab] = useState(isPrivileged ? 'general' : 'profile');
 
   // Site config states
   const [siteName, setSiteName] = useState('');
@@ -46,6 +46,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   const [showFsoPostgresPass, setShowFsoPostgresPass] = useState(false);
   const [showModalPass, setShowModalPass] = useState(false);
   const [showSelfPass, setShowSelfPass] = useState(false);
+  const [showSelfOldPass, setShowSelfOldPass] = useState(false);
 
   // User Management states (Superadmin / Developer)
   const [usersList, setUsersList] = useState([]);
@@ -67,7 +68,9 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   // Self Profile states (Senior, Middle, Junior)
   const [selfIdUser, setSelfIdUser] = useState(user ? user.id_user : '');
   const [selfNamaUser, setSelfNamaUser] = useState(user ? user.nama_user : '');
-  const [selfPasswd, setSelfPasswd] = useState('');
+  const [selfOldPassword, setSelfOldPassword] = useState('');
+  const [selfNewPassword, setSelfNewPassword] = useState('');
+  const [selfConfirmPassword, setSelfConfirmPassword] = useState('');
 
   // General loading & saving indicators
   const [loading, setLoading] = useState(true);
@@ -81,6 +84,21 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
       setLoading(true);
       setError('');
       try {
+        // Load self profile from DB for all users
+        try {
+          const selfRes = await fetch(`${apiBaseUrl}/api/users/get_self_profile`, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          });
+          const selfData = await selfRes.json();
+          if (selfRes.ok && selfData.status === 'success') {
+            setSelfIdUser(selfData.data.id_user || '');
+            setSelfNamaUser(selfData.data.nama_user || '');
+          }
+        } catch (selfErr) {
+          console.error('Error fetching self profile:', selfErr);
+        }
+
         // 1. Load DB & Site Config (Only if privileged)
         if (isPrivileged) {
           const response = await fetch(`${apiBaseUrl}/api/db_config/get_config?_=${Date.now()}`, {
@@ -141,10 +159,6 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
 
           // Load users list
           await fetchUsers();
-        } else {
-          // Senior/Middle/Junior: initialize self form from session
-          setSelfIdUser(user ? user.id_user : '');
-          setSelfNamaUser(user ? user.nama_user : '');
         }
       } catch (err) {
         console.error('Error loading config:', err);
@@ -493,6 +507,23 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    // Client-side validation for password change
+    if (selfOldPassword || selfNewPassword || selfConfirmPassword) {
+      if (!selfOldPassword || !selfNewPassword || !selfConfirmPassword) {
+        const errMsg = 'Untuk mengubah password, semua field password (Lama, Baru, Konfirmasi) wajib diisi!';
+        setError(errMsg);
+        if (showToast) showToast(errMsg, 'error');
+        return;
+      }
+      if (selfNewPassword !== selfConfirmPassword) {
+        const errMsg = 'Konfirmasi password baru tidak cocok!';
+        setError(errMsg);
+        if (showToast) showToast(errMsg, 'error');
+        return;
+      }
+    }
+
     setSaving(true);
 
     try {
@@ -505,19 +536,22 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
         body: JSON.stringify({
           id_user: selfIdUser,
           nama_user: selfNamaUser,
-          passwd: selfPasswd
+          old_password: selfOldPassword,
+          new_password: selfNewPassword,
+          confirm_password: selfConfirmPassword
         })
       });
 
       const result = await response.json();
       if (response.ok && result.status === 'success') {
         setSuccess('Profil Anda berhasil diperbarui!');
-        setSelfPasswd('');
+        setSelfOldPassword('');
+        setSelfNewPassword('');
+        setSelfConfirmPassword('');
         if (showToast) {
           showToast('Profil Anda berhasil diperbarui!', 'success');
         }
         if (user) {
-          user.id_user = selfIdUser;
           user.nama_user = selfNamaUser;
         }
       } else {
@@ -609,71 +643,17 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
         </div>
       )}
 
-      {/* Sub Tabs Navigation (Rendered only for Superadmin / Developer) */}
-      {isPrivileged ? (
-        <div className="sub-tabs-container" style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-light)', marginBottom: '24px', paddingBottom: '8px' }}>
-          <button 
-            onClick={() => { setActiveSubTab('general'); setError(''); setSuccess(''); }}
-            className={`sub-tab-btn ${activeSubTab === 'general' ? 'active' : ''}`}
-            style={{
-              padding: '8px 16px',
-              background: activeSubTab === 'general' ? '#0f766e' : 'transparent',
-              color: activeSubTab === 'general' ? '#ffffff' : 'var(--text-muted)',
-              border: 'none',
-              fontWeight: '600',
-              cursor: 'pointer',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <i className="pi pi-desktop"></i> Profil Sistem
-          </button>
-          <button 
-            onClick={() => { setActiveSubTab('database'); setError(''); setSuccess(''); }}
-            className={`sub-tab-btn ${activeSubTab === 'database' ? 'active' : ''}`}
-            style={{
-              padding: '8px 16px',
-              background: activeSubTab === 'database' ? '#0f766e' : 'transparent',
-              color: activeSubTab === 'database' ? '#ffffff' : 'var(--text-muted)',
-              border: 'none',
-              fontWeight: '600',
-              cursor: 'pointer',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <i className="pi pi-database"></i> Konfigurasi Database
-          </button>
-          <button 
-            onClick={() => { setActiveSubTab('users'); setError(''); setSuccess(''); }}
-            className={`sub-tab-btn ${activeSubTab === 'users' ? 'active' : ''}`}
-            style={{
-              padding: '8px 16px',
-              background: activeSubTab === 'users' ? '#0f766e' : 'transparent',
-              color: activeSubTab === 'users' ? '#ffffff' : 'var(--text-muted)',
-              border: 'none',
-              fontWeight: '600',
-              cursor: 'pointer',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <i className="pi pi-users"></i> Pengaturan User
-          </button>
-          {user && user.level_user === 'DEVELOPER' && (
+      {/* Sub Tabs Navigation */}
+      <div className="sub-tabs-container" style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-light)', marginBottom: '24px', paddingBottom: '8px' }}>
+        {isPrivileged && (
+          <>
             <button 
-              onClick={() => { setActiveSubTab('menu'); setError(''); setSuccess(''); }}
-              className={`sub-tab-btn ${activeSubTab === 'menu' ? 'active' : ''}`}
+              onClick={() => { setActiveSubTab('general'); setError(''); setSuccess(''); }}
+              className={`sub-tab-btn ${activeSubTab === 'general' ? 'active' : ''}`}
               style={{
                 padding: '8px 16px',
-                background: activeSubTab === 'menu' ? '#0f766e' : 'transparent',
-                color: activeSubTab === 'menu' ? '#ffffff' : 'var(--text-muted)',
+                background: activeSubTab === 'general' ? '#0f766e' : 'transparent',
+                color: activeSubTab === 'general' ? '#ffffff' : 'var(--text-muted)',
                 border: 'none',
                 fontWeight: '600',
                 cursor: 'pointer',
@@ -683,11 +663,87 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                 gap: '6px'
               }}
             >
-              <i className="pi pi-sitemap"></i> Setting Menu
+              <i className="pi pi-desktop"></i> Profil Sistem
             </button>
-          )}
-        </div>
-      ) : null}
+            <button 
+              onClick={() => { setActiveSubTab('database'); setError(''); setSuccess(''); }}
+              className={`sub-tab-btn ${activeSubTab === 'database' ? 'active' : ''}`}
+              style={{
+                padding: '8px 16px',
+                background: activeSubTab === 'database' ? '#0f766e' : 'transparent',
+                color: activeSubTab === 'database' ? '#ffffff' : 'var(--text-muted)',
+                border: 'none',
+                fontWeight: '600',
+                cursor: 'pointer',
+                borderRadius: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <i className="pi pi-database"></i> Konfigurasi Database
+            </button>
+            <button 
+              onClick={() => { setActiveSubTab('users'); setError(''); setSuccess(''); }}
+              className={`sub-tab-btn ${activeSubTab === 'users' ? 'active' : ''}`}
+              style={{
+                padding: '8px 16px',
+                background: activeSubTab === 'users' ? '#0f766e' : 'transparent',
+                color: activeSubTab === 'users' ? '#ffffff' : 'var(--text-muted)',
+                border: 'none',
+                fontWeight: '600',
+                cursor: 'pointer',
+                borderRadius: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <i className="pi pi-users"></i> Pengaturan User
+            </button>
+          </>
+        )}
+
+        <button 
+          onClick={() => { setActiveSubTab('profile'); setError(''); setSuccess(''); }}
+          className={`sub-tab-btn ${activeSubTab === 'profile' ? 'active' : ''}`}
+          style={{
+            padding: '8px 16px',
+            background: activeSubTab === 'profile' ? '#0f766e' : 'transparent',
+            color: activeSubTab === 'profile' ? '#ffffff' : 'var(--text-muted)',
+            border: 'none',
+            fontWeight: '600',
+            cursor: 'pointer',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          <i className="pi pi-user-edit"></i> Profil Saya
+        </button>
+
+        {isPrivileged && user && user.level_user === 'DEVELOPER' && (
+          <button 
+            onClick={() => { setActiveSubTab('menu'); setError(''); setSuccess(''); }}
+            className={`sub-tab-btn ${activeSubTab === 'menu' ? 'active' : ''}`}
+            style={{
+              padding: '8px 16px',
+              background: activeSubTab === 'menu' ? '#0f766e' : 'transparent',
+              color: activeSubTab === 'menu' ? '#ffffff' : 'var(--text-muted)',
+              border: 'none',
+              fontWeight: '600',
+              cursor: 'pointer',
+              borderRadius: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <i className="pi pi-sitemap"></i> Setting Menu
+          </button>
+        )}
+      </div>
 
       {/* CONTENT SWITCH AREA */}
       
@@ -1584,11 +1640,11 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
         />
       )}
 
-      {/* 5. SELF USER SETTINGS (Senior, Middle, Junior) */}
-      {!isPrivileged && (
+      {/* 5. SELF PROFILE TAB */}
+      {activeSubTab === 'profile' && (
         <div className="content-card" style={{ maxWidth: '500px' }}>
           <h3 style={{ marginBottom: '16px', color: '#0f766e', fontSize: '1.1rem' }}>
-            <i className="pi pi-user-edit" style={{ marginRight: '8px' }}></i> Pengaturan Profil Mandiri
+            <i className="pi pi-user-edit" style={{ marginRight: '8px' }}></i> Profil Saya
           </h3>
           <form onSubmit={handleSaveSelfProfile}>
             <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
@@ -1597,9 +1653,9 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                 type="text"
                 id="self-id"
                 className="form-input-text"
-                required
+                disabled
                 value={selfIdUser}
-                onChange={(e) => setSelfIdUser(e.target.value)}
+                style={{ backgroundColor: 'rgba(0, 0, 0, 0.03)', color: 'var(--text-muted)', cursor: 'not-allowed' }}
               />
             </div>
 
@@ -1615,22 +1671,78 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
               />
             </div>
 
-            <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '20px' }}>
-              <label htmlFor="self-passwd">Password Baru (Kosongkan jika tidak ingin diubah)</label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <input
-                  type={showSelfPass ? 'text' : 'password'}
-                  id="self-passwd"
-                  className="form-input-text"
-                  style={{ paddingRight: '40px', width: '100%' }}
-                  value={selfPasswd}
-                  onChange={(e) => setSelfPasswd(e.target.value)}
-                />
-                <i 
-                  className={`pi ${showSelfPass ? 'pi-eye-slash' : 'pi-eye'}`} 
-                  style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
-                  onClick={() => setShowSelfPass(!showSelfPass)}
-                />
+            <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
+              <label>Password Saat Ini</label>
+              <input
+                type="text"
+                className="form-input-text"
+                disabled
+                value="•••••••••••••••••••• (Tersimpan Terenkripsi)"
+                style={{ backgroundColor: 'rgba(0, 0, 0, 0.03)', color: 'var(--text-muted)', cursor: 'not-allowed' }}
+              />
+            </div>
+
+            <div style={{ borderTop: '1px dashed var(--border-color)', margin: '16px 0', paddingTop: '16px' }}>
+              <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: '#0f766e', fontWeight: 600 }}>Ubah Password</h4>
+              
+              <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
+                <label htmlFor="self-old-passwd">Password Lama</label>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type={showSelfOldPass ? 'text' : 'password'}
+                    id="self-old-passwd"
+                    className="form-input-text"
+                    style={{ paddingRight: '40px', width: '100%' }}
+                    placeholder="Masukkan password lama..."
+                    value={selfOldPassword}
+                    onChange={(e) => setSelfOldPassword(e.target.value)}
+                  />
+                  <i 
+                    className={`pi ${showSelfOldPass ? 'pi-eye-slash' : 'pi-eye'}`} 
+                    style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                    onClick={() => setShowSelfOldPass(!showSelfOldPass)}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
+                <label htmlFor="self-new-passwd">Password Baru</label>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type={showSelfPass ? 'text' : 'password'}
+                    id="self-new-passwd"
+                    className="form-input-text"
+                    style={{ paddingRight: '40px', width: '100%' }}
+                    placeholder="Masukkan password baru..."
+                    value={selfNewPassword}
+                    onChange={(e) => setSelfNewPassword(e.target.value)}
+                  />
+                  <i 
+                    className={`pi ${showSelfPass ? 'pi-eye-slash' : 'pi-eye'}`} 
+                    style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                    onClick={() => setShowSelfPass(!showSelfPass)}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '20px' }}>
+                <label htmlFor="self-confirm-passwd">Konfirmasi Password Baru</label>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type={showSelfPass ? 'text' : 'password'}
+                    id="self-confirm-passwd"
+                    className="form-input-text"
+                    style={{ paddingRight: '40px', width: '100%' }}
+                    placeholder="Konfirmasi password baru..."
+                    value={selfConfirmPassword}
+                    onChange={(e) => setSelfConfirmPassword(e.target.value)}
+                  />
+                  <i 
+                    className={`pi ${showSelfPass ? 'pi-eye-slash' : 'pi-eye'}`} 
+                    style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                    onClick={() => setShowSelfPass(!showSelfPass)}
+                  />
+                </div>
               </div>
             </div>
 

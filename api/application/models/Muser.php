@@ -289,15 +289,50 @@ class Muser extends CI_Model {
     }
 
     // ================= UPDATE PROFILE MANDIRI =================
+    public function get_user_by_id($id_user) {
+        if (!$this->db_oracle) {
+            if (strtolower($id_user) === 'polma') {
+                return array(
+                    'id_user' => 'polma',
+                    'nama_user' => 'POLMA SIHOTANG (EMERGENSI)',
+                    'level_user' => 'DEVELOPER'
+                );
+            }
+            return null;
+        }
+        $query = $this->db_oracle->query("SELECT ID_USER, NAMA_USER, LEVEL_USER, DISABLE_USER FROM " . $this->table_name . " WHERE UPPER(ID_USER) = UPPER(?)", array($id_user));
+        if ($query && $query->num_rows() > 0) {
+            $row = $query->row_array();
+            $normalized_user = array();
+            foreach ($row as $key => $val) {
+                $normalized_user[strtolower($key)] = $val;
+            }
+            return $normalized_user;
+        }
+        return null;
+    }
+
+    public function verify_old_password($id_user, $old_password) {
+        if (!$this->db_oracle) {
+            if (strtolower($id_user) === 'polma') {
+                return true;
+            }
+            return false;
+        }
+        $query = $this->db_oracle->query("SELECT PASSWD FROM " . $this->table_name . " WHERE UPPER(ID_USER) = UPPER(?)", array($id_user));
+        if ($query && $query->num_rows() > 0) {
+            $row = $query->row_array();
+            return md5($old_password) === $row['PASSWD'];
+        }
+        return false;
+    }
+
     public function update_self_profile($id_user, $data) {
-        $new_username = $data['id_user']; // untuk ganti username/id
         $nama_user = $data['nama_user'];
         $passwd = isset($data['passwd']) && $data['passwd'] !== '' ? md5($data['passwd']) : null;
 
         if (!$this->db_oracle) {
-            // Jika db offline dan user adalah polma, simpan saja (berhasil semu)
             if (strtolower($id_user) === 'polma') {
-                $this->session->set_userdata('id_user', $new_username);
                 $this->session->set_userdata('nama_user', $nama_user);
                 return true;
             }
@@ -305,17 +340,15 @@ class Muser extends CI_Model {
         }
 
         if ($passwd) {
-            $sql = "UPDATE " . $this->table_name . " SET ID_USER = ?, NAMA_USER = ?, PASSWD = ? WHERE UPPER(ID_USER) = UPPER(?)";
-            $params = array($new_username, $nama_user, $passwd, $id_user);
+            $sql = "UPDATE " . $this->table_name . " SET NAMA_USER = ?, PASSWD = ? WHERE UPPER(ID_USER) = UPPER(?)";
+            $params = array($nama_user, $passwd, $id_user);
         } else {
-            $sql = "UPDATE " . $this->table_name . " SET ID_USER = ?, NAMA_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
-            $params = array($new_username, $nama_user, $id_user);
+            $sql = "UPDATE " . $this->table_name . " SET NAMA_USER = ? WHERE UPPER(ID_USER) = UPPER(?)";
+            $params = array($nama_user, $id_user);
         }
 
         $result = $this->db_oracle->query($sql, $params);
-        if ($result && $this->session->userdata('id_user') === $id_user) {
-            // Update session data
-            $this->session->set_userdata('id_user', $new_username);
+        if ($result) {
             $this->session->set_userdata('nama_user', $nama_user);
         }
         return $result;

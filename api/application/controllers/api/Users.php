@@ -117,6 +117,19 @@ class Users extends MY_Controller {
         }
     }
 
+    public function get_self_profile() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            return $this->response(405, 'error', 'Method Not Allowed');
+        }
+        $id_user = $this->session->userdata('id_user');
+        $user_data = $this->muser->get_user_by_id($id_user);
+        if ($user_data) {
+            return $this->response(200, 'success', 'Berhasil memuat profil.', $user_data);
+        } else {
+            return $this->response(404, 'error', 'Profil tidak ditemukan.');
+        }
+    }
+
     // ================= UPDATE PROFILE (MANDIRI) =================
     public function update_profile() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -125,15 +138,40 @@ class Users extends MY_Controller {
 
         $json_data = json_decode($this->input->raw_input_stream, true);
 
-        $id_user   = isset($json_data['id_user']) ? trim($json_data['id_user']) : '';
-        $nama_user = isset($json_data['nama_user']) ? trim($json_data['nama_user']) : '';
-        $passwd    = isset($json_data['passwd']) ? trim($json_data['passwd']) : '';
+        $id_user          = isset($json_data['id_user']) ? trim($json_data['id_user']) : '';
+        $nama_user        = isset($json_data['nama_user']) ? trim($json_data['nama_user']) : '';
+        $old_password     = isset($json_data['old_password']) ? trim($json_data['old_password']) : '';
+        $new_password     = isset($json_data['new_password']) ? trim($json_data['new_password']) : '';
+        $confirm_password = isset($json_data['confirm_password']) ? trim($json_data['confirm_password']) : '';
 
         if (empty($id_user) || empty($nama_user)) {
             return $this->response(400, 'error', 'Username dan Nama Lengkap wajib diisi!');
         }
 
         $current_id = $this->session->userdata('id_user');
+        if (strtoupper($current_id) !== strtoupper($id_user)) {
+            return $this->response(403, 'error', 'Anda hanya dapat mengubah profil Anda sendiri!');
+        }
+
+        // If trying to change password
+        if (!empty($old_password) || !empty($new_password) || !empty($confirm_password)) {
+            if (empty($old_password) || empty($new_password) || empty($confirm_password)) {
+                return $this->response(400, 'error', 'Untuk mengubah password, semua field password (Lama, Baru, Konfirmasi) wajib diisi!');
+            }
+            if ($new_password !== $confirm_password) {
+                return $this->response(400, 'error', 'Konfirmasi password baru tidak cocok!');
+            }
+
+            // Verify old password
+            $verified = $this->muser->verify_old_password($current_id, $old_password);
+            if (!$verified) {
+                return $this->response(400, 'error', 'Password lama yang Anda masukkan salah!');
+            }
+
+            $passwd = $new_password;
+        } else {
+            $passwd = '';
+        }
 
         $data = array(
             'id_user'   => $id_user,
