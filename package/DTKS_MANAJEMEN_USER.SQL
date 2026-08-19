@@ -237,7 +237,7 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
             ) VALUES (
                 :1, :2, :3, SYSDATE, :4, :5, :6
             )
-        ' USING TO_NUMBER(NVL(SUBSTR(REGEXP_REPLACE(in_namafile, '[^0-9]'), 1, 9), TO_CHAR(SYSDATE, 'HH24MISS'))),
+        ' USING TO_NUMBER(NVL(SUBSTR(REGEXP_REPLACE(in_namafile, '[^0-9]'), 1, 8), TO_CHAR(SYSDATE, 'HH24MISS'))),
                 'Update Profil User',
                 'id_user: ' || in_id_user,
                 TO_NUMBER(NVL(REGEXP_REPLACE(SUBSTR(in_kode_unit, 1, 2), '[^0-9]'), '0')),
@@ -387,7 +387,7 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
             ) VALUES (
                 :1, :2, :3, SYSDATE, :4, :5, :6
             )
-        ' USING TO_NUMBER(NVL(SUBSTR(REGEXP_REPLACE(in_namafile, '[^0-9]'), 1, 9), TO_CHAR(SYSDATE, 'HH24MISS'))),
+        ' USING TO_NUMBER(NVL(SUBSTR(REGEXP_REPLACE(in_namafile, '[^0-9]'), 1, 8), TO_CHAR(SYSDATE, 'HH24MISS'))),
                 'Update Role User',
                 'id_user: ' || in_id_user,
                 TO_NUMBER(NVL(REGEXP_REPLACE(SUBSTR(p_unitup, 1, 2), '[^0-9]'), '0')),

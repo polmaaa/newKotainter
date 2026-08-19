@@ -48,8 +48,8 @@ class UpdateRoleUser_pg extends MY_Controller {
             'user_login' => $user_login
         );
 
-        if (empty($params['id_user']) || empty($params['nama_file'])) {
-            return $this->response(400, 'error', 'ID User dan Dokumen Pendukung wajib diisi!');
+        if (empty($params['id_user'])) {
+            return $this->response(400, 'error', 'ID User wajib diisi!');
         }
 
         $result = $this->mmanajemenuser->set_role_user_postgres($params);

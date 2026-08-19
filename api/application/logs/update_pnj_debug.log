@@ -120,3 +120,7 @@
 [2026-08-19 13:36:05] Set Role Oracle Request - User: 'PS.PUSAT.POLMA', Roles: 'INFOP2APST,LOKETF1,TEKNIKF1'
 [2026-08-19 13:36:05] Set Role Oracle Failed - User: 'PS.PUSAT.POLMA' | Out Msg: ORA-01438: value larger than specified precision allowed for this column
 [2026-08-19 14:43:55] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 14:44:25] Set Role Oracle Request - User: 'PS.PUSAT.POLMA', Roles: 'INFOP2APST,LOKETF1,TEKNIKF1'
+[2026-08-19 14:44:25] Set Role Oracle Failed - User: 'PS.PUSAT.POLMA' | Out Msg: ORA-01438: value larger than specified precision allowed for this column
+[2026-08-19 14:44:32] Set Role Oracle Request - User: 'PS.PUSAT.POLMA', Roles: 'INFOP2APST,LOKETF1,TEKNIKF1'
+[2026-08-19 14:44:32] Set Role Oracle Failed - User: 'PS.PUSAT.POLMA' | Out Msg: ORA-01438: value larger than specified precision allowed for this column

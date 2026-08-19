@@ -144,10 +144,7 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
       showToast('Silakan cari dan pilih user terlebih dahulu!', 'warning');
       return;
     }
-    if (!namaFile.trim()) {
-      showToast('Dokumen Pendukung (Log File) wajib diunggah!', 'warning');
-      return;
-    }
+    // Dokumen pendukung is optional now
 
     setSaving(true);
     try {
@@ -604,7 +601,7 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
 
                 {/* Log File / Supporting Document Upload */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '4px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Dokumen Pendukung (Log File)</label>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Dokumen Pendukung (Log File) (Opsional)</label>
                   <div 
                     onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                     onDragLeave={() => setIsDragging(false)}
