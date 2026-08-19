@@ -180,15 +180,16 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
         -- 4. Insert log into OPHARAPP.DTKS_LOG_PROSES
         EXECUTE IMMEDIATE '
             INSERT INTO OPHARAPP.DTKS_LOG_PROSES (
-                NO_TIKET, JENIS_TRANSAKSI, NO_PELANGGAN, TGLPROSES, UNITUPI, LOGIN
+                NO_TIKET, JENIS_TRANSAKSI, NO_PELANGGAN, TGLPROSES, UNITUPI, LOGIN, DB_SESSION
             ) VALUES (
-                :1, :2, :3, SYSDATE, :4, :5
+                :1, :2, :3, SYSDATE, :4, :5, :6
             )
         ' USING TO_NUMBER(NVL(REGEXP_REPLACE(in_namafile, '[^0-9]'), TO_CHAR(SYSDATE, 'YYMMDDHH24MISS'))),
                 'Ubah Kode Unit',
                 'id_user: ' || in_id_user,
                 TO_NUMBER(SUBSTR(in_kode_unit, 1, 2)),
-                in_user_login;
+                in_user_login,
+                'ORACLE';
 
         out_message := 'SUKSES';
         RETURN 1;

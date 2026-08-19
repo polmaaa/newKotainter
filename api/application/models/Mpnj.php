@@ -414,7 +414,8 @@ class Mpnj extends CI_Model {
                         'Update PNJ', 
                         'noagenda: ' . $noagenda, 
                         '0', 
-                        $params['plogin']
+                        $params['plogin'],
+                        'POSTGRE'
                     );
                 } catch (Exception $log_ex) {
                     // Ignore logger failure
@@ -498,7 +499,8 @@ class Mpnj extends CI_Model {
                         'UPDATE REMAJA KOREKSI TARIF', 
                         'noagenda: ' . $noagenda, 
                         '0', 
-                        $params['plogin']
+                        $params['plogin'],
+                        'POSTGRE'
                     );
                 } catch (Exception $log_ex) {
                     // Ignore logger failure

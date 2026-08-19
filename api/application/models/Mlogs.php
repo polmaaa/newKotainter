@@ -245,7 +245,7 @@ class Mlogs extends CI_Model {
      * Memasukkan log proses ke tabel OPHARAPP.DTKS_LOG_PROSES di database Oracle.
      * Reusable dan dipanggil oleh menu lainnya ketika update berhasil.
      */
-    public function insert_dtks_log($no_tiket, $jenis_transaksi, $no_pelanggan, $unitupi, $login) {
+    public function insert_dtks_log($no_tiket, $jenis_transaksi, $no_pelanggan, $unitupi, $login, $db_session = 'ORACLE') {
         if (!$this->db_oracle) {
             $this->init_databases();
         }
@@ -265,15 +265,16 @@ class Mlogs extends CI_Model {
                 }
 
                 $sql = "INSERT INTO OPHARAPP.DTKS_LOG_PROSES 
-                        (NO_TIKET, JENIS_TRANSAKSI, NO_PELANGGAN, TGLPROSES, UNITUPI, LOGIN) 
-                        VALUES (?, ?, ?, SYSDATE, ?, ?)";
+                        (NO_TIKET, JENIS_TRANSAKSI, NO_PELANGGAN, TGLPROSES, UNITUPI, LOGIN, DB_SESSION) 
+                        VALUES (?, ?, ?, SYSDATE, ?, ?, ?)";
                 
                 return $this->db_oracle->query($sql, array(
                     $clean_tiket,
                     $jenis_transaksi,
                     $no_pelanggan,
                     $clean_unitupi,
-                    $login
+                    $login,
+                    $db_session
                 ));
             } catch (Exception $e) {
                 // Abaikan error log

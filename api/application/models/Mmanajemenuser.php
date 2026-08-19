@@ -335,7 +335,8 @@ class Mmanajemenuser extends CI_Model {
                         'Ubah Kode Unit', 
                         'id_user: ' . $id_user, 
                         $params['kode_unit'], 
-                        $params['user_login']
+                        $params['user_login'],
+                        'POSTGRE'
                     );
                 } catch (Exception $log_ex) {
                     // Ignore logger failure
