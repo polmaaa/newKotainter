@@ -22,6 +22,7 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
   const [alamatUserBaru, setAlamatUserBaru] = useState('');
   const [emailBaru, setEmailBaru] = useState('');
   const [tglAkhirIjinBaru, setTglAkhirIjinBaru] = useState('');
+  const [disableUserBaru, setDisableUserBaru] = useState(0);
   const [namaFile, setNamaFile] = useState('');
   const [isDragging, setIsDragging] = useState(false);
 
@@ -109,6 +110,7 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
       formattedDate = usr.tglakhirijin.substring(0, 10);
     }
     setTglAkhirIjinBaru(formattedDate);
+    setDisableUserBaru(usr.disable_user !== undefined && usr.disable_user !== null ? parseInt(usr.disable_user) : 0);
     setNamaFile('');
   };
 
@@ -148,6 +150,7 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
           email1: emailBaru.trim(),
           jabatan: jabatanBaru.trim(),
           tglakhirijin: tglAkhirIjinBaru,
+          disable_user: disableUserBaru,
           nama_file: namaFile.trim()
         })
       });
@@ -164,7 +167,8 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
           alamat_user: alamatUserBaru.trim(),
           email1: emailBaru.trim(),
           jabatan: jabatanBaru.trim(),
-          tglakhirijin: tglAkhirIjinBaru
+          tglakhirijin: tglAkhirIjinBaru,
+          disable_user: disableUserBaru
         };
         setUserDataList(prev => prev.map(u => u.id_user === updatedUser.id_user ? updatedUser : u));
         setSelectedUser(null);
@@ -538,6 +542,45 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
                         )}
                       </div>
                     </div>
+
+                    {/* Status Akun Toggle */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid var(--border-light)', paddingTop: '12px' }}>
+                      <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Status Akun</label>
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        {[
+                          { value: 0, label: 'Aktif' },
+                          { value: 1, label: 'Nonaktif' }
+                        ].map((item) => {
+                          const isSelected = parseInt(disableUserBaru) === item.value;
+                          return (
+                            <button
+                              key={item.value}
+                              type="button"
+                              onClick={() => setDisableUserBaru(item.value)}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '6px 14px',
+                                borderRadius: '24px',
+                                border: isSelected ? `1px solid ${item.value === 0 ? '#10b981' : '#ef4444'}` : '1px solid var(--border-color)',
+                                backgroundColor: isSelected ? (item.value === 0 ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)') : 'var(--bg-input)',
+                                color: isSelected ? (item.value === 0 ? '#10b981' : '#ef4444') : 'var(--text-main)',
+                                fontWeight: 600,
+                                fontSize: '0.8rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                outline: 'none'
+                              }}
+                            >
+                              <i className={isSelected ? "pi pi-check-circle" : "pi pi-circle"} style={{ fontSize: '0.85rem' }}></i>
+                              {item.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
                   </div>
 
                 </div>

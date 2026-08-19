@@ -155,12 +155,14 @@ class Mmanajemenuser extends CI_Model {
                             :in_id_user, :in_kode_unit, :in_leveluser, 
                             :in_user_login, :in_namafile, :in_nama_user, 
                             :in_alamat_user, :in_email, :in_jabatan, 
-                            :in_tglakhirijin, :out_message
+                            :in_tglakhirijin, :in_disable_user, :out_message
                         ); 
                     END;";
             
             $stmt = oci_parse($conn, $sql);
             $msgerror = '';
+            
+            $disable_val = intval($params['disable_user']);
             
             oci_bind_by_name($stmt, ':in_id_user', $params['id_user']);
             oci_bind_by_name($stmt, ':in_kode_unit', $params['kode_unit']);
@@ -172,6 +174,7 @@ class Mmanajemenuser extends CI_Model {
             oci_bind_by_name($stmt, ':in_email', $params['email1']);
             oci_bind_by_name($stmt, ':in_jabatan', $params['jabatan']);
             oci_bind_by_name($stmt, ':in_tglakhirijin', $params['tglakhirijin']);
+            oci_bind_by_name($stmt, ':in_disable_user', $disable_val);
             oci_bind_by_name($stmt, ':out_message', $msgerror, 4000);
             
             $exec = @oci_execute($stmt);
@@ -308,7 +311,7 @@ class Mmanajemenuser extends CI_Model {
 
             // 3. Update active user table
             $db->where('id_user', $id_user);
-            $db->update('secman.usertab', array(
+            $update_data = array(
                 'unitup' => $params['kode_unit'],
                 'leveluser' => $params['leveluser'],
                 'nama_user' => $params['nama_user'],
@@ -316,9 +319,14 @@ class Mmanajemenuser extends CI_Model {
                 'email1' => $params['email1'],
                 'jabatan' => $params['jabatan'],
                 'tglakhirijin' => !empty($params['tglakhirijin']) ? $params['tglakhirijin'] : null,
+                'disable_user' => intval($params['disable_user']),
                 'tglupdate' => date('Y-m-d H:i:s'),
                 'userupdate' => $params['user_login']
-            ));
+            );
+            if (intval($params['disable_user']) === 0) {
+                $update_data['salahpassword'] = 0;
+            }
+            $db->update('secman.usertab', $update_data);
 
             // Helper to get active user roles in postgres (comma separated)
             $db->select("string_agg(id_group, ',') AS roles");

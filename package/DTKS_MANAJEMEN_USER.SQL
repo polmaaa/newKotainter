@@ -16,6 +16,7 @@ CREATE OR REPLACE PACKAGE OPHARAPP.DTKS_MANAJEMEN_USER AUTHID CURRENT_USER AS
         in_email         IN  VARCHAR2,
         in_jabatan       IN  VARCHAR2,
         in_tglakhirijin  IN  VARCHAR2,
+        in_disable_user  IN  NUMBER,
         out_message      OUT VARCHAR2
     );
 
@@ -35,6 +36,7 @@ CREATE OR REPLACE PACKAGE OPHARAPP.DTKS_MANAJEMEN_USER AUTHID CURRENT_USER AS
         in_email         IN  VARCHAR2,
         in_jabatan       IN  VARCHAR2,
         in_tglakhirijin  IN  VARCHAR2,
+        in_disable_user  IN  NUMBER,
         out_message      OUT VARCHAR2
     ) RETURN INT;
 END DTKS_MANAJEMEN_USER;
@@ -95,6 +97,7 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
         in_email         IN  VARCHAR2,
         in_jabatan       IN  VARCHAR2,
         in_tglakhirijin  IN  VARCHAR2,
+        in_disable_user  IN  NUMBER,
         out_message      OUT VARCHAR2
     ) IS
         v_hasil INT;
@@ -110,6 +113,7 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
             in_email,
             in_jabatan,
             in_tglakhirijin,
+            in_disable_user,
             out_message
         );
 
@@ -131,6 +135,7 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
         in_email         IN  VARCHAR2,
         in_jabatan       IN  VARCHAR2,
         in_tglakhirijin  IN  VARCHAR2,
+        in_disable_user  IN  NUMBER,
         out_message      OUT VARCHAR2
     ) RETURN INT IS
         v_hasil       INT;
@@ -182,7 +187,7 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
             WHERE id_user = :1
         ' USING in_id_user;
 
-        -- 2. Update active user table (including new profile fields)
+        -- 2. Update active user table (including new profile fields, disable_user and salahpassword reset)
         EXECUTE IMMEDIATE '
             UPDATE SECMAN.usertab
             SET unitup = :1,
@@ -192,10 +197,12 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
                 email1 = :5,
                 jabatan = :6,
                 tglakhirijin = TO_DATE(:7, ''YYYY-MM-DD''),
+                disable_user = :8,
+                salahpassword = CASE WHEN :9 = 0 THEN 0 ELSE salahpassword END,
                 tglupdate = SYSDATE,
-                userupdate = :8
-            WHERE id_user = :9
-        ' USING in_kode_unit, in_leveluser, in_nama_user, in_alamat_user, in_email, in_jabatan, in_tglakhirijin, in_user_login, in_id_user;
+                userupdate = :10
+            WHERE id_user = :11
+        ' USING in_kode_unit, in_leveluser, in_nama_user, in_alamat_user, in_email, in_jabatan, in_tglakhirijin, in_disable_user, in_disable_user, in_user_login, in_id_user;
 
         -- 3. Insert into OPHARAPP.log_update_user
         EXECUTE IMMEDIATE '

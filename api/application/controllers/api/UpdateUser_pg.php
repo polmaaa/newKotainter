@@ -51,11 +51,12 @@ class UpdateUser_pg extends MY_Controller {
             'email1' => isset($json_data['email1']) ? trim($json_data['email1']) : '',
             'jabatan' => isset($json_data['jabatan']) ? trim($json_data['jabatan']) : '',
             'tglakhirijin' => isset($json_data['tglakhirijin']) ? trim($json_data['tglakhirijin']) : '',
+            'disable_user' => isset($json_data['disable_user']) ? intval($json_data['disable_user']) : 0,
             'user_login' => $user_login
         );
 
-        if (empty($params['id_user']) || empty($params['kode_unit']) || empty($params['leveluser']) || empty($params['nama_user'])) {
-            return $this->response(400, 'error', 'ID User, Nama Lengkap, Kode Unit Baru, dan Level User wajib diisi!');
+        if (empty($params['id_user']) || empty($params['kode_unit']) || empty($params['leveluser']) || empty($params['nama_user']) || !isset($json_data['disable_user'])) {
+            return $this->response(400, 'error', 'ID User, Nama Lengkap, Kode Unit Baru, Level User, dan Status Akun wajib diisi!');
         }
 
         $result = $this->mmanajemenuser->set_kode_unit_postgres($params);
