@@ -186,4 +186,13 @@ class Users extends MY_Controller {
             return $this->response(500, 'error', 'Gagal memperbarui profil Anda. Pastikan koneksi database aktif.');
         }
     }
+
+    public function get_all_roles() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            return $this->response(405, 'error', 'Method Not Allowed');
+        }
+        $is_postgres = $this->input->get('is_postgres') === 'true';
+        $roles = $this->muser->get_all_roles($is_postgres);
+        return $this->response(200, 'success', 'Berhasil memuat list role.', $roles);
+    }
 }

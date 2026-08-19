@@ -9,6 +9,7 @@ import Help from './components/Help';
 import DetailModal from './components/DetailModal';
 import UpdatePnj from './components/UpdatePnj';
 import UpdateUser from './components/UpdateUser';
+import UpdateRoleUser from './components/UpdateRoleUser';
 
 const API_BASE_URL = import.meta.env.DEV ? '/api' : '/newkotainter/api';
 
@@ -389,6 +390,17 @@ export default function App() {
             showToast={showToast}
             isPostgres={dbMode === 'postgre'}
             menuName={menu ? menu.menu_name : 'Update User'}
+          />
+        );
+      case 'UpdateRoleUser':
+      case 'UpdateRoleUser_pg':
+        return (
+          <UpdateRoleUser
+            key={`updateroleuser-${dbMode}`}
+            user={user}
+            apiBaseUrl={API_BASE_URL}
+            showToast={showToast}
+            isPostgres={dbMode === 'postgre'}
           />
         );
       default:

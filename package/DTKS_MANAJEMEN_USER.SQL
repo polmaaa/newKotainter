@@ -39,6 +39,22 @@ CREATE OR REPLACE PACKAGE OPHARAPP.DTKS_MANAJEMEN_USER AUTHID CURRENT_USER AS
         in_disable_user  IN  NUMBER,
         out_message      OUT VARCHAR2
     ) RETURN INT;
+
+    PROCEDURE proc_set_role_user (
+        in_id_user       IN  VARCHAR2,
+        in_roles         IN  VARCHAR2,
+        in_user_login    IN  VARCHAR2,
+        in_namafile      IN  VARCHAR2,
+        out_message      OUT VARCHAR2
+    );
+
+    FUNCTION f$set_role_user (
+        in_id_user       IN  VARCHAR2,
+        in_roles         IN  VARCHAR2,
+        in_user_login    IN  VARCHAR2,
+        in_namafile      IN  VARCHAR2,
+        out_message      OUT VARCHAR2
+    ) RETURN INT;
 END DTKS_MANAJEMEN_USER;
 /
 
@@ -235,6 +251,156 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
             out_message := SQLERRM;
             RETURN -1;
     END f$set_kode_unit;
+
+    PROCEDURE proc_set_role_user (
+        in_id_user       IN  VARCHAR2,
+        in_roles         IN  VARCHAR2,
+        in_user_login    IN  VARCHAR2,
+        in_namafile      IN  VARCHAR2,
+        out_message      OUT VARCHAR2
+    ) IS
+        v_hasil INT;
+    BEGIN
+        v_hasil := OPHARAPP.DTKS_MANAJEMEN_USER.f$set_role_user(
+            in_id_user,
+            in_roles,
+            in_user_login,
+            in_namafile,
+            out_message
+        );
+
+        IF v_hasil = 1 THEN
+            COMMIT;
+        ELSE
+            ROLLBACK;
+        END IF;
+    END proc_set_role_user;
+
+    FUNCTION f$set_role_user (
+        in_id_user       IN  VARCHAR2,
+        in_roles         IN  VARCHAR2,
+        in_user_login    IN  VARCHAR2,
+        in_namafile      IN  VARCHAR2,
+        out_message      OUT VARCHAR2
+    ) RETURN INT IS
+        v_hasil       INT;
+        p_unitup      VARCHAR2(6 BYTE);
+        p_leveluser   VARCHAR2(5 BYTE);
+        v_roles_lama  VARCHAR2(1000);
+        v_nama_user   VARCHAR2(100);
+    BEGIN
+        SELECT COUNT(*)
+        INTO v_hasil
+        FROM SECMAN.usertab
+        WHERE id_user = in_id_user;
+
+        IF v_hasil = 0 THEN
+            out_message := 'User tidak ditemukan';
+            RETURN 0;
+        END IF;
+
+        -- Fetch user details beforehand
+        SELECT unitup, leveluser, nama_user
+        INTO p_unitup, p_leveluser, v_nama_user
+        FROM SECMAN.usertab
+        WHERE id_user = in_id_user;
+
+        -- Get current aggregated roles (role_lama)
+        SELECT LISTAGG(id_group, ',') WITHIN GROUP (ORDER BY id_group)
+        INTO v_roles_lama
+        FROM SECMAN.usrgroup
+        WHERE id_user = in_id_user;
+
+        -- 1. Backup old user profile (since it's required for complete trace)
+        EXECUTE IMMEDIATE '
+            INSERT INTO OPHARAPP.usertab_log (
+                tgllog, id_user, kdpp, unitup, pk__unitup, nama_user, alamat_user, 
+                no_telp1, no_telp2, no_telp3, email1, email2, disable_user, is_builtin, 
+                passwd, tglawalijin, tglakhirijin, jamawalijin, jamakhirijin, nip, 
+                jenispp, leveluser, tglinsert, userinsert, tglupdate, userupdate, 
+                tglubahpassword, masapassword, tglkadaluarsapasswd, flageula, 
+                tglflageula, salahpassword, jabatan
+            )
+            SELECT 
+                SYSDATE, id_user, kdpp, unitup, unitup, nama_user, alamat_user, 
+                no_telp1, no_telp2, no_telp3, email1, email2, disable_user, is_builtin, 
+                passwd, tglawalijin, tglakhirijin, jamawalijin, jamakhirijin, nip, 
+                jenispp, leveluser, tglinsert, userinsert, tglupdate, userupdate, 
+                tglubahpassword, masapassword, tglkadaluarsapasswd, flageula, 
+                tglflageula, salahpassword, jabatan
+            FROM SECMAN.usertab
+            WHERE id_user = :1
+        ' USING in_id_user;
+
+        -- 2. Backup current roles before delete
+        BEGIN
+            EXECUTE IMMEDIATE '
+                INSERT INTO OPHARAPP.usrgroup_log (tgllog, id_user, id_group, disabled)
+                SELECT SYSDATE, id_user, id_group, disabled
+                FROM SECMAN.usrgroup
+                WHERE id_user = :1
+            ' USING in_id_user;
+        EXCEPTION
+            WHEN OTHERS THEN
+                NULL; -- Skip if table doesn't exist
+        END;
+
+        -- 3. Delete old roles
+        EXECUTE IMMEDIATE '
+            DELETE FROM SECMAN.usrgroup
+            WHERE id_user = :1
+        ' USING in_id_user;
+
+        -- 4. Parse comma-separated roles and insert new rows
+        IF in_roles IS NOT NULL AND TRIM(in_roles) IS NOT NULL THEN
+            EXECUTE IMMEDIATE '
+                DECLARE
+                    v_user VARCHAR2(50) := :1;
+                    v_roles VARCHAR2(1000) := :2;
+                BEGIN
+                    FOR r IN (
+                        SELECT REGEXP_SUBSTR(v_roles, ''[^,]+'', 1, LEVEL) AS role_id
+                        FROM DUAL
+                        CONNECT BY REGEXP_SUBSTR(v_roles, ''[^,]+'', 1, LEVEL) IS NOT NULL
+                    ) LOOP
+                        INSERT INTO SECMAN.usrgroup (id_user, id_group, disabled)
+                        VALUES (v_user, r.role_id, 0);
+                    END LOOP;
+                END;
+            ' USING in_id_user, in_roles;
+        END IF;
+
+        -- 5. Insert change log into OPHARAPP.log_update_user
+        EXECUTE IMMEDIATE '
+            INSERT INTO OPHARAPP.log_update_user (
+                tanggal, upi, id_user, nama_user, unitup_lama, unitup_baru, 
+                leveluser_lama, leveluser_baru, role_lama, role_baru, nama_file, petugas
+            ) VALUES (
+                SYSDATE, SUBSTR(:1, 1, 2), :2, :3, :4, :5, :6, :7, :8, :9, :10, :11
+            )
+        ' USING p_unitup, in_id_user, v_nama_user, p_unitup, p_unitup, p_leveluser, p_leveluser, v_roles_lama, in_roles, in_namafile, in_user_login;
+
+        -- 6. Insert transaction log into OPHARAPP.DTKS_LOG_PROSES
+        EXECUTE IMMEDIATE '
+            INSERT INTO OPHARAPP.DTKS_LOG_PROSES (
+                NO_TIKET, JENIS_TRANSAKSI, NO_PELANGGAN, TGLPROSES, UNITUPI, LOGIN, DB_SESSION
+            ) VALUES (
+                :1, :2, :3, SYSDATE, :4, :5, :6
+            )
+        ' USING TO_NUMBER(NVL(SUBSTR(REGEXP_REPLACE(in_namafile, '[^0-9]'), 1, 9), TO_CHAR(SYSDATE, 'HH24MISS'))),
+                'Update Role User',
+                'id_user: ' || in_id_user,
+                TO_NUMBER(NVL(REGEXP_REPLACE(SUBSTR(p_unitup, 1, 2), '[^0-9]'), '0')),
+                in_user_login,
+                'ORACLE';
+
+        out_message := 'SUKSES';
+        RETURN 1;
+    EXCEPTION
+        WHEN OTHERS THEN
+            out_message := SQLERRM;
+            RETURN -1;
+    END f$set_role_user;
 
 END DTKS_MANAJEMEN_USER;
 /

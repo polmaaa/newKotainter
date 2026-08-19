@@ -353,4 +353,26 @@ class Muser extends CI_Model {
         }
         return $result;
     }
+
+    public function get_all_roles($is_postgres = false) {
+        if ($is_postgres) {
+            $db = $this->load->database('postgres', TRUE);
+            $query = $db->query("SELECT id_group, nama_group FROM secman.grouptab ORDER BY id_group");
+            return $query ? $query->result_array() : array();
+        } else {
+            if (!$this->db_oracle) {
+                // Return dummy roles for local/emergency debugging
+                return array(
+                    array('id_group' => 'ADMINF1', 'nama_group' => 'ADMIN FUNGSI 1'),
+                    array('id_group' => 'ADMINF456', 'nama_group' => 'ADMIN FUNGSI 456'),
+                    array('id_group' => 'CATER', 'nama_group' => 'CATAT METER'),
+                    array('id_group' => 'INFOLAP', 'nama_group' => 'INFORMASI LAPORAN'),
+                    array('id_group' => 'KASIR', 'nama_group' => 'KASIR'),
+                    array('id_group' => 'WASKIT', 'nama_group' => 'WASKIT')
+                );
+            }
+            $query = $this->db_oracle->query("SELECT ID_GROUP, NAMA_GROUP FROM SECMAN.GROUPTAB ORDER BY ID_GROUP");
+            return $query ? $query->result_array() : array();
+        }
+    }
 }

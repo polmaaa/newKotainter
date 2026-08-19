@@ -385,4 +385,162 @@ class Mmanajemenuser extends CI_Model {
             return array('status' => 'error', 'message' => $e->getMessage());
         }
     }
+
+    public function set_role_user_oracle($params) {
+        $log_file = APPPATH . 'logs/update_pnj_debug.log';
+        if (!$this->db_oracle) {
+            return array('status' => 'error', 'message' => 'Koneksi database Oracle tidak aktif.');
+        }
+
+        $id_user = $params['id_user'];
+        $roles = $params['roles'];
+        $user_login = $params['user_login'];
+        $nama_file = $params['nama_file'];
+
+        @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Role Oracle Request - User: '$id_user', Roles: '$roles'\n", FILE_APPEND);
+
+        try {
+            $sql = "BEGIN OPHARAPP.DTKS_MANAJEMEN_USER.proc_set_role_user(:in_id_user, :in_roles, :in_user_login, :in_namafile, :out_message); END;";
+            $stmt = oci_parse($this->db_oracle->conn_id, $sql);
+
+            oci_bind_by_name($stmt, ':in_id_user', $id_user, 50);
+            oci_bind_by_name($stmt, ':in_roles', $roles, 1000);
+            oci_bind_by_name($stmt, ':in_user_login', $user_login, 50);
+            oci_bind_by_name($stmt, ':in_namafile', $nama_file, 200);
+
+            $out_message = '';
+            oci_bind_by_name($stmt, ':out_message', $out_message, 2000);
+
+            $exec = oci_execute($stmt);
+            if ($exec) {
+                if (trim($out_message) === 'SUKSES') {
+                    @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Role Oracle Success - User: '$id_user'\n", FILE_APPEND);
+                    return array('status' => 'success', 'message' => 'Role user berhasil diperbarui di Oracle.');
+                } else {
+                    @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Role Oracle Failed - User: '$id_user' | Out Msg: $out_message\n", FILE_APPEND);
+                    return array('status' => 'error', 'message' => 'Oracle Error: ' . $out_message);
+                }
+            } else {
+                $e = oci_error($stmt);
+                @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Role Oracle Parse/Exec Error - User: '$id_user' | Error: " . $e['message'] . "\n", FILE_APPEND);
+                return array('status' => 'error', 'message' => $e['message']);
+            }
+        } catch (Exception $e) {
+            @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Role Oracle Exception - User: '$id_user' | Msg: " . $e->getMessage() . "\n", FILE_APPEND);
+            return array('status' => 'error', 'message' => $e->getMessage());
+        }
+    }
+
+    public function set_role_user_postgres($params) {
+        $log_file = APPPATH . 'logs/update_pnj_debug.log';
+        $db = $this->load->database('postgres', TRUE);
+
+        $id_user = $params['id_user'];
+        $roles = $params['roles'];
+        $user_login = $params['user_login'];
+        $nama_file = $params['nama_file'];
+
+        @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Role Postgres Request - User: '$id_user', Roles: '$roles'\n", FILE_APPEND);
+
+        try {
+            $db->trans_start();
+
+            // 1. Fetch current info of the user
+            $qUser = $db->get_where('secman.usertab', array('id_user' => $id_user));
+            if (!$qUser || $qUser->num_rows() === 0) {
+                $db->trans_rollback();
+                return array('status' => 'error', 'message' => 'User tidak ditemukan di PostgreSQL.');
+            }
+            $user_row = $qUser->row_array();
+            $p_unitup = $user_row['unitup'];
+            $p_leveluser = $user_row['leveluser'];
+            $v_nama_user = $user_row['nama_user'];
+
+            // 2. Fetch current roles list (role_lama)
+            $db->select("string_agg(id_group, ',') AS roles");
+            $qRoles = $db->get_where('secman.usrgroup', array('id_user' => $id_user));
+            $role_list_lama = '';
+            if ($qRoles && $qRoles->num_rows() > 0) {
+                $rowRoles = $qRoles->row_array();
+                $role_list_lama = $rowRoles['roles'] ? $rowRoles['roles'] : '';
+            }
+
+            // 3. Backup user profile log
+            $user_row['tgllog'] = date('Y-m-d H:i:s');
+            $db->insert('opharapp.usertab_log', $user_row);
+
+            // 4. Backup role logs
+            $qRolesRaw = $db->get_where('secman.usrgroup', array('id_user' => $id_user));
+            if ($qRolesRaw && $qRolesRaw->num_rows() > 0) {
+                foreach ($qRolesRaw->result_array() as $rRaw) {
+                    $rRaw['tgllog'] = date('Y-m-d H:i:s');
+                    @$db->insert('opharapp.usrgroup_log', $rRaw);
+                }
+            }
+
+            // 5. Delete old roles
+            $db->delete('secman.usrgroup', array('id_user' => $id_user));
+
+            // 6. Insert new roles
+            if (!empty($roles)) {
+                $role_arr = explode(',', $roles);
+                foreach ($role_arr as $r_id) {
+                    $r_id = trim($r_id);
+                    if (!empty($r_id)) {
+                        $db->insert('secman.usrgroup', array(
+                            'id_user' => $id_user,
+                            'id_group' => $r_id,
+                            'disabled' => 0
+                        ));
+                    }
+                }
+            }
+
+            // 7. Insert change log into opharapp.log_update_user
+            $db->insert('opharapp.log_update_user', array(
+                'tanggal' => date('Y-m-d H:i:s'),
+                'upi' => substr($p_unitup, 0, 2),
+                'id_user' => $id_user,
+                'nama_user' => $v_nama_user,
+                'unitup_lama' => $p_unitup,
+                'unitup_baru' => $p_unitup,
+                'leveluser_lama' => $p_leveluser,
+                'leveluser_baru' => $p_leveluser,
+                'role_lama' => $role_list_lama,
+                'role_baru' => $roles,
+                'nama_file' => $nama_file,
+                'petugas' => $user_login
+            ));
+
+            if ($db->trans_status() === FALSE) {
+                $db->trans_rollback();
+                @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Role Postgres Error - trans_status is FALSE\n", FILE_APPEND);
+                return array('status' => 'error', 'message' => 'Gagal mengubah role user di PostgreSQL.');
+            } else {
+                $db->trans_commit();
+                @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Role Postgres Success - User: '$id_user'\n", FILE_APPEND);
+
+                // Write OPHARAPP.DTKS_LOG_PROSES on Oracle via reusable helper
+                try {
+                    $this->load->model('mlogs');
+                    $this->mlogs->insert_dtks_log(
+                        $nama_file, 
+                        'Update Role User', 
+                        'id_user: ' . $id_user, 
+                        $p_unitup, 
+                        $user_login,
+                        'POSTGRE'
+                    );
+                } catch (Exception $log_ex) {
+                    // Ignore logger failure
+                }
+
+                return array('status' => 'success', 'message' => 'Role user berhasil diperbarui.');
+            }
+        } catch (Exception $e) {
+            $db->trans_rollback();
+            @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Role Postgres Exception - User: '$id_user' | Msg: " . $e->getMessage() . "\n", FILE_APPEND);
+            return array('status' => 'error', 'message' => $e->getMessage());
+        }
+    }
 }
