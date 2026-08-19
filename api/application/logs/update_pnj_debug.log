@@ -124,3 +124,10 @@
 [2026-08-19 14:44:25] Set Role Oracle Failed - User: 'PS.PUSAT.POLMA' | Out Msg: ORA-01438: value larger than specified precision allowed for this column
 [2026-08-19 14:44:32] Set Role Oracle Request - User: 'PS.PUSAT.POLMA', Roles: 'INFOP2APST,LOKETF1,TEKNIKF1'
 [2026-08-19 14:44:32] Set Role Oracle Failed - User: 'PS.PUSAT.POLMA' | Out Msg: ORA-01438: value larger than specified precision allowed for this column
+[2026-08-19 14:53:21] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 14:53:34] Set Role Oracle Request - User: 'PS.PUSAT.POLMA', Roles: 'INFOLAP,INFOP2APST,LOKETF1,TEKNIKF1'
+[2026-08-19 14:53:34] Set Role Oracle Success - User: 'PS.PUSAT.POLMA'
+[2026-08-19 14:54:12] Set Role Postgres Request - User: 'PS.PUSAT.POLMA', Roles: 'ADMINF23,ADMIN_FSO,INFOLAP,INFOP2APST,LOKETF1,P2TL,TEKNIKF1'
+[2026-08-19 14:54:12] Set Role Postgres Error - trans_status is FALSE
+[2026-08-19 15:10:01] Set Role Postgres Request - User: 'PS.PUSAT.POLMA', Roles: 'ADMINF23,ADMIN_FSO,INFOLAP,INFOP2APST,LOKETF1,P2TL,TEKNIKF1'
+[2026-08-19 15:10:01] Set Role Postgres Error - trans_status is FALSE

@@ -466,17 +466,42 @@ class Mmanajemenuser extends CI_Model {
             }
 
             // 3. Backup user profile log
-            $user_row['tgllog'] = date('Y-m-d H:i:s');
-            $db->insert('opharapp.usertab_log', $user_row);
-
-            // 4. Backup role logs
-            $qRolesRaw = $db->get_where('secman.usrgroup', array('id_user' => $id_user));
-            if ($qRolesRaw && $qRolesRaw->num_rows() > 0) {
-                foreach ($qRolesRaw->result_array() as $rRaw) {
-                    $rRaw['tgllog'] = date('Y-m-d H:i:s');
-                    @$db->insert('opharapp.usrgroup_log', $rRaw);
-                }
-            }
+            $rowUserLog = array(
+                'tgllog'        => date('Y-m-d H:i:s'),
+                'id_user'       => $user_row['id_user'],
+                'kdpp'          => isset($user_row['kdpp']) ? $user_row['kdpp'] : null,
+                'unitup'        => isset($user_row['unitup']) ? $user_row['unitup'] : null,
+                'pk__unitup'    => isset($user_row['unitup']) ? $user_row['unitup'] : null,
+                'nama_user'     => isset($user_row['nama_user']) ? $user_row['nama_user'] : null,
+                'alamat_user'   => isset($user_row['alamat_user']) ? $user_row['alamat_user'] : null,
+                'no_telp1'      => isset($user_row['no_telp1']) ? $user_row['no_telp1'] : null,
+                'no_telp2'      => isset($user_row['no_telp2']) ? $user_row['no_telp2'] : null,
+                'no_telp3'      => isset($user_row['no_telp3']) ? $user_row['no_telp3'] : null,
+                'email1'        => isset($user_row['email1']) ? $user_row['email1'] : null,
+                'email2'        => isset($user_row['email2']) ? $user_row['email2'] : null,
+                'disable_user'  => isset($user_row['disable_user']) ? $user_row['disable_user'] : 0,
+                'is_builtin'    => isset($user_row['is_builtin']) ? $user_row['is_builtin'] : 0,
+                'passwd'        => isset($user_row['passwd']) ? $user_row['passwd'] : null,
+                'tglawalijin'   => isset($user_row['tglawalijin']) ? $user_row['tglawalijin'] : null,
+                'tglakhirijin'  => isset($user_row['tglakhirijin']) ? $user_row['tglakhirijin'] : null,
+                'jamawalijin'   => isset($user_row['jamawalijin']) ? $user_row['jamawalijin'] : null,
+                'jamakhirijin'  => isset($user_row['jamakhirijin']) ? $user_row['jamakhirijin'] : null,
+                'nip'           => isset($user_row['nip']) ? $user_row['nip'] : null,
+                'jenispp'       => isset($user_row['jenispp']) ? $user_row['jenispp'] : null,
+                'leveluser'     => isset($user_row['leveluser']) ? $user_row['leveluser'] : null,
+                'tglinsert'     => isset($user_row['tglinsert']) ? $user_row['tglinsert'] : null,
+                'userinsert'    => isset($user_row['userinsert']) ? $user_row['userinsert'] : null,
+                'tglupdate'     => isset($user_row['tglupdate']) ? $user_row['tglupdate'] : null,
+                'userupdate'    => isset($user_row['userupdate']) ? $user_row['userupdate'] : null,
+                'tglubahpassword' => isset($user_row['tglubahpassword']) ? $user_row['tglubahpassword'] : null,
+                'masapassword'  => isset($user_row['masapassword']) ? $user_row['masapassword'] : 0,
+                'tglkadaluarsapasswd' => isset($user_row['tglkadaluarsapasswd']) ? $user_row['tglkadaluarsapasswd'] : null,
+                'flageula'      => isset($user_row['flageula']) ? $user_row['flageula'] : null,
+                'tglflageula'   => isset($user_row['tglflageula']) ? $user_row['tglflageula'] : null,
+                'salahpassword' => isset($user_row['salahpassword']) ? $user_row['salahpassword'] : 0,
+                'jabatan'       => isset($user_row['jabatan']) ? $user_row['jabatan'] : null
+            );
+            $db->insert('opharapp.usertab_log', $rowUserLog);
 
             // 5. Delete old roles
             $db->delete('secman.usrgroup', array('id_user' => $id_user));
