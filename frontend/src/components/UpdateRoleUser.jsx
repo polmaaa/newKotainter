@@ -568,8 +568,7 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
                   {selectedRoles.length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
                       {selectedRoles.map(roleId => {
-                        const rInfo = availableRoles.find(r => r.id_group === roleId);
-                        const label = rInfo ? `${rInfo.id_group} (${rInfo.nama_group})` : roleId;
+                        const label = roleId;
                         return (
                           <span
                             key={roleId}
