@@ -102,8 +102,8 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
           kodeunit: kodeUnitBaru.trim(),
           leveluser: levelUserBaru.trim()
         };
-        setSelectedUser(updatedUser);
         setUserDataList(prev => prev.map(u => u.id_user === updatedUser.id_user ? updatedUser : u));
+        setSelectedUser(null);
       } else {
         showToast(result.message || 'Gagal memperbarui kode unit.', 'error');
       }

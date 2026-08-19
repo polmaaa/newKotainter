@@ -32,3 +32,10 @@
 [2026-08-18 11:54:50] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-12899: value too large for column "DTKS"."LOG_UPDATE_USER"."NAMA_FILE" (actual: 112, maximum: 100)'
 [2026-08-18 11:55:57] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
 [2026-08-18 11:55:58] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'SUKSES'
+[2026-08-18 11:58:12] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 82
+[2026-08-18 11:58:33] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-18 14:48:18] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-18 14:48:25] Search User Oracle - ID: ']' | Unitup: 'PUSAT' | Count: 0
+[2026-08-18 14:48:33] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 82
+[2026-08-18 14:48:41] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 82
+[2026-08-18 14:48:43] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 82
