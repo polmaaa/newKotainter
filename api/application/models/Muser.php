@@ -356,23 +356,29 @@ class Muser extends CI_Model {
 
     public function get_all_roles($is_postgres = false) {
         $result_data = array();
+        $allowed_roles = array(
+            'ADMINF1','ADMINF23','ADMINF456','ADMINPPJ','ADMIN_KAWASAN','ADMIN_NEDYSIS',
+            'ADMIN_TAMPER','ADMIN_TMP','ADMIN_VALIDASI_UJL','BPANGSUR','CATERF23',
+            'DIVAGA','DMAN','DMPEMASARAN_ROLE','GERAI','INFOLAP','LOKETF1','MANAGER',
+            'P2TL','PENAGIHAN','SAP','SATKER','SECMAN','TEKNIKF1','WASKIT','ADMIN_FSO',
+            'ADMIN_SAR','ASMAN','ADMIN_CMT','ADMIN_IMEI_CMT','ADMIN_MON_CMT','EDISON',
+            'MANAGER_ROLE','MENU_TES','INFO_BDT'
+        );
+        $roles_str = "'" . implode("','", $allowed_roles) . "'";
+
         if ($is_postgres) {
             $db = $this->load->database('postgres', TRUE);
-            $query = $db->query("SELECT id_group, nama_group FROM secman.grouptab ORDER BY id_group");
+            $query = $db->query("SELECT id_group, nama_group FROM secman.grouptab WHERE id_group IN ($roles_str) ORDER BY id_group");
             $result_data = $query ? $query->result_array() : array();
         } else {
             if (!$this->db_oracle) {
-                // Return dummy roles for local/emergency debugging
-                return array(
-                    array('id_group' => 'ADMINF1', 'nama_group' => 'ADMIN FUNGSI 1'),
-                    array('id_group' => 'ADMINF456', 'nama_group' => 'ADMIN FUNGSI 456'),
-                    array('id_group' => 'CATER', 'nama_group' => 'CATAT METER'),
-                    array('id_group' => 'INFOLAP', 'nama_group' => 'INFORMASI LAPORAN'),
-                    array('id_group' => 'KASIR', 'nama_group' => 'KASIR'),
-                    array('id_group' => 'WASKIT', 'nama_group' => 'WASKIT')
-                );
+                $dummy = array();
+                foreach ($allowed_roles as $r) {
+                    $dummy[] = array('id_group' => $r, 'nama_group' => str_replace('_', ' ', $r));
+                }
+                return $dummy;
             }
-            $query = $this->db_oracle->query("SELECT ID_GROUP, NAMA_GROUP FROM SECMAN.GROUPTAB ORDER BY ID_GROUP");
+            $query = $this->db_oracle->query("SELECT ID_GROUP, NAMA_GROUP FROM SECMAN.GROUPTAB WHERE ID_GROUP IN ($roles_str) ORDER BY ID_GROUP");
             $result_data = $query ? $query->result_array() : array();
         }
 
@@ -381,6 +387,26 @@ class Muser extends CI_Model {
         foreach ($result_data as $row) {
             $normalized[] = array_change_key_case($row, CASE_LOWER);
         }
+
+        // Ensure all allowed roles are present (fallback if not in master)
+        $existing_ids = array_map(function($item) {
+            return strtoupper($item['id_group']);
+        }, $normalized);
+
+        foreach ($allowed_roles as $allowed_id) {
+            if (!in_array(strtoupper($allowed_id), $existing_ids)) {
+                $normalized[] = array(
+                    'id_group' => $allowed_id,
+                    'nama_group' => str_replace('_', ' ', $allowed_id)
+                );
+            }
+        }
+
+        // Sort by id_group
+        usort($normalized, function($a, $b) {
+            return strcmp($a['id_group'], $b['id_group']);
+        });
+
         return $normalized;
     }
 }
