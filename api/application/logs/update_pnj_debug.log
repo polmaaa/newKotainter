@@ -60,3 +60,10 @@
 [2026-08-19 05:44:38] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-06502: PL/SQL: numeric or value error: character to number conversion error'
 [2026-08-19 05:47:07] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
 [2026-08-19 05:47:07] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-06502: PL/SQL: numeric or value error: character to number conversion error'
+[2026-08-19 05:50:46] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 05:50:53] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 05:50:53] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'SUKSES'
+[2026-08-19 05:51:42] Set Unit Postgres Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 05:51:44] Set Unit Postgres Error - trans_status is FALSE
+[2026-08-19 06:38:12] Set Unit Postgres Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 06:38:12] Set Unit Postgres Error - trans_status is FALSE
