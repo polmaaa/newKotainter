@@ -270,16 +270,30 @@ class Mmanajemenuser extends CI_Model {
                 return array('status' => 'error', 'message' => 'User tidak ditemukan');
             }
 
-            // 2. Insert backup into secman.usertab_log
+            // 2. Insert backup into opharapp.usertab_log
             $qUser = $db->get_where('secman.usertab', array('id_user' => $id_user));
             if ($qUser && $qUser->num_rows() > 0) {
                 $rowUser = $qUser->row_array();
                 $rowUser['tgllog'] = date('Y-m-d H:i:s');
                 $rowUser['pk__unitup'] = $rowUser['unitup'];
+                
+                // Filter columns to match opharapp.usertab_log schema structure exactly
+                $allowed_cols = array(
+                    'tgllog', 'id_user', 'kdpp', 'unitup', 'pk__unitup', 'nama_user', 'alamat_user', 
+                    'no_telp1', 'no_telp2', 'no_telp3', 'email1', 'email2', 'disable_user', 'is_builtin', 
+                    'passwd', 'tglawalijin', 'tglakhirijin', 'jamawalijin', 'jamakhirijin', 'nip', 
+                    'jenispp', 'leveluser', 'tglinsert', 'userinsert', 'tglupdate', 'userupdate', 
+                    'tglubahpassword', 'masapassword', 'tglkadaluarsapasswd', 'flageula', 
+                    'tglflageula', 'salahpassword', 'jabatan'
+                );
+                $rowUser = array_intersect_key($rowUser, array_flip($allowed_cols));
+                
                 $db->insert('opharapp.usertab_log', $rowUser);
                 
-                $p_unitup = $rowUser['unitup'];
-                $p_leveluser = $rowUser['leveluser'];
+                // Get variables from query result (need unitup and leveluser from $qUser row)
+                $origRow = $qUser->row_array();
+                $p_unitup = $origRow['unitup'];
+                $p_leveluser = $origRow['leveluser'];
             } else {
                 $db->trans_rollback();
                 return array('status' => 'error', 'message' => 'Gagal membaca data user lama.');

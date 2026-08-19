@@ -67,3 +67,8 @@
 [2026-08-19 05:51:44] Set Unit Postgres Error - trans_status is FALSE
 [2026-08-19 06:38:12] Set Unit Postgres Init - User: 'PS.PUSAT.POLMA'
 [2026-08-19 06:38:12] Set Unit Postgres Error - trans_status is FALSE
+[2026-08-19 09:13:21] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 09:13:29] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 09:13:29] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'SUKSES'
+[2026-08-19 10:16:47] Set Unit Postgres Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 10:16:48] Set Unit Postgres Error - trans_status is FALSE
