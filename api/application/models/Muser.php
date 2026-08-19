@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Muser extends CI_Model {
 
     private $db_oracle = null;
-    private $table_name = 'DTKS.DTKS_USERTAB';
+    private $table_name = 'OPHARAPP.DTKS_USERTAB';
 
     public function __construct() {
         parent::__construct();
@@ -67,13 +67,13 @@ class Muser extends CI_Model {
         try {
             $this->db_oracle = @$this->load->database('oracle', TRUE);
             if ($this->db_oracle && $this->db_oracle->conn_id) {
-                // 1. Cek apakah tabel DTKS.DTKS_USERTAB dapat diakses
-                $table_check = @$this->db_oracle->query("SELECT 1 FROM DTKS.DTKS_USERTAB WHERE ROWNUM = 1");
+                // 1. Cek apakah tabel OPHARAPP.DTKS_USERTAB dapat diakses
+                $table_check = @$this->db_oracle->query("SELECT 1 FROM OPHARAPP.DTKS_USERTAB WHERE ROWNUM = 1");
                 if ($table_check) {
-                    $this->table_name = 'DTKS.DTKS_USERTAB';
+                    $this->table_name = 'OPHARAPP.DTKS_USERTAB';
                 } else {
-                    // Coba buat tabel di skema DTKS
-                    $create_sql = "CREATE TABLE DTKS.DTKS_USERTAB (
+                    // Coba buat tabel di skema OPHARAPP
+                    $create_sql = "CREATE TABLE OPHARAPP.DTKS_USERTAB (
                         ID_USER VARCHAR2(50) PRIMARY KEY,
                         NAMA_USER VARCHAR2(100) NOT NULL,
                         PASSWD VARCHAR2(32) NOT NULL,
@@ -82,13 +82,13 @@ class Muser extends CI_Model {
                     )";
                     try {
                         @$this->db_oracle->query($create_sql);
-                        $this->table_name = 'DTKS.DTKS_USERTAB';
+                        $this->table_name = 'OPHARAPP.DTKS_USERTAB';
 
                         // Isi data pengguna awal
                         $insert_queries = array(
-                            "INSERT INTO DTKS.DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.POLMA', 'POLMA SIHOTANG', 'eeb184d2cde34db5718552910d73c983', 'N', 'DEVELOPER')",
-                            "INSERT INTO DTKS.DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.LUTFI', 'LUTFI INDIARTO WIRAYUDA', 'bfce4f791b02f5fa8a35926ec5edfe26', 'N', 'SUPERUSER')",
-                            "INSERT INTO DTKS.DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.IDHAM', 'IDHAM RIZKY SAPALA', 'd74ee5bc288bff461f91e98e7d4fcd93', 'N', 'SENIOR')"
+                            "INSERT INTO OPHARAPP.DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.POLMA', 'POLMA SIHOTANG', 'eeb184d2cde34db5718552910d73c983', 'N', 'DEVELOPER')",
+                            "INSERT INTO OPHARAPP.DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.LUTFI', 'LUTFI INDIARTO WIRAYUDA', 'bfce4f791b02f5fa8a35926ec5edfe26', 'N', 'SUPERUSER')",
+                            "INSERT INTO OPHARAPP.DTKS_USERTAB (ID_USER, NAMA_USER, PASSWD, DISABLE_USER, LEVEL_USER) VALUES ('PS.PUSAT.IDHAM', 'IDHAM RIZKY SAPALA', 'd74ee5bc288bff461f91e98e7d4fcd93', 'N', 'SENIOR')"
                         );
                         foreach ($insert_queries as $sql) {
                             @$this->db_oracle->query($sql);

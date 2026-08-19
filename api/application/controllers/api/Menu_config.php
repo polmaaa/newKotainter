@@ -63,7 +63,7 @@ class Menu_config extends MY_Controller {
             $db_error = $this->db->error();
             $err_msg = isset($db_error['message']) && !empty($db_error['message']) 
                 ? 'Oracle Error: ' . $db_error['message'] 
-                : 'Gagal menyimpan menu ke database. Pastikan tabel DTKS.DTKS_MENU ada dan memiliki kolom PARENT_MENU bertipe VARCHAR2.';
+                : 'Gagal menyimpan menu ke database. Pastikan tabel OPHARAPP.DTKS_MENU ada dan memiliki kolom PARENT_MENU bertipe VARCHAR2.';
             return $this->response(500, 'error', $err_msg);
         }
     }

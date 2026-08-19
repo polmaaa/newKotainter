@@ -156,57 +156,19 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   const handleOraclePresetChange = (preset) => {
     setOraclePreset(preset);
     if (preset === 'truno') {
-      setOracleTns(`(DESCRIPTION=
-    (LOAD_BALANCE=yes)
-    (ADDRESS_LIST=
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.10)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.11)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.12)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.13)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.14)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.15)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.16)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.17)
-        (PORT=1521)
-      )
-    )
-    (CONNECT_DATA=
-      (SERVER=dedicated)
-      (SERVICE_NAME=ap2tdr)
-    )
-  )`);
-      setOracleUsername('DTKS');
-      setOraclePassword('Desember123');
+      setOracleTns(`(DESCRIPTION=(LOAD_BALANCE=yes)
+                        (ADDRESS_LIST=
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.10)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.11)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.12)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.13)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.14)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.15)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.16)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.17)(PORT=1521)))
+                        (CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=ap2tdr)))`);
+      setOracleUsername('OPHARAPP');
+      setOraclePassword('MyH3arW1llG00n');
     } else if (preset === 'gandul') {
       setOracleTns(`(DESCRIPTION=
     (ADDRESS_LIST=

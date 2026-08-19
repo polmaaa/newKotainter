@@ -95,7 +95,7 @@ class Mpnj extends CI_Model {
             $sql = "DECLARE 
                         v_ret INT;
                     BEGIN 
-                        v_ret := DTKS.PKG_PNJ_NULL.get_data_pnj(:noagenda, :tiket, :out_data, :out_rowcount, :out_message); 
+                        v_ret := OPHARAPP.PKG_PNJ_NULL.get_data_pnj(:noagenda, :tiket, :out_data, :out_rowcount, :out_message); 
                     END;";
                     
             $stmt = oci_parse($conn, $sql);
@@ -157,7 +157,7 @@ class Mpnj extends CI_Model {
         try {
             $conn = $this->db_oracle->conn_id;
             $sql = "BEGIN 
-                        DTKS.PKG_PNJ_NULL.save_pnj(
+                        OPHARAPP.PKG_PNJ_NULL.save_pnj(
                             :plogin, :tiket, :noagenda, 
                             :pnj_101, :pnj_pemohon, :pnj_106, 
                             :nobang_101, :nobang_pemohon, :nobang_106, 
@@ -217,7 +217,7 @@ class Mpnj extends CI_Model {
         try {
             $conn = $this->db_oracle->conn_id;
             $sql = "BEGIN 
-                        DTKS.PKG_PNJ_NULL.save_koreksi_tarif(
+                        OPHARAPP.PKG_PNJ_NULL.save_koreksi_tarif(
                             :plogin, :tiket, :noagenda, 
                             :out_rowcount, :msgerror
                         ); 

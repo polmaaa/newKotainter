@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Mmenu extends CI_Model {
 
     private $db_oracle = null;
-    private $table_name = 'DTKS.DTKS_MENU';
+    private $table_name = 'OPHARAPP.DTKS_MENU';
 
     public function __construct() {
         parent::__construct();
@@ -54,7 +54,7 @@ class Mmenu extends CI_Model {
         try {
             $this->db_oracle = @$this->load->database('oracle', TRUE);
             if ($this->db_oracle && $this->db_oracle->conn_id) {
-                $this->table_name = 'DTKS.DTKS_MENU';
+                $this->table_name = 'OPHARAPP.DTKS_MENU';
             } else {
                 $this->db_oracle = null;
             }

@@ -39,3 +39,16 @@
 [2026-08-18 14:48:33] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 82
 [2026-08-18 14:48:41] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 82
 [2026-08-18 14:48:43] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 82
+[2026-08-19 05:10:12] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 05:10:23] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 05:10:23] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-01031: insufficient privileges'
+[2026-08-19 05:12:30] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 05:12:43] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 05:12:43] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-01031: insufficient privileges'
+[2026-08-19 05:13:42] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 05:17:45] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 05:17:55] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 05:17:55] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-01031: insufficient privileges'
+[2026-08-19 05:24:29] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 05:24:43] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 05:24:43] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-01031: insufficient privileges'

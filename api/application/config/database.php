@@ -4,55 +4,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = "oracle";
 $query_builder = TRUE;
 
-$tnsname_oracle = '(DESCRIPTION=
-    (LOAD_BALANCE=yes)
-    (ADDRESS_LIST=
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.10)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.11)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.12)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.13)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.14)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.15)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.16)
-        (PORT=1521)
-      )
-      (ADDRESS=
-        (PROTOCOL=TCP)
-        (HOST=10.14.159.17)
-        (PORT=1521)
-      )
-    )
-    (CONNECT_DATA=
-      (SERVER=dedicated)
-      (SERVICE_NAME=ap2tdr)
-    )
-  )';
+$tnsname_oracle = '(DESCRIPTION=(LOAD_BALANCE=yes)
+                        (ADDRESS_LIST=
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.10)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.11)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.12)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.13)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.14)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.15)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.16)(PORT=1521))
+                        (ADDRESS=(PROTOCOL=TCP)(HOST=10.14.159.17)(PORT=1521)))
+                        (CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=ap2tdr)))';
 $tnsname_fso_oracle = '(DESCRIPTION =
     (ADDRESS = (PROTOCOL = TCP)(HOST = 10.14.212.11)(PORT = 1521))
     (ADDRESS = (PROTOCOL = TCP)(HOST = 10.14.212.12)(PORT = 1521))
@@ -66,8 +28,8 @@ $tnsname_fso_oracle = '(DESCRIPTION =
 $db['oracle'] = array(
 	'dsn'      => '',
 	'hostname' => $tnsname_oracle,
-	'username' => 'DTKS',
-	'password' => 'Desember123',
+	'username' => 'OPHARAPP',
+	'password' => 'MyH3arW1llG00n',
 	'database' => '',
 	'dbdriver' => 'oci8',
 	'dbprefix' => '',
@@ -87,12 +49,12 @@ $db['oracle'] = array(
 
 $db['postgres'] = array(
 	'dsn'      => '',
-	'hostname' => '10.1.50.167',
-	'username' => 'dev_ap2t',
-	'password' => 'd3v_4p2t2024',
+	'hostname' => '10.99.20.11',
+	'username' => 'supportappssss',
+	'password' => 'GR63!Ru55elL#55@CS',
 	'database' => 'ap2t_db',
 	'dbdriver' => 'postgre',
-	'port'     => 5432,
+	'port'     => 5488,
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => FALSE,
