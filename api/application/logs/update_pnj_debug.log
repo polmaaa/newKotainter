@@ -112,3 +112,11 @@
 [2026-08-19 13:28:09] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 3878
 [2026-08-19 13:29:17] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
 [2026-08-19 13:30:56] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 13:33:27] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 13:34:29] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 13:34:37] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 13:34:37] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'SUKSES'
+[2026-08-19 13:35:36] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 13:36:05] Set Role Oracle Request - User: 'PS.PUSAT.POLMA', Roles: 'INFOP2APST,LOKETF1,TEKNIKF1'
+[2026-08-19 13:36:05] Set Role Oracle Failed - User: 'PS.PUSAT.POLMA' | Out Msg: ORA-01438: value larger than specified precision allowed for this column
+[2026-08-19 14:43:55] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
