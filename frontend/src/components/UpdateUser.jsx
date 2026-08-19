@@ -17,6 +17,11 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
   // Edit Form Fields
   const [kodeUnitBaru, setKodeUnitBaru] = useState('');
   const [levelUserBaru, setLevelUserBaru] = useState('');
+  const [namaUserBaru, setNamaUserBaru] = useState('');
+  const [jabatanBaru, setJabatanBaru] = useState('');
+  const [alamatUserBaru, setAlamatUserBaru] = useState('');
+  const [emailBaru, setEmailBaru] = useState('');
+  const [tglAkhirIjinBaru, setTglAkhirIjinBaru] = useState('');
   const [namaFile, setNamaFile] = useState('');
   const [isDragging, setIsDragging] = useState(false);
 
@@ -94,6 +99,16 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
     setSelectedUser(usr);
     setKodeUnitBaru(usr.kodeunit || '');
     setLevelUserBaru(usr.leveluser || '');
+    setNamaUserBaru(usr.nama_user || '');
+    setJabatanBaru(usr.jabatan || '');
+    setAlamatUserBaru(usr.alamat_user || '');
+    setEmailBaru(usr.email1 || '');
+    
+    let formattedDate = '';
+    if (usr.tglakhirijin) {
+      formattedDate = usr.tglakhirijin.substring(0, 10);
+    }
+    setTglAkhirIjinBaru(formattedDate);
     setNamaFile('');
   };
 
@@ -101,6 +116,10 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
     e.preventDefault();
     if (!selectedUser) {
       showToast('Silakan cari dan pilih user terlebih dahulu!', 'warning');
+      return;
+    }
+    if (!namaUserBaru.trim()) {
+      showToast('Nama Lengkap wajib diisi!', 'warning');
       return;
     }
     if (!kodeUnitBaru.trim()) {
@@ -124,23 +143,33 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
           id_user: selectedUser.id_user,
           kode_unit: kodeUnitBaru.trim(),
           leveluser: levelUserBaru.trim(),
+          nama_user: namaUserBaru.trim(),
+          alamat_user: alamatUserBaru.trim(),
+          email1: emailBaru.trim(),
+          jabatan: jabatanBaru.trim(),
+          tglakhirijin: tglAkhirIjinBaru,
           nama_file: namaFile.trim()
         })
       });
       const result = await response.json();
       if (response.ok && result.status === 'success') {
-        showToast(result.message || 'Kode unit berhasil diperbarui!', 'success');
+        showToast(result.message || 'Profil user berhasil diperbarui!', 'success');
         
         // Update local state
         const updatedUser = {
           ...selectedUser,
           kodeunit: kodeUnitBaru.trim(),
-          leveluser: levelUserBaru.trim()
+          leveluser: levelUserBaru.trim(),
+          nama_user: namaUserBaru.trim(),
+          alamat_user: alamatUserBaru.trim(),
+          email1: emailBaru.trim(),
+          jabatan: jabatanBaru.trim(),
+          tglakhirijin: tglAkhirIjinBaru
         };
         setUserDataList(prev => prev.map(u => u.id_user === updatedUser.id_user ? updatedUser : u));
         setSelectedUser(null);
       } else {
-        showToast(result.message || 'Gagal memperbarui kode unit.', 'error');
+        showToast(result.message || 'Gagal memperbarui profil user.', 'error');
       }
     } catch (err) {
       console.error(err);
@@ -336,14 +365,72 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
           {selectedUser && (
             <div className="content-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', color: '#0f766e', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--border-light)', paddingBottom: '10px' }}>
-                <i className="pi pi-pencil"></i> Form Ubah Kode Unit Kerja - {selectedUser.id_user}
+                <i className="pi pi-pencil"></i> Form Update Profil User - {selectedUser.id_user}
               </h3>
               
               <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
                   
-                  {/* Left Column - Inputs */}
-                  <div style={{ flex: '1 1 450px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {/* Column 1 - Basic Info */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Nama Lengkap</label>
+                      <input
+                        type="text"
+                        required
+                        value={namaUserBaru}
+                        onChange={(e) => setNamaUserBaru(e.target.value)}
+                        placeholder="Masukkan Nama Lengkap"
+                        style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Jabatan</label>
+                      <input
+                        type="text"
+                        value={jabatanBaru}
+                        onChange={(e) => setJabatanBaru(e.target.value)}
+                        placeholder="Masukkan Jabatan"
+                        style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Alamat</label>
+                      <input
+                        type="text"
+                        value={alamatUserBaru}
+                        onChange={(e) => setAlamatUserBaru(e.target.value)}
+                        placeholder="Masukkan Alamat"
+                        style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Column 2 - Connection / Permissions */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Email</label>
+                      <input
+                        type="email"
+                        value={emailBaru}
+                        onChange={(e) => setEmailBaru(e.target.value)}
+                        placeholder="contoh@domain.com"
+                        style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Tanggal Akhir Izin</label>
+                      <input
+                        type="date"
+                        value={tglAkhirIjinBaru}
+                        onChange={(e) => setTglAkhirIjinBaru(e.target.value)}
+                        style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem', width: '100%' }}
+                      />
+                    </div>
+
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Kode Unit Baru</label>
                       <input
@@ -355,10 +442,13 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
                         style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
                       />
                     </div>
+                  </div>
 
+                  {/* Column 3 - Level & Document */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Level User Baru</label>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {['UPI', 'AP', 'UP', 'PUSAT'].map((level) => {
                           const isSelected = levelUserBaru === level;
                           return (
@@ -369,92 +459,84 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
                               style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '8px',
-                                padding: '8px 20px',
+                                gap: '6px',
+                                padding: '6px 14px',
                                 borderRadius: '24px',
                                 border: isSelected ? '1px solid #0f766e' : '1px solid var(--border-color)',
                                 backgroundColor: isSelected ? 'rgba(15, 118, 110, 0.05)' : 'var(--bg-input)',
                                 color: isSelected ? '#0f766e' : 'var(--text-main)',
                                 fontWeight: 600,
-                                fontSize: '0.85rem',
+                                fontSize: '0.8rem',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s ease',
                                 outline: 'none'
                               }}
                             >
-                              <i className={isSelected ? "pi pi-check-circle" : "pi pi-circle"} style={{ fontSize: '0.9rem', color: isSelected ? '#0f766e' : '#94a3b8' }}></i>
+                              <i className={isSelected ? "pi pi-check-circle" : "pi pi-circle"} style={{ fontSize: '0.85rem', color: isSelected ? '#0f766e' : '#94a3b8' }}></i>
                               {level}
                             </button>
                           );
                         })}
                       </div>
                     </div>
-                  </div>
 
-                  {/* Right Column - Modern Drag and Drop Upload Area */}
-                  <div style={{ flex: '1 1 350px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Dokumen Pendukung (Log)</label>
-                    <div 
-                      onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                      onDragLeave={() => setIsDragging(false)}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        setIsDragging(false);
-                        const file = e.dataTransfer.files[0];
-                        if (file) {
-                          setNamaFile(file.name);
-                        }
-                      }}
-                      onClick={() => document.getElementById('file-upload-dragdrop').click()}
-                      style={{
-                        flex: '1',
-                        minHeight: '150px',
-                        borderRadius: '12px',
-                        border: isDragging ? '2px dashed #0f766e' : '2px dashed var(--border-color)',
-                        backgroundColor: isDragging ? 'rgba(15, 118, 110, 0.06)' : 'rgba(0, 0, 0, 0.02)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px',
-                        cursor: 'pointer',
-                        padding: '20px',
-                        textAlign: 'center',
-                        transition: 'all 0.25s ease'
-                      }}
-                    >
-                      <input 
-                        type="file" 
-                        id="file-upload-dragdrop" 
-                        onChange={(e) => {
-                          const file = e.target.files[0];
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: '1' }}>
+                      <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Dokumen Pendukung (Log)</label>
+                      <div 
+                        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                        onDragLeave={() => setIsDragging(false)}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          setIsDragging(false);
+                          const file = e.dataTransfer.files[0];
                           if (file) {
                             setNamaFile(file.name);
                           }
                         }}
-                        style={{ display: 'none' }} 
-                      />
-                      
-                      <i className="pi pi-cloud-upload" style={{ fontSize: '2.2rem', color: '#0f766e' }}></i>
-                      {namaFile ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                          <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)', wordBreak: 'break-all' }}>
-                            {namaFile}
-                          </span>
-                          <span style={{ fontSize: '0.75rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <i className="pi pi-check-circle"></i> File berhasil dimuat (log)
-                          </span>
-                        </div>
-                      ) : (
-                        <div>
-                          <p style={{ margin: '0 0 4px 0', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>
-                            Tarik & lepas file di sini
-                          </p>
-                          <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                            atau klik untuk memilih file
-                          </p>
-                        </div>
-                      )}
+                        onClick={() => document.getElementById('file-upload-dragdrop').click()}
+                        style={{
+                          flex: '1',
+                          minHeight: '100px',
+                          borderRadius: '12px',
+                          border: isDragging ? '2px dashed #0f766e' : '2px dashed var(--border-color)',
+                          backgroundColor: isDragging ? 'rgba(15, 118, 110, 0.06)' : 'rgba(0, 0, 0, 0.02)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          cursor: 'pointer',
+                          padding: '12px',
+                          textAlign: 'center',
+                          transition: 'all 0.25s ease'
+                        }}
+                      >
+                        <input 
+                          type="file" 
+                          id="file-upload-dragdrop" 
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setNamaFile(file.name);
+                            }
+                          }}
+                          style={{ display: 'none' }}
+                        />
+                        <i className="pi pi-cloud-upload" style={{ fontSize: '1.8rem', color: '#0f766e' }}></i>
+                        {namaFile ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-main)', wordBreak: 'break-all' }}>{namaFile}</span>
+                            <span style={{ fontSize: '0.7rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                              <i className="pi pi-check-circle"></i> Loaded
+                            </span>
+                          </div>
+                        ) : (
+                          <div>
+                            <p style={{ margin: '0 0 2px 0', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-main)' }}>Drop file here</p>
+                            <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--text-muted)' }}>or click to upload</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -473,7 +555,7 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
                       </>
                     ) : (
                       <>
-                        <i className="pi pi-save"></i> Simpan Perubahan Kode Unit
+                        <i className="pi pi-save"></i> Simpan Perubahan Profil User
                       </>
                     )}
                   </button>

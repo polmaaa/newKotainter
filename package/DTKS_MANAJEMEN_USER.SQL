@@ -11,6 +11,11 @@ CREATE OR REPLACE PACKAGE OPHARAPP.DTKS_MANAJEMEN_USER AUTHID CURRENT_USER AS
         in_leveluser     IN  VARCHAR2,
         in_user_login    IN  VARCHAR2,
         in_namafile      IN  VARCHAR2,
+        in_nama_user     IN  VARCHAR2,
+        in_alamat_user   IN  VARCHAR2,
+        in_email         IN  VARCHAR2,
+        in_jabatan       IN  VARCHAR2,
+        in_tglakhirijin  IN  VARCHAR2,
         out_message      OUT VARCHAR2
     );
 
@@ -25,6 +30,11 @@ CREATE OR REPLACE PACKAGE OPHARAPP.DTKS_MANAJEMEN_USER AUTHID CURRENT_USER AS
         in_leveluser     IN  VARCHAR2,
         in_user_login    IN  VARCHAR2,
         in_namafile      IN  VARCHAR2,
+        in_nama_user     IN  VARCHAR2,
+        in_alamat_user   IN  VARCHAR2,
+        in_email         IN  VARCHAR2,
+        in_jabatan       IN  VARCHAR2,
+        in_tglakhirijin  IN  VARCHAR2,
         out_message      OUT VARCHAR2
     ) RETURN INT;
 END DTKS_MANAJEMEN_USER;
@@ -80,6 +90,11 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
         in_leveluser     IN  VARCHAR2,
         in_user_login    IN  VARCHAR2,
         in_namafile      IN  VARCHAR2,
+        in_nama_user     IN  VARCHAR2,
+        in_alamat_user   IN  VARCHAR2,
+        in_email         IN  VARCHAR2,
+        in_jabatan       IN  VARCHAR2,
+        in_tglakhirijin  IN  VARCHAR2,
         out_message      OUT VARCHAR2
     ) IS
         v_hasil INT;
@@ -90,6 +105,11 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
             in_leveluser,
             in_user_login,
             in_namafile,
+            in_nama_user,
+            in_alamat_user,
+            in_email,
+            in_jabatan,
+            in_tglakhirijin,
             out_message
         );
 
@@ -106,6 +126,11 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
         in_leveluser     IN  VARCHAR2,
         in_user_login    IN  VARCHAR2,
         in_namafile      IN  VARCHAR2,
+        in_nama_user     IN  VARCHAR2,
+        in_alamat_user   IN  VARCHAR2,
+        in_email         IN  VARCHAR2,
+        in_jabatan       IN  VARCHAR2,
+        in_tglakhirijin  IN  VARCHAR2,
         out_message      OUT VARCHAR2
     ) RETURN INT IS
         v_hasil       INT;
@@ -157,25 +182,30 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
             WHERE id_user = :1
         ' USING in_id_user;
 
-        -- 2. Update active user table
+        -- 2. Update active user table (including new profile fields)
         EXECUTE IMMEDIATE '
             UPDATE SECMAN.usertab
             SET unitup = :1,
                 leveluser = :2,
+                nama_user = :3,
+                alamat_user = :4,
+                email1 = :5,
+                jabatan = :6,
+                tglakhirijin = TO_DATE(:7, ''YYYY-MM-DD''),
                 tglupdate = SYSDATE,
-                userupdate = :3
-            WHERE id_user = :4
-        ' USING in_kode_unit, in_leveluser, in_user_login, in_id_user;
+                userupdate = :8
+            WHERE id_user = :9
+        ' USING in_kode_unit, in_leveluser, in_nama_user, in_alamat_user, in_email, in_jabatan, in_tglakhirijin, in_user_login, in_id_user;
 
         -- 3. Insert into OPHARAPP.log_update_user
         EXECUTE IMMEDIATE '
             INSERT INTO OPHARAPP.log_update_user (
                 tanggal, upi, id_user, nama_user, unitup_lama, unitup_baru, 
-                leveluser_lama, leveluser_baru, role_lama, role_baru, nama_file
+                leveluser_lama, leveluser_baru, role_lama, role_baru, nama_file, petugas
             ) VALUES (
-                SYSDATE, SUBSTR(:1, 1, 2), :2, :3, :4, :5, :6, :7, :8, :9, :10
+                SYSDATE, SUBSTR(:1, 1, 2), :2, :3, :4, :5, :6, :7, :8, :9, :10, :11
             )
-        ' USING p_unitup, in_id_user, v_nama_user, p_unitup, in_kode_unit, p_leveluser, in_leveluser, v_roles, v_roles, in_namafile;
+        ' USING p_unitup, in_id_user, v_nama_user, p_unitup, in_kode_unit, p_leveluser, in_leveluser, v_roles, v_roles, in_namafile, in_user_login;
 
         -- 4. Insert log into OPHARAPP.DTKS_LOG_PROSES
         EXECUTE IMMEDIATE '
@@ -185,7 +215,7 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
                 :1, :2, :3, SYSDATE, :4, :5, :6
             )
         ' USING TO_NUMBER(NVL(SUBSTR(REGEXP_REPLACE(in_namafile, '[^0-9]'), 1, 9), TO_CHAR(SYSDATE, 'HH24MISS'))),
-                'Ubah Kode Unit',
+                'Update Profil User',
                 'id_user: ' || in_id_user,
                 TO_NUMBER(NVL(REGEXP_REPLACE(SUBSTR(in_kode_unit, 1, 2), '[^0-9]'), '0')),
                 in_user_login,

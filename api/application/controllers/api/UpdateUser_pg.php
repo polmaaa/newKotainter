@@ -46,11 +46,16 @@ class UpdateUser_pg extends MY_Controller {
             'kode_unit' => isset($json_data['kode_unit']) ? trim($json_data['kode_unit']) : '',
             'leveluser' => isset($json_data['leveluser']) ? trim($json_data['leveluser']) : '',
             'nama_file' => isset($json_data['nama_file']) ? trim($json_data['nama_file']) : '',
+            'nama_user' => isset($json_data['nama_user']) ? trim($json_data['nama_user']) : '',
+            'alamat_user' => isset($json_data['alamat_user']) ? trim($json_data['alamat_user']) : '',
+            'email1' => isset($json_data['email1']) ? trim($json_data['email1']) : '',
+            'jabatan' => isset($json_data['jabatan']) ? trim($json_data['jabatan']) : '',
+            'tglakhirijin' => isset($json_data['tglakhirijin']) ? trim($json_data['tglakhirijin']) : '',
             'user_login' => $user_login
         );
 
-        if (empty($params['id_user']) || empty($params['kode_unit']) || empty($params['leveluser'])) {
-            return $this->response(400, 'error', 'ID User, Kode Unit Baru, dan Level User wajib diisi!');
+        if (empty($params['id_user']) || empty($params['kode_unit']) || empty($params['leveluser']) || empty($params['nama_user'])) {
+            return $this->response(400, 'error', 'ID User, Nama Lengkap, Kode Unit Baru, dan Level User wajib diisi!');
         }
 
         $result = $this->mmanajemenuser->set_kode_unit_postgres($params);

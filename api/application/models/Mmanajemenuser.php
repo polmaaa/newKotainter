@@ -153,7 +153,9 @@ class Mmanajemenuser extends CI_Model {
             $sql = "BEGIN 
                         OPHARAPP.DTKS_MANAJEMEN_USER.proc_set_kode_unit(
                             :in_id_user, :in_kode_unit, :in_leveluser, 
-                            :in_user_login, :in_namafile, :out_message
+                            :in_user_login, :in_namafile, :in_nama_user, 
+                            :in_alamat_user, :in_email, :in_jabatan, 
+                            :in_tglakhirijin, :out_message
                         ); 
                     END;";
             
@@ -165,6 +167,11 @@ class Mmanajemenuser extends CI_Model {
             oci_bind_by_name($stmt, ':in_leveluser', $params['leveluser']);
             oci_bind_by_name($stmt, ':in_user_login', $params['user_login']);
             oci_bind_by_name($stmt, ':in_namafile', $params['nama_file']);
+            oci_bind_by_name($stmt, ':in_nama_user', $params['nama_user']);
+            oci_bind_by_name($stmt, ':in_alamat_user', $params['alamat_user']);
+            oci_bind_by_name($stmt, ':in_email', $params['email1']);
+            oci_bind_by_name($stmt, ':in_jabatan', $params['jabatan']);
+            oci_bind_by_name($stmt, ':in_tglakhirijin', $params['tglakhirijin']);
             oci_bind_by_name($stmt, ':out_message', $msgerror, 4000);
             
             $exec = @oci_execute($stmt);
@@ -179,7 +186,7 @@ class Mmanajemenuser extends CI_Model {
             @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Unit Oracle - User: '$id_user' | MsgError: '$msgerror'\n", FILE_APPEND);
             
             if (trim(strtoupper($msgerror)) === 'SUKSES') {
-                return array('status' => 'success', 'message' => 'Kode unit user berhasil diubah.');
+                return array('status' => 'success', 'message' => 'Profil user berhasil diperbarui.');
             } else {
                 return array('status' => 'error', 'message' => $msgerror);
             }
@@ -304,6 +311,11 @@ class Mmanajemenuser extends CI_Model {
             $db->update('secman.usertab', array(
                 'unitup' => $params['kode_unit'],
                 'leveluser' => $params['leveluser'],
+                'nama_user' => $params['nama_user'],
+                'alamat_user' => $params['alamat_user'],
+                'email1' => $params['email1'],
+                'jabatan' => $params['jabatan'],
+                'tglakhirijin' => !empty($params['tglakhirijin']) ? $params['tglakhirijin'] : null,
                 'tglupdate' => date('Y-m-d H:i:s'),
                 'userupdate' => $params['user_login']
             ));
@@ -322,7 +334,7 @@ class Mmanajemenuser extends CI_Model {
                 'tanggal' => date('Y-m-d H:i:s'),
                 'upi' => substr($p_unitup, 0, 2),
                 'id_user' => $id_user,
-                'nama_user' => $rowUser['nama_user'],
+                'nama_user' => $params['nama_user'],
                 'unitup_lama' => $p_unitup,
                 'unitup_baru' => $params['kode_unit'],
                 'leveluser_lama' => $p_leveluser,
@@ -336,7 +348,7 @@ class Mmanajemenuser extends CI_Model {
             if ($db->trans_status() === FALSE) {
                 $db->trans_rollback();
                 @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Unit Postgres Error - trans_status is FALSE\n", FILE_APPEND);
-                return array('status' => 'error', 'message' => 'Gagal mengubah kode unit di PostgreSQL.');
+                return array('status' => 'error', 'message' => 'Gagal mengubah profil user di PostgreSQL.');
             } else {
                 $db->trans_commit();
                 @file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Set Unit Postgres Success - User: '$id_user'\n", FILE_APPEND);
@@ -346,7 +358,7 @@ class Mmanajemenuser extends CI_Model {
                     $this->load->model('mlogs');
                     $this->mlogs->insert_dtks_log(
                         $params['nama_file'], 
-                        'Ubah Kode Unit', 
+                        'Update Profil User', 
                         'id_user: ' . $id_user, 
                         $params['kode_unit'], 
                         $params['user_login'],
@@ -356,7 +368,7 @@ class Mmanajemenuser extends CI_Model {
                     // Ignore logger failure
                 }
 
-                return array('status' => 'success', 'message' => 'Kode unit user berhasil diubah.');
+                return array('status' => 'success', 'message' => 'Profil user berhasil diperbarui.');
             }
 
         } catch (Exception $e) {
