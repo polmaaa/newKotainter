@@ -484,10 +484,7 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
                         style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
                       />
                     </div>
-                  </div>
 
-                  {/* Column 3 - Level & Document */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Level User Baru</label>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -521,6 +518,10 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
                         })}
                       </div>
                     </div>
+                  </div>
+
+                  {/* Column 3 - Document */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: '1' }}>
                       <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Dokumen Pendukung (Log)</label>
