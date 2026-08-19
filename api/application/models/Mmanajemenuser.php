@@ -276,7 +276,7 @@ class Mmanajemenuser extends CI_Model {
                 $rowUser = $qUser->row_array();
                 $rowUser['tgllog'] = date('Y-m-d H:i:s');
                 $rowUser['pk__unitup'] = $rowUser['unitup'];
-                $db->insert('secman.usertab_log', $rowUser);
+                $db->insert('opharapp.usertab_log', $rowUser);
                 
                 $p_unitup = $rowUser['unitup'];
                 $p_leveluser = $rowUser['leveluser'];
@@ -303,8 +303,8 @@ class Mmanajemenuser extends CI_Model {
                 $role_list = $rowRoles['roles'] ? $rowRoles['roles'] : '';
             }
 
-            // 4. Insert into secman.log_update_user
-            $db->insert('secman.log_update_user', array(
+            // 4. Insert into opharapp.log_update_user
+            $db->insert('opharapp.log_update_user', array(
                 'tanggal' => date('Y-m-d H:i:s'),
                 'upi' => substr($p_unitup, 0, 2),
                 'id_user' => $id_user,
