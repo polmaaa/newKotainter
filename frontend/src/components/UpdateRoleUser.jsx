@@ -36,7 +36,12 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
         });
         const result = await res.json();
         if (res.ok && result.status === 'success') {
-          setAvailableRoles(result.data || []);
+          const rawRoles = result.data || [];
+          const normalized = rawRoles.map(r => ({
+            id_group: r.id_group || r.ID_GROUP || '',
+            nama_group: r.nama_group || r.NAMA_GROUP || ''
+          }));
+          setAvailableRoles(normalized);
         } else {
           showToast('Gagal memuat daftar role master.', 'error');
         }
@@ -263,7 +268,7 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
       </div>
 
       {/* SEARCH RESULTS LIST */}
-      {userDataList.length > 0 && !selectedUser && (
+      {userDataList.length > 0 && (
         <div className="content-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', marginBottom: '24px' }}>
           <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', color: '#0f766e', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <i className="pi pi-list"></i> Hasil Pencarian User
@@ -283,7 +288,7 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
               </thead>
               <tbody>
                 {currentRows.map((usr) => (
-                  <tr key={usr.id_user} style={{ borderBottom: '1px solid var(--border-light)', transition: 'background 0.2s' }}>
+                  <tr key={usr.id_user} style={{ borderBottom: '1px solid var(--border-light)', transition: 'background 0.2s', backgroundColor: selectedUser && selectedUser.id_user === usr.id_user ? 'rgba(15, 118, 110, 0.05)' : 'transparent' }}>
                     <td style={{ padding: '12px' }}>
                       <button
                         onClick={() => handleSelectUser(usr)}
@@ -301,7 +306,7 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
                         {usr.leveluser}
                       </span>
                     </td>
-                    <td style={{ padding: '12px', color: 'var(--text-main)', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <td style={{ padding: '12px', color: 'var(--text-main)' }}>
                       {usr.role ? (
                         usr.role.split(',').map((r, i) => (
                           <span key={i} style={{ display: 'inline-block', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, backgroundColor: 'rgba(99, 102, 241, 0.1)', color: '#4f46e5', marginRight: '4px', marginBottom: '2px' }}>

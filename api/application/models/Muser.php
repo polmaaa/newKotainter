@@ -355,10 +355,11 @@ class Muser extends CI_Model {
     }
 
     public function get_all_roles($is_postgres = false) {
+        $result_data = array();
         if ($is_postgres) {
             $db = $this->load->database('postgres', TRUE);
             $query = $db->query("SELECT id_group, nama_group FROM secman.grouptab ORDER BY id_group");
-            return $query ? $query->result_array() : array();
+            $result_data = $query ? $query->result_array() : array();
         } else {
             if (!$this->db_oracle) {
                 // Return dummy roles for local/emergency debugging
@@ -372,7 +373,14 @@ class Muser extends CI_Model {
                 );
             }
             $query = $this->db_oracle->query("SELECT ID_GROUP, NAMA_GROUP FROM SECMAN.GROUPTAB ORDER BY ID_GROUP");
-            return $query ? $query->result_array() : array();
+            $result_data = $query ? $query->result_array() : array();
         }
+
+        // Standardize all keys to lowercase
+        $normalized = array();
+        foreach ($result_data as $row) {
+            $normalized[] = array_change_key_case($row, CASE_LOWER);
+        }
+        return $normalized;
     }
 }
