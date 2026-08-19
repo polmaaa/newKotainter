@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres = false, menuName = "Ubah Kode Unit" }) {
+export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = false, menuName = "Update User" }) {
   const [searchIdUser, setSearchIdUser] = useState('');
   const [searchUnitup, setSearchUnitup] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ export default function UbahKodeUnit({ user, apiBaseUrl, showToast, isPostgres =
   const [namaFile, setNamaFile] = useState('');
   const [isDragging, setIsDragging] = useState(false);
 
-  const dbPrefix = isPostgres ? 'api/UbahKodeUnit_pg' : 'api/UbahKodeUnit';
+  const dbPrefix = isPostgres ? 'api/UpdateUser_pg' : 'api/UpdateUser';
   const dbLabel = isPostgres ? 'PostgreSQL' : 'Oracle';
 
   // Pagination calculations

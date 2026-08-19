@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class UbahKodeUnit_pg extends MY_Controller {
+class UpdateUser_pg extends MY_Controller {
 
     protected $protected = true; // Protected via session auth
 
