@@ -86,3 +86,16 @@
 [2026-08-19 12:31:24] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
 [2026-08-19 12:31:46] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
 [2026-08-19 12:32:35] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 12:32:58] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 12:34:24] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 12:34:39] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 12:34:39] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'SUKSES'
+[2026-08-19 12:35:26] Set Unit Postgres Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 12:35:26] Set Unit Postgres Success - User: 'PS.PUSAT.POLMA'
+[2026-08-19 12:39:00] Set Unit Postgres Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 12:39:00] Set Unit Postgres Success - User: 'PS.PUSAT.POLMA'
+[2026-08-19 12:39:22] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 12:39:29] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 12:39:29] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'SUKSES'
+[2026-08-19 12:39:42] Search User Oracle - ID: '' | Unitup: 'PUSAT' | Count: 3878
+[2026-08-19 12:40:29] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: 'PUSAT' | Count: 1

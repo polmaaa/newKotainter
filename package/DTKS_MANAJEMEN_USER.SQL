@@ -72,7 +72,7 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
                    a.disable_user,
                    a.salahpassword,
                    a.passwd,
-                   a.tglakhirijin
+                   TO_CHAR(a.tglakhirijin, 'YYYY-MM-DD') as tglakhirijin
             FROM SECMAN.usertab a
             WHERE (
                   (in_id_user IS NOT NULL AND a.id_user = in_id_user)
