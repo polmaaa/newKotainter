@@ -52,3 +52,11 @@
 [2026-08-19 05:24:29] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
 [2026-08-19 05:24:43] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
 [2026-08-19 05:24:43] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-01031: insufficient privileges'
+[2026-08-19 05:32:23] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 05:32:42] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 05:32:42] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-01031: insufficient privileges'
+[2026-08-19 05:44:29] Search User Oracle - ID: 'PS.PUSAT.POLMA' | Unitup: '' | Count: 1
+[2026-08-19 05:44:38] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 05:44:38] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-06502: PL/SQL: numeric or value error: character to number conversion error'
+[2026-08-19 05:47:07] Set Unit Oracle Init - User: 'PS.PUSAT.POLMA'
+[2026-08-19 05:47:07] Set Unit Oracle - User: 'PS.PUSAT.POLMA' | MsgError: 'ORA-06502: PL/SQL: numeric or value error: character to number conversion error'

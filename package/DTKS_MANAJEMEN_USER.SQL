@@ -38,7 +38,7 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
         out_data      OUT SYS_REFCURSOR
     ) IS
     BEGIN
-        out_data := f$get_info_user(in_id_user, in_unitup);
+        out_data := OPHARAPP.DTKS_MANAJEMEN_USER.f$get_info_user(in_id_user, in_unitup);
     END proc_get_info_user;
 
     FUNCTION f$get_info_user (
@@ -84,7 +84,7 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
     ) IS
         v_hasil INT;
     BEGIN
-        v_hasil := f$set_kode_unit(
+        v_hasil := OPHARAPP.DTKS_MANAJEMEN_USER.f$set_kode_unit(
             in_id_user,
             in_kode_unit,
             in_leveluser,
@@ -136,9 +136,9 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
         FROM SECMAN.usrgroup
         WHERE id_user = in_id_user;
 
-        -- 1. Insert backup into SECMAN.usertab_log using EXECUTE IMMEDIATE to bypass compile-time privileges
+        -- 1. Insert backup into OPHARAPP.usertab_log using EXECUTE IMMEDIATE to bypass compile-time privileges
         EXECUTE IMMEDIATE '
-            INSERT INTO SECMAN.usertab_log (
+            INSERT INTO OPHARAPP.usertab_log (
                 tgllog, id_user, kdpp, unitup, pk__unitup, nama_user, alamat_user, 
                 no_telp1, no_telp2, no_telp3, email1, email2, disable_user, is_builtin, 
                 passwd, tglawalijin, tglakhirijin, jamawalijin, jamakhirijin, nip, 
@@ -167,9 +167,9 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
             WHERE id_user = :4
         ' USING in_kode_unit, in_leveluser, in_user_login, in_id_user;
 
-        -- 3. Insert into SECMAN.log_update_user
+        -- 3. Insert into OPHARAPP.log_update_user
         EXECUTE IMMEDIATE '
-            INSERT INTO SECMAN.log_update_user (
+            INSERT INTO OPHARAPP.log_update_user (
                 tanggal, upi, id_user, nama_user, unitup_lama, unitup_baru, 
                 leveluser_lama, leveluser_baru, role_lama, role_baru, nama_file
             ) VALUES (
@@ -184,10 +184,10 @@ CREATE OR REPLACE PACKAGE BODY OPHARAPP.DTKS_MANAJEMEN_USER IS
             ) VALUES (
                 :1, :2, :3, SYSDATE, :4, :5, :6
             )
-        ' USING TO_NUMBER(NVL(REGEXP_REPLACE(in_namafile, '[^0-9]'), TO_CHAR(SYSDATE, 'YYMMDDHH24MISS'))),
+        ' USING TO_NUMBER(NVL(SUBSTR(REGEXP_REPLACE(in_namafile, '[^0-9]'), 1, 9), TO_CHAR(SYSDATE, 'HH24MISS'))),
                 'Ubah Kode Unit',
                 'id_user: ' || in_id_user,
-                TO_NUMBER(SUBSTR(in_kode_unit, 1, 2)),
+                TO_NUMBER(NVL(REGEXP_REPLACE(SUBSTR(in_kode_unit, 1, 2), '[^0-9]'), '0')),
                 in_user_login,
                 'ORACLE';
 
