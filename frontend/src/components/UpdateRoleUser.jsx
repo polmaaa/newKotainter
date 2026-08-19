@@ -284,50 +284,55 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
                 </tr>
               </thead>
               <tbody>
-                {currentRows.map((usr) => (
-                  <tr key={usr.id_user} style={{ borderBottom: '1px solid var(--border-light)', transition: 'background 0.2s', backgroundColor: selectedUser && selectedUser.id_user === usr.id_user ? 'rgba(15, 118, 110, 0.05)' : 'transparent' }}>
-                    <td style={{ padding: '12px' }}>
-                      <button
-                        onClick={() => handleSelectUser(usr)}
-                        className="btn btn-outline"
-                        style={{ padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 600 }}
-                      >
-                        <i className="pi pi-user-edit"></i> Pilih
-                      </button>
-                    </td>
-                    <td style={{ padding: '12px', fontWeight: 'bold', color: 'var(--text-main)' }}>{usr.id_user}</td>
-                    <td style={{ padding: '12px', color: 'var(--text-main)' }}>{usr.nama_user}</td>
-                    <td style={{ padding: '12px', color: 'var(--text-main)' }}>{usr.kodeunit}</td>
-                    <td style={{ padding: '12px' }}>
-                      <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, backgroundColor: 'rgba(15, 118, 110, 0.1)', color: '#0f766e' }}>
-                        {usr.leveluser}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px', color: 'var(--text-main)' }}>
-                      {usr.role ? (
-                        usr.role.split(',').map((r, i) => (
-                          <span key={i} style={{ display: 'inline-block', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, backgroundColor: 'rgba(99, 102, 241, 0.1)', color: '#4f46e5', marginRight: '4px', marginBottom: '2px' }}>
-                            {r}
-                          </span>
-                        ))
-                      ) : (
-                        <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Tidak Ada Role</span>
-                      )}
-                    </td>
-                    <td style={{ padding: '12px' }}>
-                      <span style={{
-                        padding: '2px 8px',
-                        borderRadius: '12px',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        backgroundColor: parseInt(usr.disable_user) === 1 ? '#fee2e2' : '#d1fae5',
-                        color: parseInt(usr.disable_user) === 1 ? '#ef4444' : '#10b981'
-                      }}>
-                        {parseInt(usr.disable_user) === 1 ? 'Nonaktif' : 'Aktif'}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {currentRows.map((usr) => {
+                  const isSelected = selectedUser && selectedUser.id_user === usr.id_user;
+                  return (
+                    <tr key={usr.id_user} style={{ borderBottom: '1px solid var(--border-light)', transition: 'background 0.2s', backgroundColor: isSelected ? 'rgba(15, 118, 110, 0.05)' : 'transparent' }}>
+                      <td style={{ padding: '12px' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleSelectUser(usr)}
+                          className={`btn ${isSelected ? 'btn-primary' : 'btn-outline'}`}
+                          style={{ padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 600 }}
+                        >
+                          {!isSelected && <i className="pi pi-user-edit"></i>}
+                          {isSelected ? 'Terpilih' : 'Pilih'}
+                        </button>
+                      </td>
+                      <td style={{ padding: '12px', fontWeight: 'bold', color: 'var(--text-main)' }}>{usr.id_user}</td>
+                      <td style={{ padding: '12px', color: 'var(--text-main)' }}>{usr.nama_user}</td>
+                      <td style={{ padding: '12px', color: 'var(--text-main)' }}>{usr.kodeunit}</td>
+                      <td style={{ padding: '12px' }}>
+                        <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, backgroundColor: 'rgba(15, 118, 110, 0.1)', color: '#0f766e' }}>
+                          {usr.leveluser}
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px', color: 'var(--text-main)' }}>
+                        {usr.role ? (
+                          usr.role.split(',').map((r, i) => (
+                            <span key={i} style={{ display: 'inline-block', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600, backgroundColor: 'rgba(99, 102, 241, 0.1)', color: '#4f46e5', marginRight: '4px', marginBottom: '2px' }}>
+                              {r}
+                            </span>
+                          ))
+                        ) : (
+                          <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Tidak Ada Role</span>
+                        )}
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        <span style={{
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          backgroundColor: parseInt(usr.disable_user) === 1 ? '#fee2e2' : '#d1fae5',
+                          color: parseInt(usr.disable_user) === 1 ? '#ef4444' : '#10b981'
+                        }}>
+                          {parseInt(usr.disable_user) === 1 ? 'Nonaktif' : 'Aktif'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
