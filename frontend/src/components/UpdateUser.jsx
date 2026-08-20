@@ -184,7 +184,7 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
   };
 
   return (
-    <div className="ubah-kode-unit-container" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="ubah-kode-unit-container" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Title area */}
       <div className="title-area" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
