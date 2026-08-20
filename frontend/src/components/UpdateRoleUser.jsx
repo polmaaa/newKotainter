@@ -219,10 +219,27 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
   };
 
   return (
-    <div>
-      <div className="panel-title-area">
-        <h2 className="panel-title">Update Role User ({dbLabel})</h2>
-        <p className="panel-subtitle">Kelola dan perbarui penugasan peran (role/group) user pada tabel SECMAN.usrgroup.</p>
+    <div className="update-role-user-container" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Title block */}
+      <div className="title-area" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h2 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <i className="pi pi-user-edit" style={{ color: '#0f766e' }}></i> Update Role User
+          </h2>
+          <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            Kelola dan perbarui penugasan peran (role/group) user pada tabel SECMAN.usrgroup menggunakan koneksi {dbLabel}.
+          </p>
+        </div>
+        <span style={{ 
+          padding: '6px 12px', 
+          backgroundColor: isPostgres ? '#1e3a8a' : '#115e59', 
+          color: '#ffffff', 
+          borderRadius: '20px', 
+          fontSize: '0.8rem', 
+          fontWeight: 600 
+        }}>
+          Mode DB: {dbLabel}
+        </span>
       </div>
 
       {/* SEARCH PANEL */}

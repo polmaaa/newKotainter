@@ -166,7 +166,7 @@ export default function UpdatePnj({ user, apiBaseUrl, showToast, isPostgres = fa
   };
 
   return (
-    <div className="update-pnj-container" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="update-pnj-container" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Title block */}
       <div className="title-area" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
