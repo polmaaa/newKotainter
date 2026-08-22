@@ -29,8 +29,7 @@ class Api_docs extends MY_Controller {
 
         $spec_path = APPPATH . 'docs/openapi.json';
         if (!is_file($spec_path)) {
-            show_404();
-            return;
+            return $this->response(404, 'error', 'File openapi.json tidak ditemukan di path: ' . realpath(APPPATH) . '/docs/openapi.json');
         }
 
         $spec = json_decode(file_get_contents($spec_path), true);
