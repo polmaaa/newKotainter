@@ -10,6 +10,7 @@ import DetailModal from './components/DetailModal';
 import UpdatePnj from './components/UpdatePnj';
 import UpdateUser from './components/UpdateUser';
 import UpdateRoleUser from './components/UpdateRoleUser';
+import InfoDataTabel from './components/InfoDataTabel';
 
 const API_BASE_URL = import.meta.env.DEV ? '/api' : '/newkotainter/api';
 
@@ -401,6 +402,18 @@ export default function App() {
             apiBaseUrl={API_BASE_URL}
             showToast={showToast}
             isPostgres={dbMode === 'postgre'}
+          />
+        );
+      case 'InfoDataTabel':
+      case 'InfoDataTabel_pg':
+        return (
+          <InfoDataTabel 
+            key={`infodatatabel-${dbMode}`}
+            user={user}
+            apiBaseUrl={API_BASE_URL}
+            showToast={showToast}
+            isPostgres={dbMode === 'postgre'}
+            menuName={menu ? menu.menu_name : 'Informasi Data Tabel'}
           />
         );
       default:
