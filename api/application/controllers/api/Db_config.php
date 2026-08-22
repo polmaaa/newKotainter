@@ -60,7 +60,14 @@ class Db_config extends MY_Controller {
             'fso_postgres_port'     => isset($db['fso_postgres']['port']) ? $db['fso_postgres']['port'] : 5488,
             'fso_postgres_username' => isset($db['fso_postgres']['username']) ? $db['fso_postgres']['username'] : '',
             'fso_postgres_password' => isset($db['fso_postgres']['password']) ? $db['fso_postgres']['password'] : '',
-            'fso_postgres_database' => isset($db['fso_postgres']['database']) ? $db['fso_postgres']['database'] : ''
+            'fso_postgres_database' => isset($db['fso_postgres']['database']) ? $db['fso_postgres']['database'] : '',
+            
+            // 5. CRM Postgres
+            'postgres_crm_host'     => isset($db['postgres_crm']['hostname']) ? $db['postgres_crm']['hostname'] : '',
+            'postgres_crm_port'     => isset($db['postgres_crm']['port']) ? $db['postgres_crm']['port'] : 5432,
+            'postgres_crm_username' => isset($db['postgres_crm']['username']) ? $db['postgres_crm']['username'] : '',
+            'postgres_crm_password' => isset($db['postgres_crm']['password']) ? $db['postgres_crm']['password'] : '',
+            'postgres_crm_database' => isset($db['postgres_crm']['database']) ? $db['postgres_crm']['database'] : ''
         );
 
         return $this->response(200, 'success', 'Berhasil memuat konfigurasi database dan sistem.', $data);
@@ -112,6 +119,13 @@ class Db_config extends MY_Controller {
         $fso_postgres_username = isset($json_data['fso_postgres_username']) ? trim($json_data['fso_postgres_username']) : '';
         $fso_postgres_password = isset($json_data['fso_postgres_password']) ? trim($json_data['fso_postgres_password']) : '';
         $fso_postgres_database = isset($json_data['fso_postgres_database']) ? trim($json_data['fso_postgres_database']) : '';
+
+        // CRM Postgres
+        $postgres_crm_host     = isset($json_data['postgres_crm_host']) ? trim($json_data['postgres_crm_host']) : '';
+        $postgres_crm_port     = isset($json_data['postgres_crm_port']) ? (int)$json_data['postgres_crm_port'] : 5432;
+        $postgres_crm_username = isset($json_data['postgres_crm_username']) ? trim($json_data['postgres_crm_username']) : '';
+        $postgres_crm_password = isset($json_data['postgres_crm_password']) ? trim($json_data['postgres_crm_password']) : '';
+        $postgres_crm_database = isset($json_data['postgres_crm_database']) ? trim($json_data['postgres_crm_database']) : '';
 
         // Validasi input minimal
         if (empty($oracle_tns) || empty($oracle_username) || empty($postgres_host) || empty($postgres_database)) {
@@ -208,6 +222,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	'database' => '" . addcslashes($fso_postgres_database, "'\\") . "',
 	'dbdriver' => 'postgre',
 	'port'     => " . $fso_postgres_port . ",
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt'  => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+\$db['postgres_crm'] = array(
+	'dsn'      => '',
+	'hostname' => '" . addcslashes($postgres_crm_host, "'\\") . "',
+	'username' => '" . addcslashes($postgres_crm_username, "'\\") . "',
+	'password' => '" . addcslashes($postgres_crm_password, "'\\") . "',
+	'database' => '" . addcslashes($postgres_crm_database, "'\\") . "',
+	'dbdriver' => 'postgre',
+	'port'     => " . $postgres_crm_port . ",
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => FALSE,

@@ -7,6 +7,7 @@ class Mlogs extends CI_Model {
     private $db_postgres = null;
     private $db_fso_oracle = null;
     private $db_fso_postgres = null;
+    private $db_postgres_crm = null;
 
     public function __construct() {
         parent::__construct();
@@ -56,6 +57,8 @@ class Mlogs extends CI_Model {
         $pg_port = 5432;
         $fso_pg_host = '';
         $fso_pg_port = 5488;
+        $pg_crm_host = '';
+        $pg_crm_port = 5432;
         
         if (file_exists($db_file)) {
             include($db_file);
@@ -65,6 +68,8 @@ class Mlogs extends CI_Model {
             $pg_port = isset($db['postgres']['port']) ? $db['postgres']['port'] : 5432;
             $fso_pg_host = isset($db['fso_postgres']['hostname']) ? $db['fso_postgres']['hostname'] : '';
             $fso_pg_port = isset($db['fso_postgres']['port']) ? $db['fso_postgres']['port'] : 5488;
+            $pg_crm_host = isset($db['postgres_crm']['hostname']) ? $db['postgres_crm']['hostname'] : '';
+            $pg_crm_port = isset($db['postgres_crm']['port']) ? $db['postgres_crm']['port'] : 5432;
         }
 
         // 1. Inisialisasi Database Oracle (oci8)
@@ -122,6 +127,20 @@ class Mlogs extends CI_Model {
         } else {
             $this->db_fso_postgres = null;
         }
+
+        // 5. Inisialisasi Database CRM PostgreSQL (postgre)
+        if ($this->_ping_host($pg_crm_host, $pg_crm_port, 1)) {
+            try {
+                $this->db_postgres_crm = @$this->load->database('postgres_crm', TRUE);
+                if (!$this->db_postgres_crm || !$this->db_postgres_crm->conn_id) {
+                    $this->db_postgres_crm = null;
+                }
+            } catch (Exception $e) {
+                $this->db_postgres_crm = null;
+            }
+        } else {
+            $this->db_postgres_crm = null;
+        }
     }
 
     /**
@@ -132,7 +151,8 @@ class Mlogs extends CI_Model {
             'oracle'       => $this->db_oracle !== null,
             'postgresql'   => $this->db_postgres !== null,
             'fso_oracle'   => $this->db_fso_oracle !== null,
-            'fso_postgres' => $this->db_fso_postgres !== null
+            'fso_postgres' => $this->db_fso_postgres !== null,
+            'postgres_crm' => $this->db_postgres_crm !== null
         );
     }
 
@@ -146,20 +166,23 @@ class Mlogs extends CI_Model {
         // 1. Ambil data dari Oracle jika terhubung
         if ($this->db_oracle) {
             try {
-                // Jalankan query pada tabel OPHAR_LOG_PROSES
-                $sql = "SELECT NOTIKET as no_tiket, 
+                // Jalankan query pada tabel DTKS_LOG_PROSES
+                $sql = "SELECT NO_TIKET as no_tiket, 
                                JENIS_TRANSAKSI as jenis_transaksi, 
                                NO_PELANGGAN as no_pelanggan, 
                                TGLPROSES as tanggal_proses, 
-                               'ORACLE' as database, 
-                               STATUS as status, 
-                               PETUGAS as petugas, 
-                               KETERANGAN as query 
-                        FROM OPHARAPP.OPHAR_LOG_PROSES 
+                               DB_SESSION as database, 
+                               'SUCCESS' as status, 
+                               LOGIN as petugas, 
+                               'UNITUPI: ' || UNITUPI as query 
+                        FROM OPHARAPP.DTKS_LOG_PROSES 
                         ORDER BY TGLPROSES DESC";
                 $query = $this->db_oracle->query($sql);
                 if ($query) {
-                    $logs = $query->result_array();
+                    $raw_logs = $query->result_array();
+                    foreach ($raw_logs as $row) {
+                        $logs[] = array_change_key_case($row, CASE_LOWER);
+                    }
                 }
             } catch (Exception $e) {
                 // Log error atau abaikan

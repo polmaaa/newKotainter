@@ -138,6 +138,10 @@ export default function Dashboard({ logs, dbStatus, loading, onRefresh, onViewDe
             <span className={`indicator-dot ${(dbStatus && dbStatus.fso_postgres) ? 'online' : 'offline'}`} id="status-dot-fso-postgres"></span>
             <span>FSO Postgre</span>
           </div>
+          <div className="db-indicator" title="Database CRM PostgreSQL">
+            <span className={`indicator-dot ${(dbStatus && dbStatus.postgres_crm) ? 'online' : 'offline'}`} id="status-dot-postgres-crm"></span>
+            <span>CRM Postgre</span>
+          </div>
         </div>
       </div>
 

@@ -52,3 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'Home';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+// Route untuk Swagger API Docs
+$route['Api_docs'] = 'api/Api_docs';
+$route['Api_docs/(:any)'] = 'api/Api_docs/$1';

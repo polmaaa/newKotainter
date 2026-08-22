@@ -1,0 +1,621 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NewKotainter v2.0 REST API Docs",
+    "version": "2.0.0",
+    "description": "Dokumentasi Lengkap API Backend NewKotainter v2.0 (Oracle & PostgreSQL)."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Current Environment"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "SessionCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "ci_session",
+        "description": "Autentikasi menggunakan cookie session PHP/CodeIgniter setelah login berhasil."
+      }
+    },
+    "schemas": {
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "message": {
+            "type": "string",
+            "example": "Operasi berhasil"
+          },
+          "data": {
+            "type": "object",
+            "nullable": true
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "SessionCookie": []
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login Pengguna",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": {"type": "string", "example": "admin"},
+                  "password": {"type": "string", "format": "password", "example": "password"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login berhasil, session cookie akan disimpan oleh browser",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ApiResponse"}
+              }
+            }
+          },
+          "400": {
+            "description": "Username atau password kosong"
+          },
+          "401": {
+            "description": "Kredensial tidak valid"
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Cek Status Session Aktif",
+        "responses": {
+          "200": {
+            "description": "Session valid",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ApiResponse"}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Logout Pengguna",
+        "responses": {
+          "200": {
+            "description": "Logout berhasil"
+          }
+        }
+      }
+    },
+    "/api/Logs/get_db_status": {
+      "get": {
+        "tags": ["System & Config"],
+        "summary": "Ambil Status Koneksi 5 Database",
+        "responses": {
+          "200": {
+            "description": "Status koneksi database (online/offline)"
+          }
+        }
+      }
+    },
+    "/api/Logs/get_all_logs": {
+      "get": {
+        "tags": ["System & Config"],
+        "summary": "Ambil Riwayat Audit Log Proses",
+        "responses": {
+          "200": {
+            "description": "Daftar audit log proses"
+          }
+        }
+      }
+    },
+    "/api/Db_config/get_config": {
+      "get": {
+        "tags": ["System & Config"],
+        "summary": "Ambil Konfigurasi 5 Database",
+        "responses": {
+          "200": {
+            "description": "Detail host/port/user database"
+          }
+        }
+      }
+    },
+    "/api/Db_config/save_config": {
+      "post": {
+        "tags": ["System & Config"],
+        "summary": "Simpan Konfigurasi 5 Database Baru",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "site_name": {"type": "string"},
+                  "site_description": {"type": "string"},
+                  "oracle_tns": {"type": "string"},
+                  "oracle_username": {"type": "string"},
+                  "oracle_password": {"type": "string"},
+                  "postgres_host": {"type": "string"},
+                  "postgres_port": {"type": "integer"},
+                  "postgres_username": {"type": "string"},
+                  "postgres_password": {"type": "string"},
+                  "postgres_database": {"type": "string"},
+                  "fso_oracle_tns": {"type": "string"},
+                  "fso_oracle_username": {"type": "string"},
+                  "fso_oracle_password": {"type": "string"},
+                  "fso_postgres_host": {"type": "string"},
+                  "fso_postgres_port": {"type": "integer"},
+                  "fso_postgres_username": {"type": "string"},
+                  "fso_postgres_password": {"type": "string"},
+                  "fso_postgres_database": {"type": "string"},
+                  "postgres_crm_host": {"type": "string"},
+                  "postgres_crm_port": {"type": "integer"},
+                  "postgres_crm_username": {"type": "string"},
+                  "postgres_crm_password": {"type": "string"},
+                  "postgres_crm_database": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Konfigurasi berhasil disimpan"
+          }
+        }
+      }
+    },
+    "/api/Menu_config/get_menus": {
+      "get": {
+        "tags": ["System & Config"],
+        "summary": "Ambil Daftar Menu Dinamis",
+        "responses": {
+          "200": {
+            "description": "Daftar menu dari OPHARAPP.DTKS_MENU"
+          }
+        }
+      }
+    },
+    "/api/InfoDataTabel/get_data": {
+      "get": {
+        "tags": ["Informasi Data Tabel"],
+        "summary": "Cari IDPEL di Oracle (View)",
+        "parameters": [
+          {"name": "idpel", "in": "query", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Data ditemukan"}
+        }
+      }
+    },
+    "/api/InfoDataTabel_pg/get_data": {
+      "get": {
+        "tags": ["Informasi Data Tabel"],
+        "summary": "Cari IDPEL di PostgreSQL (View)",
+        "parameters": [
+          {"name": "idpel", "in": "query", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Data ditemukan"}
+        }
+      }
+    },
+    "/api/UpdatePnj/get_user": {
+      "get": {
+        "tags": ["Update PNJ"],
+        "summary": "Cari User PNJ di Oracle",
+        "parameters": [
+          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Data ditemukan"}
+        }
+      }
+    },
+    "/api/UpdatePnj/save_pnj": {
+      "post": {
+        "tags": ["Update PNJ"],
+        "summary": "Update Unit Kerja PNJ di Oracle",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id", "working_unit", "no_tiket"],
+                "properties": {
+                  "user_id": {"type": "string"},
+                  "working_unit": {"type": "string"},
+                  "no_tiket": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Berhasil disimpan"}
+        }
+      }
+    },
+    "/api/UpdatePnj_pg/get_user": {
+      "get": {
+        "tags": ["Update PNJ"],
+        "summary": "Cari User PNJ di PostgreSQL",
+        "parameters": [
+          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Data ditemukan"}
+        }
+      }
+    },
+    "/api/UpdatePnj_pg/save_pnj": {
+      "post": {
+        "tags": ["Update PNJ"],
+        "summary": "Update Unit Kerja PNJ di PostgreSQL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id", "working_unit", "no_tiket"],
+                "properties": {
+                  "user_id": {"type": "string"},
+                  "working_unit": {"type": "string"},
+                  "no_tiket": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Berhasil disimpan"}
+        }
+      }
+    },
+    "/api/UpdateRoleUser/get_user": {
+      "get": {
+        "tags": ["Update Role User"],
+        "summary": "Cari User & Role di Oracle",
+        "parameters": [
+          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Data ditemukan"}
+        }
+      }
+    },
+    "/api/UpdateRoleUser/save_role": {
+      "post": {
+        "tags": ["Update Role User"],
+        "summary": "Update Role User di Oracle",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id", "role_id", "no_tiket"],
+                "properties": {
+                  "user_id": {"type": "string"},
+                  "role_id": {"type": "integer"},
+                  "no_tiket": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Berhasil disimpan"}
+        }
+      }
+    },
+    "/api/UpdateRoleUser_pg/get_user": {
+      "get": {
+        "tags": ["Update Role User"],
+        "summary": "Cari User & Role di PostgreSQL",
+        "parameters": [
+          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Data ditemukan"}
+        }
+      }
+    },
+    "/api/UpdateRoleUser_pg/save_role": {
+      "post": {
+        "tags": ["Update Role User"],
+        "summary": "Update Role User di PostgreSQL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id", "role_id", "no_tiket"],
+                "properties": {
+                  "user_id": {"type": "string"},
+                  "role_id": {"type": "integer"},
+                  "no_tiket": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Berhasil disimpan"}
+        }
+      }
+    },
+    "/api/UpdateUser/get_user": {
+      "get": {
+        "tags": ["Update User"],
+        "summary": "Cari Profil User di Oracle",
+        "parameters": [
+          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Data ditemukan"}
+        }
+      }
+    },
+    "/api/UpdateUser/save_user": {
+      "post": {
+        "tags": ["Update User"],
+        "summary": "Update Password / Status User di Oracle",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id", "status_user", "no_tiket"],
+                "properties": {
+                  "user_id": {"type": "string"},
+                  "status_user": {"type": "string"},
+                  "password_user": {"type": "string"},
+                  "no_tiket": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Berhasil disimpan"}
+        }
+      }
+    },
+    "/api/UpdateUser_pg/get_user": {
+      "get": {
+        "tags": ["Update User"],
+        "summary": "Cari Profil User di PostgreSQL",
+        "parameters": [
+          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Data ditemukan"}
+        }
+      }
+    },
+    "/api/UpdateUser_pg/save_user": {
+      "post": {
+        "tags": ["Update User"],
+        "summary": "Update Password / Status User di PostgreSQL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id", "status_user", "no_tiket"],
+                "properties": {
+                  "user_id": {"type": "string"},
+                  "status_user": {"type": "string"},
+                  "password_user": {"type": "string"},
+                  "no_tiket": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Berhasil disimpan"}
+        }
+      }
+    },
+    "/api/Crm_mutasi_unit/get_user": {
+      "get": {
+        "tags": ["CRM"],
+        "summary": "Cari User CRM (Mutasi Unit)",
+        "parameters": [
+          {"name": "identifier", "in": "query", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Data ditemukan"}
+        }
+      }
+    },
+    "/api/Crm_mutasi_unit/save_mutasi": {
+      "post": {
+        "tags": ["CRM"],
+        "summary": "Update Working Unit CRM",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["identifier", "working_unit", "no_tiket"],
+                "properties": {
+                  "identifier": {"type": "string"},
+                  "working_unit": {"type": "string"},
+                  "no_tiket": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Berhasil disimpan"}
+        }
+      }
+    },
+    "/api/Crm_update_role/get_user": {
+      "get": {
+        "tags": ["CRM"],
+        "summary": "Cari User CRM (Update Role)",
+        "parameters": [
+          {"name": "identifier", "in": "query", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Data ditemukan"}
+        }
+      }
+    },
+    "/api/Crm_update_role/get_roles": {
+      "get": {
+        "tags": ["CRM"],
+        "summary": "Ambil Daftar Master Role CRM",
+        "responses": {
+          "200": {"description": "Daftar role"}
+        }
+      }
+    },
+    "/api/Crm_update_role/save_role": {
+      "post": {
+        "tags": ["CRM"],
+        "summary": "Update Role ID User CRM",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["identifier", "role_id", "no_tiket"],
+                "properties": {
+                  "identifier": {"type": "string"},
+                  "role_id": {"type": "integer"},
+                  "no_tiket": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Berhasil disimpan"}
+        }
+      }
+    },
+    "/api/Users/get_users": {
+      "get": {
+        "tags": ["Developer User Management"],
+        "summary": "Ambil Semua Pengguna Aplikasi Utama",
+        "responses": {
+          "200": {"description": "Daftar pengguna"}
+        }
+      }
+    },
+    "/api/Users/save_user": {
+      "post": {
+        "tags": ["Developer User Management"],
+        "summary": "Tambah / Edit Pengguna Aplikasi Utama",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "nama", "level"],
+                "properties": {
+                  "username": {"type": "string"},
+                  "nama": {"type": "string"},
+                  "level": {"type": "string"},
+                  "password": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Berhasil disimpan"}
+        }
+      }
+    },
+    "/api/Users/delete_user": {
+      "post": {
+        "tags": ["Developer User Management"],
+        "summary": "Hapus Pengguna Aplikasi Utama",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username"],
+                "properties": {
+                  "username": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Berhasil dihapus"}
+        }
+      }
+    },
+    "/api/Users/change_password": {
+      "post": {
+        "tags": ["Developer User Management"],
+        "summary": "Ubah Password Mandiri (Self)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["old_password", "new_password"],
+                "properties": {
+                  "old_password": {"type": "string"},
+                  "new_password": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Password berhasil diubah"}
+        }
+      }
+    }
+  }
+}

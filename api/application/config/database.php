@@ -111,6 +111,27 @@ $db['fso_postgres'] = array(
 	'encrypt'  => FALSE,
 	'compress' => FALSE,
 	'stricton' => FALSE,
+);
+
+$db['postgres_crm'] = array(
+	'dsn'      => '',
+	'hostname' => '10.1.86.11',
+	'username' => 'plncrm_apps',
+	'password' => 'Ant1Cov!d@2020',
+	'database' => 'plncrm_db',
+	'dbdriver' => 'postgre',
+	'port'     => 5432,
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt'  => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
 	'failover' => array(),
 	'save_queries' => TRUE
 );

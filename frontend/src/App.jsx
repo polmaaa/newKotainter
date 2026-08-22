@@ -11,6 +11,9 @@ import UpdatePnj from './components/UpdatePnj';
 import UpdateUser from './components/UpdateUser';
 import UpdateRoleUser from './components/UpdateRoleUser';
 import InfoDataTabel from './components/InfoDataTabel';
+import CrmMutasiUnit from './components/CrmMutasiUnit';
+import CrmUpdateRole from './components/CrmUpdateRole';
+import DeveloperInfo from './components/DeveloperInfo';
 
 const API_BASE_URL = import.meta.env.DEV ? '/api' : '/newkotainter/api';
 
@@ -188,7 +191,7 @@ export default function App() {
       });
       const result = await response.json();
       if (response.ok && result.status === 'success') {
-        const statusDb = result.data ? result.data : { oracle: false, postgresql: false, fso_oracle: false, fso_postgres: false };
+        const statusDb = result.data ? result.data : { oracle: false, postgresql: false, fso_oracle: false, fso_postgres: false, postgres_crm: false };
         setDbStatus(statusDb);
         if (alertUser) {
           setDbStatusModal(statusDb);
@@ -278,6 +281,9 @@ export default function App() {
       case 'UpdatePNJ_pg': return 'user-edit';
       case 'UpdateUser':
       case 'UpdateUser_pg': return 'user-edit';
+      case 'Crm_mutasi_unit': return 'directions';
+      case 'Crm_update_role': return 'key';
+      case 'developer_info': return 'code';
       default: return 'folder';
     }
   };
@@ -414,6 +420,35 @@ export default function App() {
             showToast={showToast}
             isPostgres={dbMode === 'postgre'}
             menuName={menu ? menu.menu_name : 'Informasi Data Tabel'}
+          />
+        );
+      case 'Crm_mutasi_unit':
+        return (
+          <CrmMutasiUnit
+            key={`crmmutasiunit-${dbMode}`}
+            user={user}
+            apiBaseUrl={API_BASE_URL}
+            showToast={showToast}
+            isPostgres={true}
+            menuName={menu ? menu.menu_name : 'Mutasi Unit CRM'}
+          />
+        );
+      case 'Crm_update_role':
+        return (
+          <CrmUpdateRole
+            key={`crmupdaterole-${dbMode}`}
+            user={user}
+            apiBaseUrl={API_BASE_URL}
+            showToast={showToast}
+            isPostgres={true}
+            menuName={menu ? menu.menu_name : 'Update Role CRM'}
+          />
+        );
+      case 'developer_info':
+        return (
+          <DeveloperInfo
+            key="developer-info"
+            apiBaseUrl={API_BASE_URL}
           />
         );
       default:
@@ -644,6 +679,12 @@ export default function App() {
                 <span style={{ fontWeight: '500' }}>4. FSO PostgreSQL</span>
                 <span className={`badge ${dbStatusModal.fso_postgres ? 'badge-success' : 'badge-error'}`} style={{ minWidth: '85px', textAlign: 'center', display: 'inline-block' }}>
                   {dbStatusModal.fso_postgres ? 'ONLINE' : 'OFFLINE'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+                <span style={{ fontWeight: '500' }}>5. CRM PostgreSQL</span>
+                <span className={`badge ${dbStatusModal.postgres_crm ? 'badge-success' : 'badge-error'}`} style={{ minWidth: '85px', textAlign: 'center', display: 'inline-block' }}>
+                  {dbStatusModal.postgres_crm ? 'ONLINE' : 'OFFLINE'}
                 </span>
               </div>
             </div>

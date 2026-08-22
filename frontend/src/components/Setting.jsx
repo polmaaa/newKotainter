@@ -35,8 +35,15 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   const [fsoPostgresPassword, setFsoPostgresPassword] = useState('fsm@2026');
   const [fsoPostgresDatabase, setFsoPostgresDatabase] = useState('fsm');
 
+  // 5. CRM Postgres states
+  const [postgresCrmHost, setPostgresCrmHost] = useState('10.1.86.11');
+  const [postgresCrmPort, setPostgresCrmPort] = useState('5432');
+  const [postgresCrmUsername, setPostgresCrmUsername] = useState('plncrm_apps');
+  const [postgresCrmPassword, setPostgresCrmPassword] = useState('Ant1Cov!d@2020');
+  const [postgresCrmDatabase, setPostgresCrmDatabase] = useState('plncrm_db');
+
   // Accordion & Password toggle states
-  const [activeAccordion, setActiveAccordion] = useState(null); // 'oracle', 'postgres', 'fsoOracle', 'fsoPostgres', or null (all closed)
+  const [activeAccordion, setActiveAccordion] = useState(null); // 'oracle', 'postgres', 'fsoOracle', 'fsoPostgres', 'postgresCrm', or null (all closed)
   const toggleAccordion = (key) => {
     setActiveAccordion(prev => prev === key ? null : key);
   };
@@ -44,6 +51,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   const [showPostgresPass, setShowPostgresPass] = useState(false);
   const [showFsoOraclePass, setShowFsoOraclePass] = useState(false);
   const [showFsoPostgresPass, setShowFsoPostgresPass] = useState(false);
+  const [showPostgresCrmPass, setShowPostgresCrmPass] = useState(false);
   const [showModalPass, setShowModalPass] = useState(false);
   const [showSelfPass, setShowSelfPass] = useState(false);
   const [showSelfOldPass, setShowSelfOldPass] = useState(false);
@@ -152,6 +160,13 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
             setFsoPostgresUsername(data.fso_postgres_username || 'fsm');
             setFsoPostgresPassword(data.fso_postgres_password || 'fsm@2026');
             setFsoPostgresDatabase(data.fso_postgres_database || 'fsm');
+
+            // CRM Postgres
+            setPostgresCrmHost(data.postgres_crm_host || '10.1.86.11');
+            setPostgresCrmPort(data.postgres_crm_port ? data.postgres_crm_port.toString() : '5432');
+            setPostgresCrmUsername(data.postgres_crm_username || 'plncrm_apps');
+            setPostgresCrmPassword(data.postgres_crm_password || 'Ant1Cov!d@2020');
+            setPostgresCrmDatabase(data.postgres_crm_database || 'plncrm_db');
 
           } else {
             setError(result.message || 'Gagal memuat konfigurasi.');
@@ -326,7 +341,13 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
           fso_postgres_port: parseInt(fsoPostgresPort) || 5488,
           fso_postgres_username: fsoPostgresUsername,
           fso_postgres_password: fsoPostgresPassword,
-          fso_postgres_database: fsoPostgresDatabase
+          fso_postgres_database: fsoPostgresDatabase,
+
+          postgres_crm_host: postgresCrmHost,
+          postgres_crm_port: parseInt(postgresCrmPort) || 5432,
+          postgres_crm_username: postgresCrmUsername,
+          postgres_crm_password: postgresCrmPassword,
+          postgres_crm_database: postgresCrmDatabase
         })
       });
 
@@ -1269,6 +1290,99 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                           className={`pi ${showFsoPostgresPass ? 'pi-eye-slash' : 'pi-eye'}`} 
                           style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
                           onClick={() => setShowFsoPostgresPass(!showFsoPostgresPass)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {/* 5. CRM Postgres Accordion */}
+              <div style={{ border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden' }}>
+                <div 
+                  onClick={() => toggleAccordion('postgresCrm')}
+                  style={{ 
+                    padding: '14px 16px', 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    backgroundColor: activeAccordion === 'postgresCrm' ? '#f0fdfa' : '#f8fafc',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <i className="pi pi-server" style={{ color: '#0f766e', fontSize: '1.1rem' }}></i>
+                    <span style={{ fontWeight: 600, color: '#1e293b', fontSize: '0.95rem' }}>Database CRM POSTGRE</span>
+                  </div>
+                  <i className={`pi ${activeAccordion === 'postgresCrm' ? 'pi-chevron-down' : 'pi-chevron-right'}`} style={{ color: '#64748b', fontSize: '0.85rem' }}></i>
+                </div>
+
+                {activeAccordion === 'postgresCrm' && (
+                  <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#ffffff' }}>
+                    <div className="form-row">
+                      <label htmlFor="crm-pg-host">Host / IP Address</label>
+                      <input
+                        type="text"
+                        id="crm-pg-host"
+                        className="form-input-text"
+                        required
+                        value={postgresCrmHost}
+                        onChange={(e) => setPostgresCrmHost(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <label htmlFor="crm-pg-port">Port</label>
+                      <input
+                        type="number"
+                        id="crm-pg-port"
+                        className="form-input-text"
+                        required
+                        value={postgresCrmPort}
+                        onChange={(e) => setPostgresCrmPort(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <label htmlFor="crm-pg-db">Database Name</label>
+                      <input
+                        type="text"
+                        id="crm-pg-db"
+                        className="form-input-text"
+                        required
+                        value={postgresCrmDatabase}
+                        onChange={(e) => setPostgresCrmDatabase(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <label htmlFor="crm-pg-user">Username</label>
+                      <input
+                        type="text"
+                        id="crm-pg-user"
+                        className="form-input-text"
+                        required
+                        value={postgresCrmUsername}
+                        onChange={(e) => setPostgresCrmUsername(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <label htmlFor="crm-pg-pass">Password</label>
+                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <input
+                          type={showPostgresCrmPass ? 'text' : 'password'}
+                          id="crm-pg-pass"
+                          className="form-input-text"
+                          required
+                          value={postgresCrmPassword}
+                          onChange={(e) => setPostgresCrmPassword(e.target.value)}
+                        />
+                        <i 
+                          className={`pi ${showPostgresCrmPass ? 'pi-eye-slash' : 'pi-eye'}`} 
+                          style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
+                          onClick={() => setShowPostgresCrmPass(!showPostgresCrmPass)}
                         />
                       </div>
                     </div>
