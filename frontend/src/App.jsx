@@ -15,7 +15,9 @@ import CrmMutasiUnit from './components/CrmMutasiUnit';
 import CrmUpdateRole from './components/CrmUpdateRole';
 import DeveloperInfo from './components/DeveloperInfo';
 
-const API_BASE_URL = import.meta.env.DEV ? '/api' : '/newkotainter/api';
+const API_BASE_URL = import.meta.env.DEV 
+  ? '/api' 
+  : `${window.location.pathname.replace(/\/$/, '')}/api`;
 
 export default function App() {
   const [user, setUser] = useState(null);
