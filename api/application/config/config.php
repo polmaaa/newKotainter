@@ -17,15 +17,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | environments.
 |
 */
-if (PHP_SAPI === 'cli') {
-    $config['base_url'] = 'http://localhost/newkotainter/api/';
-} else {
-    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-    $script_name = $_SERVER['SCRIPT_NAME'];
-    $base_dir = str_replace(basename($script_name), '', $script_name);
-    $config['base_url'] = $protocol . "://" . $host . $base_dir;
-} 
+$config['base_url'] = 'http://localhost/newkotainter/api/';    
 
 //$servername=filter_input(INPUT_SERVER, 'SERVER_NAME');
 //$port=filter_input(INPUT_SERVER, 'SERVER_PORT');
