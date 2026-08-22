@@ -17,12 +17,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | environments.
 |
 */
-$config['base_url'] = 'http://localhost/newkotainter/api/';   
-//$config['base_url'] = 'http://10.71.1.173:8888/kotainter/';
-//$config['base_url'] = 'http://10.71.1.175:8888/kotainter/';
-//$config['base_url'] = 'http://10.68.35.12:8888/kotainter/';
-//$config['base_url'] = 'http://10.68.35.8:8888/kotainter/';
-//$config['base_url'] = 'http://10.68.35.12:8888/kotainter_ppbt/'; 
+if (PHP_SAPI === 'cli') {
+    $config['base_url'] = 'http://localhost/newkotainter/api/';
+} else {
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+    $script_name = $_SERVER['SCRIPT_NAME'];
+    $base_dir = str_replace(basename($script_name), '', $script_name);
+    $config['base_url'] = $protocol . "://" . $host . $base_dir;
+} 
 
 //$servername=filter_input(INPUT_SERVER, 'SERVER_NAME');
 //$port=filter_input(INPUT_SERVER, 'SERVER_PORT');
