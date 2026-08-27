@@ -279,5 +279,42 @@
                 }
             ]
         }
+    },
+    {
+        "id": 9,
+        "name": "Update SLO dan NIDI",
+        "parent": "Back Office",
+        "oracle": {
+            "controller": "api\/application\/controllers\/api\/UpdateSLOdanNIDI.php",
+            "model": "api\/application\/models\/Mupdateslodannidi.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/UpdateSLOdanNIDI\/get_data",
+                    "desc": "Mencari data Update SLO dan NIDI di database Oracle."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/UpdateSLOdanNIDI\/save",
+                    "desc": "Menyimpan data Update SLO dan NIDI di database Oracle."
+                }
+            ]
+        },
+        "postgres": {
+            "controller": "api\/application\/controllers\/api\/UpdateSLOdanNIDI_pg.php",
+            "model": "api\/application\/models\/Mupdateslodannidi.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/UpdateSLOdanNIDI_pg\/get_data",
+                    "desc": "Mencari data Update SLO dan NIDI di database PostgreSQL."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/UpdateSLOdanNIDI_pg\/save",
+                    "desc": "Menyimpan data Update SLO dan NIDI di database PostgreSQL."
+                }
+            ]
+        }
     }
 ]
