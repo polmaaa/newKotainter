@@ -70,7 +70,7 @@ class Mmenu extends CI_Model {
         }
 
         try {
-            $query = $this->db_oracle->query("SELECT ID_MENU, PARENT_MENU, MENU_NAME, ORACLE, POSTGRE, AKTIVE, ROLE_MENU, TO_CHAR(CREATE_AT, 'YYYY-MM-DD HH24:MI:SS') as CREATE_AT FROM " . $this->table_name . " ORDER BY CREATE_AT ASC");
+            $query = $this->db_oracle->query("SELECT ID_MENU, PARENT_MENU, MENU_NAME, ORACLE, POSTGRE, AKTIVE, ROLE_MENU, TO_CHAR(CREATE_AT, 'YYYY-MM-DD HH24:MI:SS') as CREATE_AT FROM " . $this->table_name . " ORDER BY ID_MENU ASC");
             if ($query) {
                 $results = $query->result_array();
                 $normalized = array();

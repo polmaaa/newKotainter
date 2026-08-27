@@ -85,6 +85,17 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedApi, setSelectedApi] = useState(null);
 
+  // Custom styled confirmation modal state
+  const [confirmConfig, setConfirmConfig] = useState({
+    show: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+    confirmText: 'Ya',
+    cancelText: 'Batal',
+    type: 'danger'
+  });
+
   useEffect(() => {
     loadMenus();
   }, []);
@@ -379,10 +390,10 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
         },
         body: JSON.stringify({
           id_menu: modalMode === 'edit' ? menuId : null,
-          parent_menu: menuParent.trim() || null,
-          menu_name: menuName.trim(),
-          oracle: menuOracle.trim() || null,
-          postgre: menuPostgre.trim() || null,
+          parent_menu: (menuParent || '').trim() || null,
+          menu_name: (menuName || '').trim(),
+          oracle: (menuOracle || '').trim() || null,
+          postgre: (menuPostgre || '').trim() || null,
           aktive: menuAktive,
           role_menu: selectedRoles.join(',')
         })
@@ -397,24 +408,24 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
       // 2. Save API configuration & trigger file code skeletons generation
       if (enableApiDoc) {
         let apiIdToSave = null;
-        const existingApi = apisList.find(a => a.name.trim().toLowerCase() === menuName.trim().toLowerCase());
+        const existingApi = apisList.find(a => (a.name || '').trim().toLowerCase() === (menuName || '').trim().toLowerCase());
         if (existingApi) {
           apiIdToSave = existingApi.id;
         }
 
         const apiPayload = {
           id: apiIdToSave,
-          name: menuName.trim(),
-          parent: menuParent.trim() || 'Utama',
+          name: (menuName || '').trim(),
+          parent: (menuParent || '').trim() || 'Utama',
           oracle: hasOracle ? {
             controller: oracleController,
             model: oracleModel,
-            apis: oracleApis.filter(api => api.path.trim() !== '')
+            apis: oracleApis.filter(api => (api.path || '').trim() !== '')
           } : null,
           postgres: hasPostgres ? {
             controller: postgresController,
             model: postgresModel,
-            apis: postgresApis.filter(api => api.path.trim() !== '')
+            apis: postgresApis.filter(api => (api.path || '').trim() !== '')
           } : null
         };
 
@@ -450,14 +461,10 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm(`Apakah Anda yakin ingin menghapus menu ID ${id}? (Dokumentasi API terkait juga akan dihapus)`)) {
-      return;
-    }
-
     try {
       const menuToDelete = menus.find(m => m.id_menu === id);
       if (menuToDelete) {
-        const matchingApi = apisList.find(a => a.name.trim().toLowerCase() === menuToDelete.menu_name.trim().toLowerCase());
+        const matchingApi = apisList.find(a => (a.name || '').trim().toLowerCase() === (menuToDelete.menu_name || '').trim().toLowerCase());
         if (matchingApi) {
           await fetch(`${apiBaseUrl}/api/Developer_apis/delete_api`, {
             method: 'POST',
@@ -492,16 +499,36 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
     }
   };
 
+  const handleDeleteClick = (id) => {
+    setConfirmConfig({
+      show: true,
+      title: 'Hapus Menu',
+      message: `Apakah Anda yakin ingin menghapus menu ID ${id}? (Dokumentasi API terkait juga akan dihapus)`,
+      confirmText: 'Hapus',
+      cancelText: 'Batal',
+      type: 'danger',
+      onConfirm: () => handleDelete(id)
+    });
+  };
+
   const handleOpenInfoApi = (menu) => {
-    const matchingApi = apisList.find(a => a.name.trim().toLowerCase() === menu.menu_name.trim().toLowerCase());
+    const matchingApi = apisList.find(a => (a.name || '').trim().toLowerCase() === (menu.menu_name || '').trim().toLowerCase());
     if (matchingApi) {
       setSelectedApi(matchingApi);
       setShowDetailModal(true);
     } else {
-      if (window.confirm(`Dokumentasi API untuk menu "${menu.menu_name}" belum terkonfigurasi. Apakah Anda ingin mengonfigurasinya sekarang?`)) {
-        handleOpenEdit(menu);
-        setEnableApiDoc(true);
-      }
+      setConfirmConfig({
+        show: true,
+        title: 'Konfigurasi API',
+        message: `Dokumentasi API untuk menu "${menu.menu_name}" belum terkonfigurasi. Apakah Anda ingin mengonfigurasinya sekarang?`,
+        confirmText: 'Konfigurasi',
+        cancelText: 'Batal',
+        type: 'info',
+        onConfirm: () => {
+          handleOpenEdit(menu);
+          setEnableApiDoc(true);
+        }
+      });
     }
   };
 
@@ -641,7 +668,7 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
                           <button 
                             type="button" 
                             className="btn-action"
-                            onClick={() => handleDelete(menu.id_menu)}
+                            onClick={() => handleDeleteClick(menu.id_menu)}
                             style={{ color: 'var(--error)' }}
                             title="Hapus"
                           >
@@ -1218,6 +1245,60 @@ export default function SettingMenu({ apiBaseUrl, showToast, user, onRefreshMenu
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* CUSTOM CONFIRMATION MODAL */}
+      {confirmConfig.show && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.6)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', zIndex: 1100,
+          backdropFilter: 'blur(4px)'
+        }}>
+          <div style={{
+            backgroundColor: 'var(--bg-card)', borderRadius: '12px',
+            width: '90%', maxWidth: '420px', padding: '24px',
+            border: '1px solid var(--border-light)',
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)',
+            display: 'flex', flexDirection: 'column', gap: '16px'
+          }}>
+            <h3 style={{ margin: 0, fontSize: '1.15rem', color: confirmConfig.type === 'danger' ? 'var(--error)' : '#0f766e', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <i className={confirmConfig.type === 'danger' ? 'pi pi-exclamation-triangle' : 'pi pi-question-circle'}></i>
+              {confirmConfig.title}
+            </h3>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.5' }}>
+              {confirmConfig.message}
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
+              <button 
+                type="button" 
+                className="btn btn-outline" 
+                onClick={() => setConfirmConfig(prev => ({ ...prev, show: false }))}
+                style={{ padding: '8px 16px', fontSize: '0.85rem' }}
+              >
+                {confirmConfig.cancelText}
+              </button>
+              <button 
+                type="button" 
+                onClick={() => {
+                  if (confirmConfig.onConfirm) confirmConfig.onConfirm();
+                  setConfirmConfig(prev => ({ ...prev, show: false }));
+                }}
+                style={{ 
+                  padding: '8px 16px', 
+                  fontSize: '0.85rem',
+                  backgroundColor: confirmConfig.type === 'danger' ? 'var(--error)' : 'var(--primary)',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: 600
+                }}
+              >
+                {confirmConfig.confirmText}
+              </button>
+            </div>
           </div>
         </div>
       )}

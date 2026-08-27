@@ -41,9 +41,10 @@ class Developer_apis extends MY_Controller {
     }
 
     private function _generate_file_skeleton($filePath, $type, $className, $modelName = '') {
-        $cleanPath = str_replace('api/application/', '', $filePath);
+        $normalizedPath = str_replace('\\', '/', $filePath);
+        $cleanPath = str_replace('api/application/', '', $normalizedPath);
         $cleanPath = str_replace('application/', '', $cleanPath);
-        $absolutePath = APPPATH . $cleanPath;
+        $absolutePath = APPPATH . ltrim($cleanPath, '/');
 
         if (file_exists($absolutePath)) {
             return; // File already exists, don't overwrite
@@ -52,7 +53,7 @@ class Developer_apis extends MY_Controller {
         // Create parent directories if they don't exist
         $dir = dirname($absolutePath);
         if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
+            @mkdir($dir, 0755, true);
         }
 
         // Generate template
@@ -90,7 +91,7 @@ class Developer_apis extends MY_Controller {
                       . "}\n";
         }
 
-        file_put_contents($absolutePath, $template);
+        @file_put_contents($absolutePath, $template);
     }
 
     public function save_api() {
