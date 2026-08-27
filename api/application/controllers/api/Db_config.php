@@ -44,11 +44,31 @@ class Db_config extends MY_Controller {
             'oracle_password'       => isset($db['oracle']['password']) ? $db['oracle']['password'] : '',
             
             // 2. Postgres
-            'postgres_host'         => isset($db['postgres']['hostname']) ? $db['postgres']['hostname'] : '',
-            'postgres_port'         => isset($db['postgres']['port']) ? $db['postgres']['port'] : 5432,
-            'postgres_username'     => isset($db['postgres']['username']) ? $db['postgres']['username'] : '',
-            'postgres_password'     => isset($db['postgres']['password']) ? $db['postgres']['password'] : '',
-            'postgres_database'     => isset($db['postgres']['database']) ? $db['postgres']['database'] : '',
+            'postgres_host'         => isset($db['postgres_ap2t']['hostname']) ? $db['postgres_ap2t']['hostname'] : (isset($db['postgres']['hostname']) ? $db['postgres']['hostname'] : ''),
+            'postgres_port'         => isset($db['postgres_ap2t']['port']) ? $db['postgres_ap2t']['port'] : (isset($db['postgres']['port']) ? $db['postgres']['port'] : 5488),
+            'postgres_database'     => isset($db['postgres_ap2t']['database']) ? $db['postgres_ap2t']['database'] : (isset($db['postgres']['database']) ? $db['postgres']['database'] : ''),
+            'postgres_username'     => isset($db['postgres_ap2t']['username']) ? $db['postgres_ap2t']['username'] : (isset($db['postgres']['username']) ? $db['postgres']['username'] : ''),
+            'postgres_password'     => isset($db['postgres_ap2t']['password']) ? $db['postgres_ap2t']['password'] : (isset($db['postgres']['password']) ? $db['postgres']['password'] : ''),
+            
+            'postgres_host_ap2t'    => isset($db['postgres_ap2t']['hostname']) ? $db['postgres_ap2t']['hostname'] : '10.99.20.11',
+            'postgres_port_ap2t'    => isset($db['postgres_ap2t']['port']) ? $db['postgres_ap2t']['port'] : 5488,
+            'postgres_database_ap2t'=> isset($db['postgres_ap2t']['database']) ? $db['postgres_ap2t']['database'] : 'ap2t_db',
+
+            'postgres_host_jateng'  => isset($db['postgres_jateng']['hostname']) ? $db['postgres_jateng']['hostname'] : '10.99.20.12',
+            'postgres_port_jateng'  => isset($db['postgres_jateng']['port']) ? $db['postgres_jateng']['port'] : 5488,
+            'postgres_database_jateng'=> isset($db['postgres_jateng']['database']) ? $db['postgres_jateng']['database'] : 'ap2t_db_jateng',
+
+            'postgres_host_jatim'   => isset($db['postgres_jatim']['hostname']) ? $db['postgres_jatim']['hostname'] : '10.99.20.13',
+            'postgres_port_jatim'   => isset($db['postgres_jatim']['port']) ? $db['postgres_jatim']['port'] : 5488,
+            'postgres_database_jatim'=> isset($db['postgres_jatim']['database']) ? $db['postgres_jatim']['database'] : 'ap2t_db_jatim',
+
+            'postgres_host_jakban'  => isset($db['postgres_jakban']['hostname']) ? $db['postgres_jakban']['hostname'] : '10.99.20.13',
+            'postgres_port_jakban'  => isset($db['postgres_jakban']['port']) ? $db['postgres_jakban']['port'] : 5488,
+            'postgres_database_jakban'=> isset($db['postgres_jakban']['database']) ? $db['postgres_jakban']['database'] : 'ap2t_db_jakban',
+
+            'postgres_host_jabar'   => isset($db['postgres_jabar']['hostname']) ? $db['postgres_jabar']['hostname'] : '10.99.20.14',
+            'postgres_port_jabar'   => isset($db['postgres_jabar']['port']) ? $db['postgres_jabar']['port'] : 5488,
+            'postgres_database_jabar'=> isset($db['postgres_jabar']['database']) ? $db['postgres_jabar']['database'] : 'ap2t_db_jabar',
             
             // 3. FSO Oracle
             'fso_oracle_tns'        => isset($tnsname_fso_oracle) ? $tnsname_fso_oracle : '',
@@ -102,11 +122,28 @@ class Db_config extends MY_Controller {
         $oracle_password   = isset($json_data['oracle_password']) ? trim($json_data['oracle_password']) : '';
         
         // Postgres
-        $postgres_host     = isset($json_data['postgres_host']) ? trim($json_data['postgres_host']) : '';
-        $postgres_port     = isset($json_data['postgres_port']) ? (int)$json_data['postgres_port'] : 5432;
         $postgres_username = isset($json_data['postgres_username']) ? trim($json_data['postgres_username']) : '';
         $postgres_password = isset($json_data['postgres_password']) ? trim($json_data['postgres_password']) : '';
-        $postgres_database = isset($json_data['postgres_database']) ? trim($json_data['postgres_database']) : '';
+        
+        $postgres_host_ap2t      = isset($json_data['postgres_host_ap2t']) ? trim($json_data['postgres_host_ap2t']) : '10.99.20.11';
+        $postgres_port_ap2t      = isset($json_data['postgres_port_ap2t']) ? (int)$json_data['postgres_port_ap2t'] : 5488;
+        $postgres_database_ap2t  = isset($json_data['postgres_database_ap2t']) ? trim($json_data['postgres_database_ap2t']) : 'ap2t_db';
+
+        $postgres_host_jateng    = isset($json_data['postgres_host_jateng']) ? trim($json_data['postgres_host_jateng']) : '10.99.20.12';
+        $postgres_port_jateng    = isset($json_data['postgres_port_jateng']) ? (int)$json_data['postgres_port_jateng'] : 5488;
+        $postgres_database_jateng= isset($json_data['postgres_database_jateng']) ? trim($json_data['postgres_database_jateng']) : 'ap2t_db_jateng';
+
+        $postgres_host_jatim     = isset($json_data['postgres_host_jatim']) ? trim($json_data['postgres_host_jatim']) : '10.99.20.13';
+        $postgres_port_jatim     = isset($json_data['postgres_port_jatim']) ? (int)$json_data['postgres_port_jatim'] : 5488;
+        $postgres_database_jatim = isset($json_data['postgres_database_jatim']) ? trim($json_data['postgres_database_jatim']) : 'ap2t_db_jatim';
+
+        $postgres_host_jakban    = isset($json_data['postgres_host_jakban']) ? trim($json_data['postgres_host_jakban']) : '10.99.20.13';
+        $postgres_port_jakban    = isset($json_data['postgres_port_jakban']) ? (int)$json_data['postgres_port_jakban'] : 5488;
+        $postgres_database_jakban= isset($json_data['postgres_database_jakban']) ? trim($json_data['postgres_database_jakban']) : 'ap2t_db_jakban';
+
+        $postgres_host_jabar     = isset($json_data['postgres_host_jabar']) ? trim($json_data['postgres_host_jabar']) : '10.99.20.14';
+        $postgres_port_jabar     = isset($json_data['postgres_port_jabar']) ? (int)$json_data['postgres_port_jabar'] : 5488;
+        $postgres_database_jabar = isset($json_data['postgres_database_jabar']) ? trim($json_data['postgres_database_jabar']) : 'ap2t_db_jabar';
 
         // FSO Oracle
         $fso_oracle_tns      = isset($json_data['fso_oracle_tns']) ? trim($json_data['fso_oracle_tns']) : '';
@@ -128,8 +165,8 @@ class Db_config extends MY_Controller {
         $postgres_crm_database = isset($json_data['postgres_crm_database']) ? trim($json_data['postgres_crm_database']) : '';
 
         // Validasi input minimal
-        if (empty($oracle_tns) || empty($oracle_username) || empty($postgres_host) || empty($postgres_database)) {
-            return $this->response(400, 'error', 'Kolom TNS Oracle, Username Oracle, Host Postgres, dan DB Name Postgres wajib diisi!');
+        if (empty($oracle_tns) || empty($oracle_username) || empty($postgres_host_ap2t) || empty($postgres_database_ap2t)) {
+            return $this->response(400, 'error', 'Kolom TNS Oracle, Username Oracle, Host Postgres (AP2T), dan DB Name Postgres (AP2T) wajib diisi!');
         }
 
         $db_file = APPPATH . 'config/database.php';
@@ -169,14 +206,106 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	'save_queries' => TRUE
 );
 
-\$db['postgres'] = array(
+\$db['postgres_ap2t'] = array(
 	'dsn'      => '',
-	'hostname' => '" . addcslashes($postgres_host, "'\\") . "',
+	'hostname' => '" . addcslashes($postgres_host_ap2t, "'\\") . "',
 	'username' => '" . addcslashes($postgres_username, "'\\") . "',
 	'password' => '" . addcslashes($postgres_password, "'\\") . "',
-	'database' => '" . addcslashes($postgres_database, "'\\") . "',
+	'database' => '" . addcslashes($postgres_database_ap2t, "'\\") . "',
 	'dbdriver' => 'postgre',
-	'port'     => " . $postgres_port . ",
+	'port'     => " . $postgres_port_ap2t . ",
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt'  => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+\$db['postgres_jateng'] = array(
+	'dsn'      => '',
+	'hostname' => '" . addcslashes($postgres_host_jateng, "'\\") . "',
+	'username' => '" . addcslashes($postgres_username, "'\\") . "',
+	'password' => '" . addcslashes($postgres_password, "'\\") . "',
+	'database' => '" . addcslashes($postgres_database_jateng, "'\\") . "',
+	'dbdriver' => 'postgre',
+	'port'     => " . $postgres_port_jateng . ",
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt'  => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+\$db['postgres_jatim'] = array(
+	'dsn'      => '',
+	'hostname' => '" . addcslashes($postgres_host_jatim, "'\\") . "',
+	'username' => '" . addcslashes($postgres_username, "'\\") . "',
+	'password' => '" . addcslashes($postgres_password, "'\\") . "',
+	'database' => '" . addcslashes($postgres_database_jatim, "'\\") . "',
+	'dbdriver' => 'postgre',
+	'port'     => " . $postgres_port_jatim . ",
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt'  => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+\$db['postgres_jakban'] = array(
+	'dsn'      => '',
+	'hostname' => '" . addcslashes($postgres_host_jakban, "'\\") . "',
+	'username' => '" . addcslashes($postgres_username, "'\\") . "',
+	'password' => '" . addcslashes($postgres_password, "'\\") . "',
+	'database' => '" . addcslashes($postgres_database_jakban, "'\\") . "',
+	'dbdriver' => 'postgre',
+	'port'     => " . $postgres_port_jakban . ",
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt'  => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+\$db['postgres_jabar'] = array(
+	'dsn'      => '',
+	'hostname' => '" . addcslashes($postgres_host_jabar, "'\\") . "',
+	'username' => '" . addcslashes($postgres_username, "'\\") . "',
+	'password' => '" . addcslashes($postgres_password, "'\\") . "',
+	'database' => '" . addcslashes($postgres_database_jabar, "'\\") . "',
+	'dbdriver' => 'postgre',
+	'port'     => " . $postgres_port_jabar . ",
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => FALSE,
@@ -259,6 +388,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+// Dynamic connection swap for group 'postgres' based on request header X-DB-Region
+\$db_region = isset(\$_SERVER['HTTP_X_DB_REGION']) ? strtolower(\$_SERVER['HTTP_X_DB_REGION']) : 'ap2t';
+if (\$db_region === 'jateng') {
+	\$db['postgres'] = \$db['postgres_jateng'];
+} else if (\$db_region === 'jatim') {
+	\$db['postgres'] = \$db['postgres_jatim'];
+} else if (\$db_region === 'jakban') {
+	\$db['postgres'] = \$db['postgres_jakban'];
+} else if (\$db_region === 'jabar') {
+	\$db['postgres'] = \$db['postgres_jabar'];
+} else {
+	\$db['postgres'] = \$db['postgres_ap2t'];
+}
 ";
 
         // Check if we should update Oracle presets in Setting.jsx source file

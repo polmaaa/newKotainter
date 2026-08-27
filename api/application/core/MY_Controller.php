@@ -17,7 +17,7 @@ class MY_Controller extends CI_Controller {
             header("Access-Control-Allow-Origin: *");
         }
         header('Access-Control-Allow-Credentials: true');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-DB-Region');
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 
         // Menangani preflight request OPTIONS

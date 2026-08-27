@@ -8,12 +8,13 @@ import Setting from './components/Setting';
 import Help from './components/Help';
 import DetailModal from './components/DetailModal';
 import UpdatePnj from './components/UpdatePnj';
+import PostingPdl from './components/PostingPdl';
 import UpdateUser from './components/UpdateUser';
 import UpdateRoleUser from './components/UpdateRoleUser';
 import InfoDataTabel from './components/InfoDataTabel';
 import CrmMutasiUnit from './components/CrmMutasiUnit';
 import CrmUpdateRole from './components/CrmUpdateRole';
-import DeveloperInfo from './components/DeveloperInfo';
+import RealokasiLittr from './components/RealokasiLittr';
 
 const API_BASE_URL = import.meta.env.DEV ? '/api' : '/newkotainter/api';
 
@@ -71,7 +72,8 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const [checkingDb, setCheckingDb] = useState(false);
   const [dynamicMenus, setDynamicMenus] = useState([]);
-  const [dbMode, setDbMode] = useState('oracle');
+  const [dbMode, setDbMode] = useState('postgre');
+  const [pgRegion, setPgRegion] = useState('ap2t');
 
   const loadDynamicMenus = async () => {
     try {
@@ -279,10 +281,14 @@ export default function App() {
       case 'UpdatePNJ':
       case 'UpdatePnj_pg':
       case 'UpdatePNJ_pg': return 'user-edit';
+      case 'PostingPDL':
+      case 'PostingPDL_pg': return 'envelope';
       case 'UpdateUser':
       case 'UpdateUser_pg': return 'user-edit';
       case 'Crm_mutasi_unit': return 'directions';
       case 'Crm_update_role': return 'key';
+      case 'RealokasiLITTR':
+      case 'RealokasiLITTR_pg': return 'share-alt';
       case 'developer_info': return 'code';
       default: return 'folder';
     }
@@ -385,6 +391,22 @@ export default function App() {
             showToast={showToast}
             isPostgres={dbMode === 'postgre'}
             menuName={menu ? menu.menu_name : 'Update PNJ'}
+            pgRegion={pgRegion}
+            onPgRegionChange={setPgRegion}
+          />
+        );
+      case 'PostingPDL':
+      case 'PostingPDL_pg':
+        return (
+          <PostingPdl 
+            key={`postingpdl-${dbMode}`}
+            user={user}
+            apiBaseUrl={API_BASE_URL}
+            showToast={showToast}
+            isPostgres={dbMode === 'postgre'}
+            menuName={menu ? menu.menu_name : 'Posting PDL'}
+            pgRegion={pgRegion}
+            onPgRegionChange={setPgRegion}
           />
         );
       case 'UpdateUser':
@@ -397,6 +419,8 @@ export default function App() {
             showToast={showToast}
             isPostgres={dbMode === 'postgre'}
             menuName={menu ? menu.menu_name : 'Update User'}
+            pgRegion={pgRegion}
+            onPgRegionChange={setPgRegion}
           />
         );
       case 'UpdateRoleUser':
@@ -408,6 +432,8 @@ export default function App() {
             apiBaseUrl={API_BASE_URL}
             showToast={showToast}
             isPostgres={dbMode === 'postgre'}
+            pgRegion={pgRegion}
+            onPgRegionChange={setPgRegion}
           />
         );
       case 'InfoDataTabel':
@@ -420,6 +446,8 @@ export default function App() {
             showToast={showToast}
             isPostgres={dbMode === 'postgre'}
             menuName={menu ? menu.menu_name : 'Informasi Data Tabel'}
+            pgRegion={pgRegion}
+            onPgRegionChange={setPgRegion}
           />
         );
       case 'Crm_mutasi_unit':
@@ -444,11 +472,18 @@ export default function App() {
             menuName={menu ? menu.menu_name : 'Update Role CRM'}
           />
         );
-      case 'developer_info':
+      case 'RealokasiLITTR':
+      case 'RealokasiLITTR_pg':
         return (
-          <DeveloperInfo
-            key="developer-info"
+          <RealokasiLittr
+            key={`realokasilittr-${dbMode}`}
+            user={user}
             apiBaseUrl={API_BASE_URL}
+            showToast={showToast}
+            isPostgres={dbMode === 'postgre'}
+            menuName={menu ? menu.menu_name : 'Realokasi LITTR'}
+            pgRegion={pgRegion}
+            onPgRegionChange={setPgRegion}
           />
         );
       default:
@@ -623,12 +658,12 @@ export default function App() {
             
             <main className="workspace-area" style={{ flexGrow: 1, overflowY: 'auto', position: 'relative' }}>
               {/* Tab Content Panels Container */}
-              <div className="tab-panels" id="tab-panels" style={{ width: '100%', height: '100%' }}>
+              <div className="tab-panels" id="tab-panels" style={{ width: '100%' }}>
                 {tabs.map(tab => (
                   <div 
                     key={tab.id} 
                     className={`tab-panel ${activeTabId === tab.id ? 'active' : ''}`}
-                    style={{ display: activeTabId === tab.id ? 'block' : 'none', width: '100%', height: '100%' }}
+                    style={{ display: activeTabId === tab.id ? 'block' : 'none', width: '100%' }}
                   >
                     {renderTabContent(tab.id)}
                   </div>
@@ -698,7 +733,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Modern Toast Notification in Top-Right Corner */}
+      {/* Modern Toast Notification in Bottom-Right Corner */}
       {toast && (
         <>
           <style>{`
@@ -710,7 +745,7 @@ export default function App() {
           <div 
             style={{
               position: 'fixed',
-              top: '24px',
+              bottom: '24px',
               right: '24px',
               zIndex: 9999,
               backgroundColor: toast.type === 'success' ? '#0f766e' : (toast.type === 'error' ? '#e11d48' : '#d97706'),

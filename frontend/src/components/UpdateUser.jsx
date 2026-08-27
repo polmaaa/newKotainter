@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = false, menuName = "Update User" }) {
+export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = false, menuName = "Update User", pgRegion = 'ap2t', onPgRegionChange }) {
   const [searchIdUser, setSearchIdUser] = useState('');
   const [searchUnitup, setSearchUnitup] = useState('');
   const [loading, setLoading] = useState(false);
@@ -9,6 +9,19 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
   // Current search result
   const [userDataList, setUserDataList] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  
+  const [pgDropdownOpen, setPgDropdownOpen] = useState(false);
+  const pgDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (pgDropdownRef.current && !pgDropdownRef.current.contains(e.target)) {
+        setPgDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -74,7 +87,10 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
       const url = `${apiBaseUrl}/${dbPrefix}/get_data?id_user=${encodeURIComponent(searchIdUser.trim())}&unitup=${encodeURIComponent(searchUnitup.trim())}`;
       const response = await fetch(url, {
         method: 'GET',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        headers: { 
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-DB-Region': pgRegion
+        }
       });
       const result = await response.json();
       if (response.ok && result.status === 'success') {
@@ -139,7 +155,8 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-DB-Region': pgRegion
         },
         body: JSON.stringify({
           id_user: selectedUser.id_user,
@@ -195,16 +212,134 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
             Pencarian data profil user, perubahan kode unit kerja (unitup), dan level otorisasi akses menggunakan koneksi {dbLabel}.
           </p>
         </div>
-        <span style={{ 
-          padding: '6px 12px', 
-          backgroundColor: isPostgres ? '#1e3a8a' : '#115e59', 
-          color: '#ffffff', 
-          borderRadius: '20px', 
-          fontSize: '0.8rem', 
-          fontWeight: 600 
-        }}>
-          Mode DB: {dbLabel}
-        </span>
+        {isPostgres ? (
+          <div ref={pgDropdownRef} style={{
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            borderRadius: '20px',
+            padding: '2px 8px 2px 4px',
+            gap: '8px',
+            position: 'relative'
+          }}>
+            <span style={{ 
+              padding: '4px 10px', 
+              backgroundColor: '#1e3a8a', 
+              color: '#ffffff', 
+              borderRadius: '16px', 
+              fontSize: '0.75rem', 
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              <i className="pi pi-database" style={{ fontSize: '0.7rem' }}></i> Mode DB: PostgreSQL
+            </span>
+            <div 
+              onClick={() => setPgDropdownOpen(!pgDropdownOpen)}
+              style={{
+                flex: 1,
+                padding: '4px 24px 4px 8px',
+                borderRadius: '16px',
+                border: 'none',
+                backgroundColor: 'transparent',
+                color: '#1e3a8a',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                userSelect: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%231e3a8a\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'/%3e%3c/svg%3e")',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 4px center',
+                backgroundSize: '12px'
+              }}
+            >
+              {pgRegion === 'ap2t' && 'AP2T (10.99.20.11)'}
+              {pgRegion === 'jateng' && 'JATENG & DIY (10.99.20.12)'}
+              {pgRegion === 'jatim' && 'JATIM (10.99.20.13)'}
+              {pgRegion === 'jakban' && 'JAKARTA & BANTEN (10.99.20.13)'}
+              {pgRegion === 'jabar' && 'JABAR (10.99.20.14)'}
+            </div>
+
+            {pgDropdownOpen && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                marginTop: '8px',
+                backgroundColor: '#ffffff',
+                border: '1px solid #bfdbfe',
+                borderRadius: '12px',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                zIndex: 999,
+                overflow: 'hidden',
+                padding: '4px 0'
+              }}>
+                {[
+                  { value: 'ap2t', label: 'AP2T (10.99.20.11)' },
+                  { value: 'jateng', label: 'JATENG & DIY (10.99.20.12)' },
+                  { value: 'jatim', label: 'JATIM (10.99.20.13)' },
+                  { value: 'jakban', label: 'JAKARTA & BANTEN (10.99.20.13)' },
+                  { value: 'jabar', label: 'JABAR (10.99.20.14)' }
+                ].map((item) => (
+                  <div
+                    key={item.value}
+                    onClick={() => {
+                      onPgRegionChange(item.value);
+                      setPgDropdownOpen(false);
+                    }}
+                    style={{
+                      padding: '10px 16px',
+                      fontSize: '0.8rem',
+                      fontWeight: pgRegion === item.value ? '600' : '500',
+                      color: pgRegion === item.value ? '#1e3a8a' : '#475569',
+                      backgroundColor: pgRegion === item.value ? '#eff6ff' : 'transparent',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.15s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (pgRegion !== item.value) {
+                        e.currentTarget.style.backgroundColor = '#f8fafc';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (pgRegion !== item.value) {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }
+                    }}
+                  >
+                    <span>{item.label}</span>
+                    {pgRegion === item.value && (
+                      <i className="pi pi-check" style={{ color: '#1e3a8a', fontSize: '0.75rem' }}></i>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <span style={{ 
+            padding: '6px 12px', 
+            backgroundColor: '#115e59', 
+            color: '#ffffff', 
+            borderRadius: '20px', 
+            fontSize: '0.8rem', 
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <i className="pi pi-database" style={{ fontSize: '0.75rem' }}></i> Mode DB: Oracle
+          </span>
+        )}
       </div>
 
       {/* Search card */}

@@ -16,11 +16,28 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
   const [oraclePreset, setOraclePreset] = useState('custom');
   
   // 2. Postgres states
-  const [postgresHost, setPostgresHost] = useState('');
-  const [postgresPort, setPostgresPort] = useState('5432');
   const [postgresUsername, setPostgresUsername] = useState('');
   const [postgresPassword, setPostgresPassword] = useState('');
-  const [postgresDatabase, setPostgresDatabase] = useState('');
+  
+  const [postgresHostAp2t, setPostgresHostAp2t] = useState('10.99.20.11');
+  const [postgresPortAp2t, setPostgresPortAp2t] = useState('5488');
+  const [postgresDatabaseAp2t, setPostgresDatabaseAp2t] = useState('ap2t_db');
+
+  const [postgresHostJateng, setPostgresHostJateng] = useState('10.99.20.12');
+  const [postgresPortJateng, setPostgresPortJateng] = useState('5488');
+  const [postgresDatabaseJateng, setPostgresDatabaseJateng] = useState('ap2t_db_jateng');
+
+  const [postgresHostJatim, setPostgresHostJatim] = useState('10.99.20.13');
+  const [postgresPortJatim, setPostgresPortJatim] = useState('5488');
+  const [postgresDatabaseJatim, setPostgresDatabaseJatim] = useState('ap2t_db_jatim');
+
+  const [postgresHostJakban, setPostgresHostJakban] = useState('10.99.20.13');
+  const [postgresPortJakban, setPostgresPortJakban] = useState('5488');
+  const [postgresDatabaseJakban, setPostgresDatabaseJakban] = useState('ap2t_db_jakban');
+
+  const [postgresHostJabar, setPostgresHostJabar] = useState('10.99.20.14');
+  const [postgresPortJabar, setPostgresPortJabar] = useState('5488');
+  const [postgresDatabaseJabar, setPostgresDatabaseJabar] = useState('ap2t_db_jabar');
 
   // 3. FSO Oracle states
   const [fsoOracleTns, setFsoOracleTns] = useState('');
@@ -134,11 +151,27 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
             }
             
             // Postgres
-            setPostgresHost(data.postgres_host || '');
-            setPostgresPort(data.postgres_port ? data.postgres_port.toString() : '5432');
             setPostgresUsername(data.postgres_username || '');
             setPostgresPassword(data.postgres_password || '');
-            setPostgresDatabase(data.postgres_database || '');
+            setPostgresHostAp2t(data.postgres_host_ap2t || '10.99.20.11');
+            setPostgresPortAp2t(data.postgres_port_ap2t ? data.postgres_port_ap2t.toString() : '5488');
+            setPostgresDatabaseAp2t(data.postgres_database_ap2t || 'ap2t_db');
+            
+            setPostgresHostJateng(data.postgres_host_jateng || '10.99.20.12');
+            setPostgresPortJateng(data.postgres_port_jateng ? data.postgres_port_jateng.toString() : '5488');
+            setPostgresDatabaseJateng(data.postgres_database_jateng || 'ap2t_db_jateng');
+
+            setPostgresHostJatim(data.postgres_host_jatim || '10.99.20.13');
+            setPostgresPortJatim(data.postgres_port_jatim ? data.postgres_port_jatim.toString() : '5488');
+            setPostgresDatabaseJatim(data.postgres_database_jatim || 'ap2t_db_jatim');
+
+            setPostgresHostJakban(data.postgres_host_jakban || '10.99.20.13');
+            setPostgresPortJakban(data.postgres_port_jakban ? data.postgres_port_jakban.toString() : '5488');
+            setPostgresDatabaseJakban(data.postgres_database_jakban || 'ap2t_db_jakban');
+
+            setPostgresHostJabar(data.postgres_host_jabar || '10.99.20.14');
+            setPostgresPortJabar(data.postgres_port_jabar ? data.postgres_port_jabar.toString() : '5488');
+            setPostgresDatabaseJabar(data.postgres_database_jabar || 'ap2t_db_jabar');
 
             // FSO Oracle
             const fsoTns = data.fso_oracle_tns || '';
@@ -327,11 +360,28 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
           oracle_username: oracleUsername,
           oracle_password: oraclePassword,
           
-          postgres_host: postgresHost,
-          postgres_port: parseInt(postgresPort) || 5432,
           postgres_username: postgresUsername,
           postgres_password: postgresPassword,
-          postgres_database: postgresDatabase,
+          
+          postgres_host_ap2t: postgresHostAp2t,
+          postgres_port_ap2t: parseInt(postgresPortAp2t) || 5488,
+          postgres_database_ap2t: postgresDatabaseAp2t,
+          
+          postgres_host_jateng: postgresHostJateng,
+          postgres_port_jateng: parseInt(postgresPortJateng) || 5488,
+          postgres_database_jateng: postgresDatabaseJateng,
+          
+          postgres_host_jatim: postgresHostJatim,
+          postgres_port_jatim: parseInt(postgresPortJatim) || 5488,
+          postgres_database_jatim: postgresDatabaseJatim,
+          
+          postgres_host_jakban: postgresHostJakban,
+          postgres_port_jakban: parseInt(postgresPortJakban) || 5488,
+          postgres_database_jakban: postgresDatabaseJakban,
+          
+          postgres_host_jabar: postgresHostJabar,
+          postgres_port_jabar: parseInt(postgresPortJabar) || 5488,
+          postgres_database_jabar: postgresDatabaseJabar,
           
           fso_oracle_tns: fsoOracleTns,
           fso_oracle_username: fsoOracleUsername,
@@ -991,43 +1041,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                 {activeAccordion === 'postgres' && (
                   <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#ffffff' }}>
                     <div className="form-row">
-                      <label htmlFor="pg-host">Host / IP Address</label>
-                      <input
-                        type="text"
-                        id="pg-host"
-                        className="form-input-text"
-                        required
-                        value={postgresHost}
-                        onChange={(e) => setPostgresHost(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="form-row">
-                      <label htmlFor="pg-port">Port</label>
-                      <input
-                        type="number"
-                        id="pg-port"
-                        className="form-input-text"
-                        required
-                        value={postgresPort}
-                        onChange={(e) => setPostgresPort(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="form-row">
-                      <label htmlFor="pg-db">Database Name</label>
-                      <input
-                        type="text"
-                        id="pg-db"
-                        className="form-input-text"
-                        required
-                        value={postgresDatabase}
-                        onChange={(e) => setPostgresDatabase(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="form-row">
-                      <label htmlFor="pg-user">Username</label>
+                      <label htmlFor="pg-user" style={{ fontWeight: 600 }}>Username (Bersama)</label>
                       <input
                         type="text"
                         id="pg-user"
@@ -1039,7 +1053,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                     </div>
 
                     <div className="form-row">
-                      <label htmlFor="pg-pass">Password</label>
+                      <label htmlFor="pg-pass" style={{ fontWeight: 600 }}>Password (Bersama)</label>
                       <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                         <input
                           type={showPostgresPass ? 'text' : 'password'}
@@ -1054,6 +1068,107 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
                           style={{ position: 'absolute', right: '12px', cursor: 'pointer', color: '#64748b', fontSize: '1rem' }}
                           onClick={() => setShowPostgresPass(!showPostgresPass)}
                         />
+                      </div>
+                    </div>
+
+                    <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '12px', marginTop: '8px' }}>
+                      <h4 style={{ color: '#1e3a8a', marginBottom: '12px', fontSize: '0.9rem', fontWeight: 600 }}>Pengaturan Host per Wilayah:</h4>
+                      
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {/* Wilayah AP2T */}
+                        <div style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', backgroundColor: '#f8fafc' }}>
+                          <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#1e3a8a', display: 'block', marginBottom: '8px' }}>AP2T</span>
+                          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 2fr', gap: '8px' }}>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Host / IP</label>
+                              <input type="text" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresHostAp2t} onChange={(e) => setPostgresHostAp2t(e.target.value)} required />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Port</label>
+                              <input type="number" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresPortAp2t} onChange={(e) => setPostgresPortAp2t(e.target.value)} required />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Database Name</label>
+                              <input type="text" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresDatabaseAp2t} onChange={(e) => setPostgresDatabaseAp2t(e.target.value)} required />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Wilayah JATENG & DIY */}
+                        <div style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', backgroundColor: '#f8fafc' }}>
+                          <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#1e3a8a', display: 'block', marginBottom: '8px' }}>JATENG & DIY</span>
+                          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 2fr', gap: '8px' }}>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Host / IP</label>
+                              <input type="text" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresHostJateng} onChange={(e) => setPostgresHostJateng(e.target.value)} required />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Port</label>
+                              <input type="number" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresPortJateng} onChange={(e) => setPostgresPortJateng(e.target.value)} required />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Database Name</label>
+                              <input type="text" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresDatabaseJateng} onChange={(e) => setPostgresDatabaseJateng(e.target.value)} required />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Wilayah JATIM */}
+                        <div style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', backgroundColor: '#f8fafc' }}>
+                          <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#1e3a8a', display: 'block', marginBottom: '8px' }}>JATIM</span>
+                          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 2fr', gap: '8px' }}>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Host / IP</label>
+                              <input type="text" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresHostJatim} onChange={(e) => setPostgresHostJatim(e.target.value)} required />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Port</label>
+                              <input type="number" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresPortJatim} onChange={(e) => setPostgresPortJatim(e.target.value)} required />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Database Name</label>
+                              <input type="text" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresDatabaseJatim} onChange={(e) => setPostgresDatabaseJatim(e.target.value)} required />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Wilayah JAKARTA & BANTEN */}
+                        <div style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', backgroundColor: '#f8fafc' }}>
+                          <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#1e3a8a', display: 'block', marginBottom: '8px' }}>JAKARTA & BANTEN</span>
+                          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 2fr', gap: '8px' }}>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Host / IP</label>
+                              <input type="text" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresHostJakban} onChange={(e) => setPostgresHostJakban(e.target.value)} required />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Port</label>
+                              <input type="number" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresPortJakban} onChange={(e) => setPostgresPortJakban(e.target.value)} required />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Database Name</label>
+                              <input type="text" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresDatabaseJakban} onChange={(e) => setPostgresDatabaseJakban(e.target.value)} required />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Wilayah JABAR */}
+                        <div style={{ padding: '12px', border: '1px solid var(--border-color)', borderRadius: '6px', backgroundColor: '#f8fafc' }}>
+                          <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#1e3a8a', display: 'block', marginBottom: '8px' }}>JABAR</span>
+                          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 2fr', gap: '8px' }}>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Host / IP</label>
+                              <input type="text" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresHostJabar} onChange={(e) => setPostgresHostJabar(e.target.value)} required />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Port</label>
+                              <input type="number" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresPortJabar} onChange={(e) => setPostgresPortJabar(e.target.value)} required />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Database Name</label>
+                              <input type="text" className="form-input-text" style={{ fontSize: '0.8rem', padding: '6px 10px' }} value={postgresDatabaseJabar} onChange={(e) => setPostgresDatabaseJabar(e.target.value)} required />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1753,6 +1868,7 @@ export default function Setting({ user, onCheckConnection, apiBaseUrl, onUpdateS
           onRefreshMenus={onRefreshMenus}
         />
       )}
+
 
       {/* 5. SELF PROFILE TAB */}
       {activeSubTab === 'profile' && (

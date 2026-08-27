@@ -26,7 +26,8 @@
                 deepLinking: true,
                 presets: [
                     SwaggerUIBundle.presets.apis
-                ]
+                ],
+                withCredentials: true
             });
         };
     </script>

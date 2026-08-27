@@ -48,7 +48,9 @@
   "paths": {
     "/auth/login": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "summary": "Login Pengguna",
         "security": [],
         "requestBody": {
@@ -57,10 +59,20 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["username", "password"],
+                "required": [
+                  "username",
+                  "password"
+                ],
                 "properties": {
-                  "username": {"type": "string", "example": "admin"},
-                  "password": {"type": "string", "format": "password", "example": "password"}
+                  "username": {
+                    "type": "string",
+                    "example": "admin"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "password"
+                  }
                 }
               }
             }
@@ -71,7 +83,9 @@
             "description": "Login berhasil, session cookie akan disimpan oleh browser",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/ApiResponse"}
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
               }
             }
           },
@@ -86,14 +100,18 @@
     },
     "/auth/me": {
       "get": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "summary": "Cek Status Session Aktif",
         "responses": {
           "200": {
             "description": "Session valid",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/ApiResponse"}
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
               }
             }
           },
@@ -105,7 +123,9 @@
     },
     "/auth/logout": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "summary": "Logout Pengguna",
         "responses": {
           "200": {
@@ -116,7 +136,9 @@
     },
     "/api/Logs/get_db_status": {
       "get": {
-        "tags": ["System & Config"],
+        "tags": [
+          "System & Config"
+        ],
         "summary": "Ambil Status Koneksi 5 Database",
         "responses": {
           "200": {
@@ -127,7 +149,9 @@
     },
     "/api/Logs/get_all_logs": {
       "get": {
-        "tags": ["System & Config"],
+        "tags": [
+          "System & Config"
+        ],
         "summary": "Ambil Riwayat Audit Log Proses",
         "responses": {
           "200": {
@@ -138,7 +162,9 @@
     },
     "/api/Db_config/get_config": {
       "get": {
-        "tags": ["System & Config"],
+        "tags": [
+          "System & Config"
+        ],
         "summary": "Ambil Konfigurasi 5 Database",
         "responses": {
           "200": {
@@ -149,7 +175,9 @@
     },
     "/api/Db_config/save_config": {
       "post": {
-        "tags": ["System & Config"],
+        "tags": [
+          "System & Config"
+        ],
         "summary": "Simpan Konfigurasi 5 Database Baru",
         "requestBody": {
           "required": true,
@@ -158,29 +186,111 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "site_name": {"type": "string"},
-                  "site_description": {"type": "string"},
-                  "oracle_tns": {"type": "string"},
-                  "oracle_username": {"type": "string"},
-                  "oracle_password": {"type": "string"},
-                  "postgres_host": {"type": "string"},
-                  "postgres_port": {"type": "integer"},
-                  "postgres_username": {"type": "string"},
-                  "postgres_password": {"type": "string"},
-                  "postgres_database": {"type": "string"},
-                  "fso_oracle_tns": {"type": "string"},
-                  "fso_oracle_username": {"type": "string"},
-                  "fso_oracle_password": {"type": "string"},
-                  "fso_postgres_host": {"type": "string"},
-                  "fso_postgres_port": {"type": "integer"},
-                  "fso_postgres_username": {"type": "string"},
-                  "fso_postgres_password": {"type": "string"},
-                  "fso_postgres_database": {"type": "string"},
-                  "postgres_crm_host": {"type": "string"},
-                  "postgres_crm_port": {"type": "integer"},
-                  "postgres_crm_username": {"type": "string"},
-                  "postgres_crm_password": {"type": "string"},
-                  "postgres_crm_database": {"type": "string"}
+                  "site_name": {
+                    "type": "string"
+                  },
+                  "site_description": {
+                    "type": "string"
+                  },
+                  "oracle_tns": {
+                    "type": "string"
+                  },
+                  "oracle_username": {
+                    "type": "string"
+                  },
+                  "oracle_password": {
+                    "type": "string"
+                  },
+                  "postgres_ap2t_host": {
+                    "type": "string"
+                  },
+                  "postgres_ap2t_port": {
+                    "type": "integer"
+                  },
+                  "postgres_ap2t_database": {
+                    "type": "string"
+                  },
+                  "postgres_jateng_host": {
+                    "type": "string"
+                  },
+                  "postgres_jateng_port": {
+                    "type": "integer"
+                  },
+                  "postgres_jateng_database": {
+                    "type": "string"
+                  },
+                  "postgres_jatim_host": {
+                    "type": "string"
+                  },
+                  "postgres_jatim_port": {
+                    "type": "integer"
+                  },
+                  "postgres_jatim_database": {
+                    "type": "string"
+                  },
+                  "postgres_jakban_host": {
+                    "type": "string"
+                  },
+                  "postgres_jakban_port": {
+                    "type": "integer"
+                  },
+                  "postgres_jakban_database": {
+                    "type": "string"
+                  },
+                  "postgres_jabar_host": {
+                    "type": "string"
+                  },
+                  "postgres_jabar_port": {
+                    "type": "integer"
+                  },
+                  "postgres_jabar_database": {
+                    "type": "string"
+                  },
+                  "postgres_username": {
+                    "type": "string"
+                  },
+                  "postgres_password": {
+                    "type": "string"
+                  },
+                  "fso_oracle_tns": {
+                    "type": "string"
+                  },
+                  "fso_oracle_username": {
+                    "type": "string"
+                  },
+                  "fso_oracle_password": {
+                    "type": "string"
+                  },
+                  "fso_postgres_host": {
+                    "type": "string"
+                  },
+                  "fso_postgres_port": {
+                    "type": "integer"
+                  },
+                  "fso_postgres_username": {
+                    "type": "string"
+                  },
+                  "fso_postgres_password": {
+                    "type": "string"
+                  },
+                  "fso_postgres_database": {
+                    "type": "string"
+                  },
+                  "postgres_crm_host": {
+                    "type": "string"
+                  },
+                  "postgres_crm_port": {
+                    "type": "integer"
+                  },
+                  "postgres_crm_username": {
+                    "type": "string"
+                  },
+                  "postgres_crm_password": {
+                    "type": "string"
+                  },
+                  "postgres_crm_database": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -195,7 +305,9 @@
     },
     "/api/Menu_config/get_menus": {
       "get": {
-        "tags": ["System & Config"],
+        "tags": [
+          "System & Config"
+        ],
         "summary": "Ambil Daftar Menu Dinamis",
         "responses": {
           "200": {
@@ -204,45 +316,169 @@
         }
       }
     },
+    "/api/Menu_config/save_menu": {
+      "post": {
+        "tags": [
+          "System & Config"
+        ],
+        "summary": "Simpan/Update Menu Dinamis",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "menu_name"
+                ],
+                "properties": {
+                  "id_menu": {
+                    "type": "integer"
+                  },
+                  "parent_menu": {
+                    "type": "string"
+                  },
+                  "menu_name": {
+                    "type": "string"
+                  },
+                  "oracle": {
+                    "type": "string"
+                  },
+                  "postgre": {
+                    "type": "string"
+                  },
+                  "aktive": {
+                    "type": "string",
+                    "example": "Y"
+                  },
+                  "role_menu": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Menu berhasil disimpan"
+          }
+        }
+      }
+    },
+    "/api/Menu_config/delete_menu": {
+      "post": {
+        "tags": [
+          "System & Config"
+        ],
+        "summary": "Hapus Menu Dinamis",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id_menu"
+                ],
+                "properties": {
+                  "id_menu": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Menu berhasil dihapus"
+          }
+        }
+      }
+    },
     "/api/InfoDataTabel/get_data": {
       "get": {
-        "tags": ["Informasi Data Tabel"],
+        "tags": [
+          "Informasi Data Tabel"
+        ],
         "summary": "Cari IDPEL di Oracle (View)",
         "parameters": [
-          {"name": "idpel", "in": "query", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "idpel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Data ditemukan"}
+          "200": {
+            "description": "Data ditemukan"
+          }
         }
       }
     },
     "/api/InfoDataTabel_pg/get_data": {
       "get": {
-        "tags": ["Informasi Data Tabel"],
+        "tags": [
+          "Informasi Data Tabel"
+        ],
         "summary": "Cari IDPEL di PostgreSQL (View)",
         "parameters": [
-          {"name": "idpel", "in": "query", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "idpel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Data ditemukan"}
+          "200": {
+            "description": "Data ditemukan"
+          }
         }
       }
     },
-    "/api/UpdatePnj/get_user": {
+    "/api/UpdatePnj/get_data": {
       "get": {
-        "tags": ["Update PNJ"],
+        "tags": [
+          "Update PNJ"
+        ],
         "summary": "Cari User PNJ di Oracle",
         "parameters": [
-          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "noagenda",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tiket",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Data ditemukan"}
+          "200": {
+            "description": "Data ditemukan"
+          }
         }
       }
     },
-    "/api/UpdatePnj/save_pnj": {
+    "/api/UpdatePnj/save": {
       "post": {
-        "tags": ["Update PNJ"],
+        "tags": [
+          "Update PNJ"
+        ],
         "summary": "Update Unit Kerja PNJ di Oracle",
         "requestBody": {
           "required": true,
@@ -250,36 +486,127 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["user_id", "working_unit", "no_tiket"],
+                "required": [
+                  "noagenda",
+                  "tiket"
+                ],
                 "properties": {
-                  "user_id": {"type": "string"},
-                  "working_unit": {"type": "string"},
-                  "no_tiket": {"type": "string"}
+                  "tiket": {
+                    "type": "string"
+                  },
+                  "noagenda": {
+                    "type": "string"
+                  },
+                  "pnj_101": {
+                    "type": "string"
+                  },
+                  "pnj_pemohon": {
+                    "type": "string"
+                  },
+                  "pnj_106": {
+                    "type": "string"
+                  },
+                  "nobang_101": {
+                    "type": "string"
+                  },
+                  "nobang_pemohon": {
+                    "type": "string"
+                  },
+                  "nobang_106": {
+                    "type": "string"
+                  },
+                  "ketnobang_101": {
+                    "type": "string"
+                  },
+                  "ketnobang_pemohon": {
+                    "type": "string"
+                  },
+                  "ketnobang_106": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Berhasil disimpan"}
+          "200": {
+            "description": "Berhasil disimpan"
+          }
         }
       }
     },
-    "/api/UpdatePnj_pg/get_user": {
+    "/api/UpdatePnj/save_koreksi": {
+      "post": {
+        "tags": [
+          "Update PNJ"
+        ],
+        "summary": "Koreksi Tarif PNJ di Oracle",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "noagenda",
+                  "tiket"
+                ],
+                "properties": {
+                  "noagenda": {
+                    "type": "string"
+                  },
+                  "tiket": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Koreksi tarif berhasil diproses"
+          }
+        }
+      }
+    },
+    "/api/UpdatePnj_pg/get_data": {
       "get": {
-        "tags": ["Update PNJ"],
+        "tags": [
+          "Update PNJ"
+        ],
         "summary": "Cari User PNJ di PostgreSQL",
         "parameters": [
-          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "noagenda",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tiket",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Data ditemukan"}
+          "200": {
+            "description": "Data ditemukan"
+          }
         }
       }
     },
-    "/api/UpdatePnj_pg/save_pnj": {
+    "/api/UpdatePnj_pg/save": {
       "post": {
-        "tags": ["Update PNJ"],
+        "tags": [
+          "Update PNJ"
+        ],
         "summary": "Update Unit Kerja PNJ di PostgreSQL",
         "requestBody": {
           "required": true,
@@ -287,36 +614,127 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["user_id", "working_unit", "no_tiket"],
+                "required": [
+                  "noagenda",
+                  "tiket"
+                ],
                 "properties": {
-                  "user_id": {"type": "string"},
-                  "working_unit": {"type": "string"},
-                  "no_tiket": {"type": "string"}
+                  "tiket": {
+                    "type": "string"
+                  },
+                  "noagenda": {
+                    "type": "string"
+                  },
+                  "pnj_101": {
+                    "type": "string"
+                  },
+                  "pnj_pemohon": {
+                    "type": "string"
+                  },
+                  "pnj_106": {
+                    "type": "string"
+                  },
+                  "nobang_101": {
+                    "type": "string"
+                  },
+                  "nobang_pemohon": {
+                    "type": "string"
+                  },
+                  "nobang_106": {
+                    "type": "string"
+                  },
+                  "ketnobang_101": {
+                    "type": "string"
+                  },
+                  "ketnobang_pemohon": {
+                    "type": "string"
+                  },
+                  "ketnobang_106": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Berhasil disimpan"}
+          "200": {
+            "description": "Berhasil disimpan"
+          }
         }
       }
     },
-    "/api/UpdateRoleUser/get_user": {
+    "/api/UpdatePnj_pg/save_koreksi": {
+      "post": {
+        "tags": [
+          "Update PNJ"
+        ],
+        "summary": "Koreksi Tarif PNJ di PostgreSQL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "noagenda",
+                  "tiket"
+                ],
+                "properties": {
+                  "noagenda": {
+                    "type": "string"
+                  },
+                  "tiket": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Koreksi tarif berhasil diproses"
+          }
+        }
+      }
+    },
+    "/api/UpdateRoleUser/get_data": {
       "get": {
-        "tags": ["Update Role User"],
+        "tags": [
+          "Update Role User"
+        ],
         "summary": "Cari User & Role di Oracle",
         "parameters": [
-          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "id_user",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitup",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Data ditemukan"}
+          "200": {
+            "description": "Data ditemukan"
+          }
         }
       }
     },
     "/api/UpdateRoleUser/save_role": {
       "post": {
-        "tags": ["Update Role User"],
+        "tags": [
+          "Update Role User"
+        ],
         "summary": "Update Role User di Oracle",
         "requestBody": {
           "required": true,
@@ -324,36 +742,67 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["user_id", "role_id", "no_tiket"],
+                "required": [
+                  "id_user"
+                ],
                 "properties": {
-                  "user_id": {"type": "string"},
-                  "role_id": {"type": "integer"},
-                  "no_tiket": {"type": "string"}
+                  "id_user": {
+                    "type": "string"
+                  },
+                  "roles": {
+                    "type": "string"
+                  },
+                  "nama_file": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Berhasil disimpan"}
+          "200": {
+            "description": "Berhasil disimpan"
+          }
         }
       }
     },
-    "/api/UpdateRoleUser_pg/get_user": {
+    "/api/UpdateRoleUser_pg/get_data": {
       "get": {
-        "tags": ["Update Role User"],
+        "tags": [
+          "Update Role User"
+        ],
         "summary": "Cari User & Role di PostgreSQL",
         "parameters": [
-          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "id_user",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitup",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Data ditemukan"}
+          "200": {
+            "description": "Data ditemukan"
+          }
         }
       }
     },
     "/api/UpdateRoleUser_pg/save_role": {
       "post": {
-        "tags": ["Update Role User"],
+        "tags": [
+          "Update Role User"
+        ],
         "summary": "Update Role User di PostgreSQL",
         "requestBody": {
           "required": true,
@@ -361,36 +810,67 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["user_id", "role_id", "no_tiket"],
+                "required": [
+                  "id_user"
+                ],
                 "properties": {
-                  "user_id": {"type": "string"},
-                  "role_id": {"type": "integer"},
-                  "no_tiket": {"type": "string"}
+                  "id_user": {
+                    "type": "string"
+                  },
+                  "roles": {
+                    "type": "string"
+                  },
+                  "nama_file": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Berhasil disimpan"}
+          "200": {
+            "description": "Berhasil disimpan"
+          }
         }
       }
     },
-    "/api/UpdateUser/get_user": {
+    "/api/UpdateUser/get_data": {
       "get": {
-        "tags": ["Update User"],
+        "tags": [
+          "Update User"
+        ],
         "summary": "Cari Profil User di Oracle",
         "parameters": [
-          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "id_user",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitup",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Data ditemukan"}
+          "200": {
+            "description": "Data ditemukan"
+          }
         }
       }
     },
-    "/api/UpdateUser/save_user": {
+    "/api/UpdateUser/save": {
       "post": {
-        "tags": ["Update User"],
+        "tags": [
+          "Update User"
+        ],
         "summary": "Update Password / Status User di Oracle",
         "requestBody": {
           "required": true,
@@ -398,37 +878,93 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["user_id", "status_user", "no_tiket"],
+                "required": [
+                  "id_user",
+                  "kode_unit",
+                  "leveluser",
+                  "nama_user",
+                  "disable_user"
+                ],
                 "properties": {
-                  "user_id": {"type": "string"},
-                  "status_user": {"type": "string"},
-                  "password_user": {"type": "string"},
-                  "no_tiket": {"type": "string"}
+                  "id_user": {
+                    "type": "string"
+                  },
+                  "kode_unit": {
+                    "type": "string"
+                  },
+                  "leveluser": {
+                    "type": "string"
+                  },
+                  "nama_file": {
+                    "type": "string"
+                  },
+                  "nama_user": {
+                    "type": "string"
+                  },
+                  "alamat_user": {
+                    "type": "string"
+                  },
+                  "email1": {
+                    "type": "string"
+                  },
+                  "jabatan": {
+                    "type": "string"
+                  },
+                  "tglakhirijin": {
+                    "type": "string"
+                  },
+                  "disable_user": {
+                    "type": "integer",
+                    "example": 0
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Berhasil disimpan"}
+          "200": {
+            "description": "Berhasil disimpan"
+          }
         }
       }
     },
-    "/api/UpdateUser_pg/get_user": {
+    "/api/UpdateUser_pg/get_data": {
       "get": {
-        "tags": ["Update User"],
+        "tags": [
+          "Update User"
+        ],
         "summary": "Cari Profil User di PostgreSQL",
         "parameters": [
-          {"name": "user_id", "in": "query", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "id_user",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitup",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Data ditemukan"}
+          "200": {
+            "description": "Data ditemukan"
+          }
         }
       }
     },
-    "/api/UpdateUser_pg/save_user": {
+    "/api/UpdateUser_pg/save": {
       "post": {
-        "tags": ["Update User"],
+        "tags": [
+          "Update User"
+        ],
         "summary": "Update Password / Status User di PostgreSQL",
         "requestBody": {
           "required": true,
@@ -436,37 +972,85 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["user_id", "status_user", "no_tiket"],
+                "required": [
+                  "id_user",
+                  "kode_unit",
+                  "leveluser",
+                  "nama_user",
+                  "disable_user"
+                ],
                 "properties": {
-                  "user_id": {"type": "string"},
-                  "status_user": {"type": "string"},
-                  "password_user": {"type": "string"},
-                  "no_tiket": {"type": "string"}
+                  "id_user": {
+                    "type": "string"
+                  },
+                  "kode_unit": {
+                    "type": "string"
+                  },
+                  "leveluser": {
+                    "type": "string"
+                  },
+                  "nama_file": {
+                    "type": "string"
+                  },
+                  "nama_user": {
+                    "type": "string"
+                  },
+                  "alamat_user": {
+                    "type": "string"
+                  },
+                  "email1": {
+                    "type": "string"
+                  },
+                  "jabatan": {
+                    "type": "string"
+                  },
+                  "tglakhirijin": {
+                    "type": "string"
+                  },
+                  "disable_user": {
+                    "type": "integer",
+                    "example": 0
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Berhasil disimpan"}
+          "200": {
+            "description": "Berhasil disimpan"
+          }
         }
       }
     },
     "/api/Crm_mutasi_unit/get_user": {
       "get": {
-        "tags": ["CRM"],
+        "tags": [
+          "CRM"
+        ],
         "summary": "Cari User CRM (Mutasi Unit)",
         "parameters": [
-          {"name": "identifier", "in": "query", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "identifier",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Data ditemukan"}
+          "200": {
+            "description": "Data ditemukan"
+          }
         }
       }
     },
     "/api/Crm_mutasi_unit/save_mutasi": {
       "post": {
-        "tags": ["CRM"],
+        "tags": [
+          "CRM"
+        ],
         "summary": "Update Working Unit CRM",
         "requestBody": {
           "required": true,
@@ -474,45 +1058,74 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["identifier", "working_unit", "no_tiket"],
+                "required": [
+                  "identifier",
+                  "working_unit",
+                  "no_tiket"
+                ],
                 "properties": {
-                  "identifier": {"type": "string"},
-                  "working_unit": {"type": "string"},
-                  "no_tiket": {"type": "string"}
+                  "identifier": {
+                    "type": "string"
+                  },
+                  "working_unit": {
+                    "type": "string"
+                  },
+                  "no_tiket": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Berhasil disimpan"}
+          "200": {
+            "description": "Berhasil disimpan"
+          }
         }
       }
     },
     "/api/Crm_update_role/get_user": {
       "get": {
-        "tags": ["CRM"],
+        "tags": [
+          "CRM"
+        ],
         "summary": "Cari User CRM (Update Role)",
         "parameters": [
-          {"name": "identifier", "in": "query", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "identifier",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Data ditemukan"}
+          "200": {
+            "description": "Data ditemukan"
+          }
         }
       }
     },
     "/api/Crm_update_role/get_roles": {
       "get": {
-        "tags": ["CRM"],
+        "tags": [
+          "CRM"
+        ],
         "summary": "Ambil Daftar Master Role CRM",
         "responses": {
-          "200": {"description": "Daftar role"}
+          "200": {
+            "description": "Daftar role"
+          }
         }
       }
     },
     "/api/Crm_update_role/save_role": {
       "post": {
-        "tags": ["CRM"],
+        "tags": [
+          "CRM"
+        ],
         "summary": "Update Role ID User CRM",
         "requestBody": {
           "required": true,
@@ -520,33 +1133,51 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["identifier", "role_id", "no_tiket"],
+                "required": [
+                  "identifier",
+                  "role_id",
+                  "no_tiket"
+                ],
                 "properties": {
-                  "identifier": {"type": "string"},
-                  "role_id": {"type": "integer"},
-                  "no_tiket": {"type": "string"}
+                  "identifier": {
+                    "type": "string"
+                  },
+                  "role_id": {
+                    "type": "integer"
+                  },
+                  "no_tiket": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Berhasil disimpan"}
+          "200": {
+            "description": "Berhasil disimpan"
+          }
         }
       }
     },
     "/api/Users/get_users": {
       "get": {
-        "tags": ["Developer User Management"],
+        "tags": [
+          "Developer User Management"
+        ],
         "summary": "Ambil Semua Pengguna Aplikasi Utama",
         "responses": {
-          "200": {"description": "Daftar pengguna"}
+          "200": {
+            "description": "Daftar pengguna"
+          }
         }
       }
     },
     "/api/Users/save_user": {
       "post": {
-        "tags": ["Developer User Management"],
+        "tags": [
+          "Developer User Management"
+        ],
         "summary": "Tambah / Edit Pengguna Aplikasi Utama",
         "requestBody": {
           "required": true,
@@ -554,25 +1185,76 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["username", "nama", "level"],
+                "required": [
+                  "id_user",
+                  "nama_user",
+                  "level_user"
+                ],
                 "properties": {
-                  "username": {"type": "string"},
-                  "nama": {"type": "string"},
-                  "level": {"type": "string"},
-                  "password": {"type": "string"}
+                  "id_user": {
+                    "type": "string"
+                  },
+                  "nama_user": {
+                    "type": "string"
+                  },
+                  "level_user": {
+                    "type": "string"
+                  },
+                  "passwd": {
+                    "type": "string"
+                  },
+                  "disable_user": {
+                    "type": "string",
+                    "example": "N"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Berhasil disimpan"}
+          "200": {
+            "description": "Berhasil disimpan"
+          }
+        }
+      }
+    },
+    "/api/Users/toggle_status": {
+      "post": {
+        "tags": [
+          "Developer User Management"
+        ],
+        "summary": "Ubah Status Aktif/Nonaktif Pengguna",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id_user"
+                ],
+                "properties": {
+                  "id_user": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status user berhasil diperbarui"
+          }
         }
       }
     },
     "/api/Users/delete_user": {
       "post": {
-        "tags": ["Developer User Management"],
+        "tags": [
+          "Developer User Management"
+        ],
         "summary": "Hapus Pengguna Aplikasi Utama",
         "requestBody": {
           "required": true,
@@ -580,40 +1262,561 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["username"],
+                "required": [
+                  "id_user"
+                ],
                 "properties": {
-                  "username": {"type": "string"}
+                  "id_user": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Berhasil dihapus"}
+          "200": {
+            "description": "Berhasil dihapus"
+          }
         }
       }
     },
-    "/api/Users/change_password": {
+    "/api/Users/get_self_profile": {
+      "get": {
+        "tags": [
+          "Developer User Management"
+        ],
+        "summary": "Ambil Profil Pengguna Mandiri",
+        "responses": {
+          "200": {
+            "description": "Data profil"
+          }
+        }
+      }
+    },
+    "/api/Users/update_profile": {
       "post": {
-        "tags": ["Developer User Management"],
-        "summary": "Ubah Password Mandiri (Self)",
+        "tags": [
+          "Developer User Management"
+        ],
+        "summary": "Perbarui Profil Mandiri (Nama & Password)",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["old_password", "new_password"],
+                "required": [
+                  "id_user",
+                  "nama_user"
+                ],
                 "properties": {
-                  "old_password": {"type": "string"},
-                  "new_password": {"type": "string"}
+                  "id_user": {
+                    "type": "string"
+                  },
+                  "nama_user": {
+                    "type": "string"
+                  },
+                  "old_password": {
+                    "type": "string"
+                  },
+                  "new_password": {
+                    "type": "string"
+                  },
+                  "confirm_password": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Password berhasil diubah"}
+          "200": {
+            "description": "Profil berhasil diperbarui"
+          }
+        }
+      }
+    },
+    "/api/Users/get_all_roles": {
+      "get": {
+        "tags": [
+          "Developer User Management"
+        ],
+        "summary": "Ambil Semua Master Role Aplikasi",
+        "parameters": [
+          {
+            "name": "is_postgres",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar master role"
+          }
+        }
+      }
+    },
+    "/api/Users/change_password": {
+      "post": {
+        "tags": [
+          "Developer User Management"
+        ],
+        "summary": "Ubah Password Mandiri (Simple)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "old_password",
+                  "new_password"
+                ],
+                "properties": {
+                  "old_password": {
+                    "type": "string"
+                  },
+                  "new_password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password berhasil diubah"
+          }
+        }
+      }
+    },
+    "/api/PostingPDL/get_data": {
+      "get": {
+        "tags": [
+          "Posting PDL"
+        ],
+        "summary": "Cari Transaksi PDL di Oracle",
+        "parameters": [
+          {
+            "name": "idpel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tiket",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "SEARCH"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data ditemukan"
+          }
+        }
+      }
+    },
+    "/api/PostingPDL/get_detail": {
+      "get": {
+        "tags": [
+          "Posting PDL"
+        ],
+        "summary": "Ambil Detail Transaksi PDL di Oracle",
+        "parameters": [
+          {
+            "name": "noagenda",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idpel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data ditemukan"
+          }
+        }
+      }
+    },
+    "/api/PostingPDL/save": {
+      "post": {
+        "tags": [
+          "Posting PDL"
+        ],
+        "summary": "Simpan/Update Transaksi Posting PDL di Oracle",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tiket",
+                  "idpel",
+                  "NopostingPDLBaru"
+                ],
+                "properties": {
+                  "tiket": {
+                    "type": "string"
+                  },
+                  "idpel": {
+                    "type": "string"
+                  },
+                  "p_noagenda": {
+                    "type": "string"
+                  },
+                  "postingPDLBaru": {
+                    "type": "string"
+                  },
+                  "THBLangS1ABaru": {
+                    "type": "string"
+                  },
+                  "PNJBaru": {
+                    "type": "string"
+                  },
+                  "namaPNJBaru": {
+                    "type": "string"
+                  },
+                  "KDPROVBaru": {
+                    "type": "string"
+                  },
+                  "KDKABBaru": {
+                    "type": "string"
+                  },
+                  "KDKECBaru": {
+                    "type": "string"
+                  },
+                  "KDKELBaru": {
+                    "type": "string"
+                  },
+                  "PEMDABaru": {
+                    "type": "string"
+                  },
+                  "noBangBaru": {
+                    "type": "string"
+                  },
+                  "ketNoBangBaru": {
+                    "type": "string"
+                  },
+                  "thblmut": {
+                    "type": "string"
+                  },
+                  "unitUpiBaru": {
+                    "type": "string"
+                  },
+                  "unitApBaru": {
+                    "type": "string"
+                  },
+                  "unitUpBaru": {
+                    "type": "string"
+                  },
+                  "NopostingPDLBaru": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil disimpan"
+          }
+        }
+      }
+    },
+    "/api/PostingPDL_pg/get_data": {
+      "get": {
+        "tags": [
+          "Posting PDL"
+        ],
+        "summary": "Cari Transaksi PDL di PostgreSQL",
+        "parameters": [
+          {
+            "name": "idpel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tiket",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "SEARCH"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data ditemukan"
+          }
+        }
+      }
+    },
+    "/api/PostingPDL_pg/get_detail": {
+      "get": {
+        "tags": [
+          "Posting PDL"
+        ],
+        "summary": "Ambil Detail Transaksi PDL di PostgreSQL",
+        "parameters": [
+          {
+            "name": "noagenda",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "idpel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data ditemukan"
+          }
+        }
+      }
+    },
+    "/api/PostingPDL_pg/save": {
+      "post": {
+        "tags": [
+          "Posting PDL"
+        ],
+        "summary": "Simpan/Update Transaksi Posting PDL di PostgreSQL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tiket",
+                  "idpel",
+                  "NopostingPDLBaru"
+                ],
+                "properties": {
+                  "tiket": {
+                    "type": "string"
+                  },
+                  "idpel": {
+                    "type": "string"
+                  },
+                  "p_noagenda": {
+                    "type": "string"
+                  },
+                  "postingPDLBaru": {
+                    "type": "string"
+                  },
+                  "THBLangS1ABaru": {
+                    "type": "string"
+                  },
+                  "PNJBaru": {
+                    "type": "string"
+                  },
+                  "namaPNJBaru": {
+                    "type": "string"
+                  },
+                  "KDPROVBaru": {
+                    "type": "string"
+                  },
+                  "KDKABBaru": {
+                    "type": "string"
+                  },
+                  "KDKECBaru": {
+                    "type": "string"
+                  },
+                  "KDKELBaru": {
+                    "type": "string"
+                  },
+                  "PEMDABaru": {
+                    "type": "string"
+                  },
+                  "noBangBaru": {
+                    "type": "string"
+                  },
+                  "ketNoBangBaru": {
+                    "type": "string"
+                  },
+                  "thblmut": {
+                    "type": "string"
+                  },
+                  "unitUpiBaru": {
+                    "type": "string"
+                  },
+                  "unitApBaru": {
+                    "type": "string"
+                  },
+                  "unitUpBaru": {
+                    "type": "string"
+                  },
+                  "NopostingPDLBaru": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil disimpan"
+          }
+        }
+      }
+    },
+    "/api/RealokasiLITTR/get_data": {
+      "get": {
+        "tags": [
+          "Realokasi LITTR"
+        ],
+        "summary": "Cari Data Realokasi LITTR di Oracle",
+        "parameters": [
+          {
+            "name": "noagenda",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data ditemukan"
+          }
+        }
+      }
+    },
+    "/api/RealokasiLITTR/save": {
+      "post": {
+        "tags": [
+          "Realokasi LITTR"
+        ],
+        "summary": "Proses Realokasi LITTR di Oracle",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "noagenda",
+                  "tiket",
+                  "new_id_littr"
+                ],
+                "properties": {
+                  "noagenda": {
+                    "type": "string"
+                  },
+                  "tiket": {
+                    "type": "string"
+                  },
+                  "new_id_littr": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil diproses"
+          }
+        }
+      }
+    },
+    "/api/RealokasiLITTR_pg/get_data": {
+      "get": {
+        "tags": [
+          "Realokasi LITTR"
+        ],
+        "summary": "Cari Data Realokasi LITTR di PostgreSQL",
+        "parameters": [
+          {
+            "name": "noagenda",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data ditemukan"
+          }
+        }
+      }
+    },
+    "/api/RealokasiLITTR_pg/save": {
+      "post": {
+        "tags": [
+          "Realokasi LITTR"
+        ],
+        "summary": "Proses Realokasi LITTR di PostgreSQL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "noagenda",
+                  "tiket",
+                  "new_id_littr"
+                ],
+                "properties": {
+                  "noagenda": {
+                    "type": "string"
+                  },
+                  "tiket": {
+                    "type": "string"
+                  },
+                  "new_id_littr": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil diproses"
+          }
         }
       }
     }

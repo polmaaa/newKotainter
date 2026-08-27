@@ -1,0 +1,283 @@
+[
+    {
+        "id": 1,
+        "name": "Update PNJ",
+        "parent": "Pelayanan Pelanggan",
+        "oracle": {
+            "controller": "api\/application\/controllers\/api\/UpdatePnj.php",
+            "model": "api\/application\/models\/Mpnj.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/UpdatePnj\/get_data",
+                    "desc": "Mencari data transaksi PNJ di database Oracle menggunakan No Agenda & No Tiket."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/UpdatePnj\/save",
+                    "desc": "Menyimpan pembaruan PNJ, No Bangunan, dan Keterangan No Bangunan di Oracle."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/UpdatePnj\/save_koreksi",
+                    "desc": "Melakukan koreksi tarif PNJ di database Oracle."
+                }
+            ]
+        },
+        "postgres": {
+            "controller": "api\/application\/controllers\/api\/UpdatePnj_pg.php",
+            "model": "api\/application\/models\/Mpnj.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/UpdatePnj_pg\/get_data",
+                    "desc": "Mencari data transaksi PNJ di database PostgreSQL menggunakan No Agenda & No Tiket."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/UpdatePnj_pg\/save",
+                    "desc": "Menyimpan pembaruan PNJ, No Bangunan, dan Keterangan No Bangunan di PostgreSQL."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/UpdatePnj_pg\/save_koreksi",
+                    "desc": "Melakukan koreksi tarif PNJ di database PostgreSQL."
+                }
+            ]
+        }
+    },
+    {
+        "id": 2,
+        "name": "Update User",
+        "parent": "Manajemen User",
+        "oracle": {
+            "controller": "api\/application\/controllers\/api\/UpdateUser.php",
+            "model": "api\/application\/models\/Mmanajemenuser.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/UpdateUser\/get_data",
+                    "desc": "Mencari profil user di Oracle berdasarkan ID User atau Kode Unit."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/UpdateUser\/save",
+                    "desc": "Menyimpan pembaruan data profil user (Kode Unit Baru, Level, Nama, Alamat, Email, Jabatan, Status Akun) di Oracle."
+                }
+            ]
+        },
+        "postgres": {
+            "controller": "api\/application\/controllers\/api\/UpdateUser_pg.php",
+            "model": "api\/application\/models\/Mmanajemenuser.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/UpdateUser_pg\/get_data",
+                    "desc": "Mencari profil user di PostgreSQL berdasarkan ID User atau Kode Unit."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/UpdateUser_pg\/save",
+                    "desc": "Menyimpan pembaruan data profil user (Kode Unit Baru, Level, Nama, Alamat, Email, Jabatan, Status Akun) di PostgreSQL."
+                }
+            ]
+        }
+    },
+    {
+        "id": 3,
+        "name": "Update Role User",
+        "parent": "Manajemen User",
+        "oracle": {
+            "controller": "api\/application\/controllers\/api\/UpdateRoleUser.php",
+            "model": "api\/application\/models\/Mmanajemenuser.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/UpdateRoleUser\/get_data",
+                    "desc": "Mencari data user & peran (role\/group) di database Oracle."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/UpdateRoleUser\/save_role",
+                    "desc": "Menyimpan pembaruan penugasan peran (role\/group) user pada SECMAN.usrgroup di Oracle."
+                }
+            ]
+        },
+        "postgres": {
+            "controller": "api\/application\/controllers\/api\/UpdateRoleUser_pg.php",
+            "model": "api\/application\/models\/Mmanajemenuser.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/UpdateRoleUser_pg\/get_data",
+                    "desc": "Mencari data user & peran (role\/group) di database PostgreSQL."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/UpdateRoleUser_pg\/save_role",
+                    "desc": "Menyimpan pembaruan penugasan peran (role\/group) user pada SECMAN.usrgroup di PostgreSQL."
+                }
+            ]
+        }
+    },
+    {
+        "id": 4,
+        "name": "Informasi Data Tabel",
+        "parent": "Back Office",
+        "oracle": {
+            "controller": "api\/application\/controllers\/api\/InfoDataTabel.php",
+            "model": "api\/application\/models\/Mbackoffice.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/InfoDataTabel\/get_data",
+                    "desc": "Mencari data permohonan pelanggan berdasarkan IDPEL pada view opharapp.vw_idpel_bermohon di Oracle."
+                }
+            ]
+        },
+        "postgres": {
+            "controller": "api\/application\/controllers\/api\/InfoDataTabel_pg.php",
+            "model": "api\/application\/models\/Mbackoffice.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/InfoDataTabel_pg\/get_data",
+                    "desc": "Mencari data permohonan pelanggan berdasarkan IDPEL pada view opharapp.vw_idpel_bermohon di PostgreSQL."
+                }
+            ]
+        }
+    },
+    {
+        "id": 5,
+        "name": "Mutasi Unit CRM",
+        "parent": "CRM",
+        "oracle": null,
+        "postgres": {
+            "controller": "api\/application\/controllers\/api\/Crm_mutasi_unit.php",
+            "model": "api\/application\/models\/Mcrm.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/Crm_mutasi_unit\/get_user",
+                    "desc": "Mencari detail data user CRM di database PostgreSQL berdasarkan User ID\/Email."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/Crm_mutasi_unit\/save_mutasi",
+                    "desc": "Menyimpan pembaruan unit kerja (working_unit) user CRM di PostgreSQL."
+                }
+            ]
+        }
+    },
+    {
+        "id": 6,
+        "name": "Update Role CRM",
+        "parent": "CRM",
+        "oracle": null,
+        "postgres": {
+            "controller": "api\/application\/controllers\/api\/Crm_update_role.php",
+            "model": "api\/application\/models\/Mcrm.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/Crm_update_role\/get_user",
+                    "desc": "Mencari detail data user CRM di database PostgreSQL berdasarkan User ID\/Email."
+                },
+                {
+                    "method": "GET",
+                    "path": "\/api\/Crm_update_role\/get_roles",
+                    "desc": "Memuat seluruh daftar role master CRM dari PostgreSQL."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/Crm_update_role\/save_role",
+                    "desc": "Menyimpan pembaruan role ID user CRM di PostgreSQL."
+                }
+            ]
+        }
+    },
+    {
+        "id": 7,
+        "name": "Posting PDL",
+        "parent": "Pelayanan Pelanggan",
+        "oracle": {
+            "controller": "api\/application\/controllers\/api\/PostingPDL.php",
+            "model": "api\/application\/models\/Mpdl.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/PostingPDL\/get_data",
+                    "desc": "Mencari transaksi PDL di Oracle berdasarkan IDPEL dan Tiket."
+                },
+                {
+                    "method": "GET",
+                    "path": "\/api\/PostingPDL\/get_detail",
+                    "desc": "Mengambil detail transaksi PDL di Oracle berdasarkan No Agenda dan IDPEL."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/PostingPDL\/save",
+                    "desc": "Menyimpan atau memperbarui transaksi Posting PDL di Oracle."
+                }
+            ]
+        },
+        "postgres": {
+            "controller": "api\/application\/controllers\/api\/PostingPDL_pg.php",
+            "model": "api\/application\/models\/Mpdl.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/PostingPDL_pg\/get_data",
+                    "desc": "Mencari transaksi PDL di PostgreSQL berdasarkan IDPEL dan Tiket."
+                },
+                {
+                    "method": "GET",
+                    "path": "\/api\/PostingPDL_pg\/get_detail",
+                    "desc": "Mengambil detail transaksi PDL di PostgreSQL berdasarkan No Agenda dan IDPEL."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/PostingPDL_pg\/save",
+                    "desc": "Menyimpan atau memperbarui transaksi Posting PDL di PostgreSQL."
+                }
+            ]
+        }
+    },
+    {
+        "id": 8,
+        "name": "Realokasi LITTR",
+        "parent": "Back Office",
+        "oracle": {
+            "controller": "api\/application\/controllers\/api\/RealokasiLITTR.php",
+            "model": "api\/application\/models\/Mrealokasilittr.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/RealokasiLITTR\/get_data",
+                    "desc": "Mencari data Realokasi LITTR di database Oracle."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/RealokasiLITTR\/save",
+                    "desc": "Menyimpan data Realokasi LITTR di database Oracle."
+                }
+            ]
+        },
+        "postgres": {
+            "controller": "api\/application\/controllers\/api\/RealokasiLITTR_pg.php",
+            "model": "api\/application\/models\/Mrealokasilittr.php",
+            "apis": [
+                {
+                    "method": "GET",
+                    "path": "\/api\/RealokasiLITTR_pg\/get_data",
+                    "desc": "Mencari data Realokasi LITTR di database PostgreSQL."
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/RealokasiLITTR_pg\/save",
+                    "desc": "Menyimpan data Realokasi LITTR di database PostgreSQL."
+                }
+            ]
+        }
+    }
+]

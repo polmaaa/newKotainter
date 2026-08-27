@@ -47,12 +47,104 @@ $db['oracle'] = array(
 	'save_queries' => TRUE
 );
 
-$db['postgres'] = array(
+$db['postgres_ap2t'] = array(
 	'dsn'      => '',
 	'hostname' => '10.99.20.11',
 	'username' => 'supportapps',
 	'password' => 'GR63!Ru55elL#55@CS',
 	'database' => 'ap2t_db',
+	'dbdriver' => 'postgre',
+	'port'     => 5488,
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt'  => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['postgres_jateng'] = array(
+	'dsn'      => '',
+	'hostname' => '10.99.20.12',
+	'username' => 'supportapps',
+	'password' => 'GR63!Ru55elL#55@CS',
+	'database' => 'ap2t_db_jateng',
+	'dbdriver' => 'postgre',
+	'port'     => 5488,
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt'  => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['postgres_jatim'] = array(
+	'dsn'      => '',
+	'hostname' => '10.99.20.13',
+	'username' => 'supportapps',
+	'password' => 'GR63!Ru55elL#55@CS',
+	'database' => 'ap2t_db_jatim',
+	'dbdriver' => 'postgre',
+	'port'     => 5488,
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt'  => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['postgres_jakban'] = array(
+	'dsn'      => '',
+	'hostname' => '10.99.20.13',
+	'username' => 'supportapps',
+	'password' => 'GR63!Ru55elL#55@CS',
+	'database' => 'ap2t_db_jakban',
+	'dbdriver' => 'postgre',
+	'port'     => 5488,
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => FALSE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt'  => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['postgres_jabar'] = array(
+	'dsn'      => '',
+	'hostname' => '10.99.20.14',
+	'username' => 'supportapps',
+	'password' => 'GR63!Ru55elL#55@CS',
+	'database' => 'ap2t_db_jabar',
 	'dbdriver' => 'postgre',
 	'port'     => 5488,
 	'dbprefix' => '',
@@ -111,6 +203,8 @@ $db['fso_postgres'] = array(
 	'encrypt'  => FALSE,
 	'compress' => FALSE,
 	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
 );
 
 $db['postgres_crm'] = array(
@@ -135,3 +229,17 @@ $db['postgres_crm'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+// Dynamic connection swap for group 'postgres' based on request header X-DB-Region
+$db_region = isset($_SERVER['HTTP_X_DB_REGION']) ? strtolower($_SERVER['HTTP_X_DB_REGION']) : 'ap2t';
+if ($db_region === 'jateng') {
+	$db['postgres'] = $db['postgres_jateng'];
+} else if ($db_region === 'jatim') {
+	$db['postgres'] = $db['postgres_jatim'];
+} else if ($db_region === 'jakban') {
+	$db['postgres'] = $db['postgres_jakban'];
+} else if ($db_region === 'jabar') {
+	$db['postgres'] = $db['postgres_jabar'];
+} else {
+	$db['postgres'] = $db['postgres_ap2t'];
+}

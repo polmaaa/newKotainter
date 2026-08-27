@@ -142,15 +142,6 @@ export default function Sidebar({ user, activeTabId, onOpenTab, onLogout, sideba
             <i className="pi pi-cog"></i> Setting
           </div>
         </li>
-
-        <li>
-          <div 
-            className={`sidebar-menu-item ${activeTabId === 'developer_info' ? 'active' : ''}`} 
-            onClick={() => onOpenTab('developer_info', 'Developer Info')}
-          >
-            <i className="pi pi-code"></i> Developer Info
-          </div>
-        </li>
       </ul>
 
       {/* Profile Info & Logout */}

@@ -1,0 +1,533 @@
+[
+    {
+        "NO": "1",
+        "NAMA_MENU": "Update PNJ",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "BILL52.TRANS_101",
+        "GRANT": "SELECT",
+        "KETERANGAN": "Membaca data pelanggan lama",
+        "STATUS": "PENDING"
+    },
+    {
+        "NO": "2",
+        "NAMA_MENU": "Update PNJ",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.TRANS_PEMOHON",
+        "GRANT": "SELECT",
+        "KETERANGAN": "Membaca data pemohon",
+        "STATUS": "PENDING"
+    },
+    {
+        "NO": "3",
+        "NAMA_MENU": "Update PNJ",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "BILL52.TRANS_106",
+        "GRANT": "SELECT; UPDATE",
+        "KETERANGAN": "Membaca data transaksi tagihan dan memperbarui kolom PNJ; NOBANG; KETNOBANG",
+        "STATUS": "PENDING"
+    },
+    {
+        "NO": "4",
+        "NAMA_MENU": "Update PNJ",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.OPHAR_LOG_PROSES",
+        "GRANT": "SELECT; INSERT",
+        "KETERANGAN": "Mencatat riwayat log eksekusi\/proses pembaruan",
+        "STATUS": "PENDING"
+    },
+    {
+        "NO": "5",
+        "NAMA_MENU": "Update PNJ",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "bill52.trans_101",
+        "GRANT": "SELECT",
+        "KETERANGAN": "Membaca data pelanggan lama",
+        "STATUS": "PENDING"
+    },
+    {
+        "NO": "6",
+        "NAMA_MENU": "Update PNJ",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "opharapp.trans_pemohon",
+        "GRANT": "SELECT",
+        "KETERANGAN": "Membaca data pemohon",
+        "STATUS": "PENDING"
+    },
+    {
+        "NO": "7",
+        "NAMA_MENU": "Update PNJ",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "bill52.trans_106",
+        "GRANT": "SELECT; UPDATE",
+        "KETERANGAN": "Membaca data transaksi tagihan dan memperbarui kolom pnj; nobang; ketnobang",
+        "STATUS": "PENDING"
+    },
+    {
+        "NO": "8",
+        "NAMA_MENU": "Update PNJ",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "opharapp.ophar_log_proses",
+        "GRANT": "SELECT; INSERT",
+        "KETERANGAN": "Mencatat riwayat log eksekusi\/proses pembaruan lokal",
+        "STATUS": "PENDING"
+    },
+    {
+        "NO": "9",
+        "NAMA_MENU": "Update PNJ",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "OPHARAPP.DTKS_LOG_PROSES (Oracle)",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat log eksekusi ke database Oracle pusat via helper log terpadu",
+        "STATUS": "PENDING"
+    },
+    {
+        "NO": "10",
+        "NAMA_MENU": "Update User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "SECMAN.USERTAB",
+        "GRANT": "SELECT; UPDATE",
+        "KETERANGAN": "Membaca & memperbarui unitup; leveluser; nama_user; alamat_user; email1; jabatan; salahpassword; disable_user; tglakhirijin; tglupdate",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "11",
+        "NAMA_MENU": "Update User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "SECMAN.USRGROUP",
+        "GRANT": "SELECT",
+        "KETERANGAN": "Membaca role grup akses yang aktif milik user",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "12",
+        "NAMA_MENU": "Update User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.USERTAB_LOG",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Menyimpan pencadangan (backup) data user lama sebelum diperbarui",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "13",
+        "NAMA_MENU": "Update User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.LOG_UPDATE_USER",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Menyimpan riwayat log mutasi data user lama vs baru",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "14",
+        "NAMA_MENU": "Update User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.DTKS_LOG_PROSES",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat log aktivitas menu Update User di database Oracle pusat",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "15",
+        "NAMA_MENU": "Update User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "secman.usertab",
+        "GRANT": "SELECT; UPDATE",
+        "KETERANGAN": "Membaca & memperbarui unitup; leveluser; nama_user; alamat_user; email1; jabatan; salahpassword; disable_user; tglakhirijin; tglupdate",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "16",
+        "NAMA_MENU": "Update User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "secman.usrgroup",
+        "GRANT": "SELECT",
+        "KETERANGAN": "Membaca role grup akses yang aktif milik user",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "17",
+        "NAMA_MENU": "Update User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "opharapp.usertab_log",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Menyimpan pencadangan (backup) data user lama sebelum diperbarui",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "18",
+        "NAMA_MENU": "Update User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "opharapp.log_update_user",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Menyimpan riwayat log mutasi data user lama vs baru",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "19",
+        "NAMA_MENU": "Update User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "OPHARAPP.DTKS_LOG_PROSES (Oracle)",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat log eksekusi ke database Oracle pusat via helper log terpadu",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "20",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "SECMAN.USRGROUP",
+        "GRANT": "SELECT; DELETE; INSERT",
+        "KETERANGAN": "Menghapus pemetaan role lama dan memasukkan pemetaan role baru",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "21",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "SECMAN.GROUPTAB",
+        "GRANT": "SELECT",
+        "KETERANGAN": "Membaca daftar grup\/role master (dengan whitelist f$getuserroleaktif)",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "22",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.USRGROUP_LOG",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Menyimpan pencadangan (backup) data pemetaan role lama sebelum dihapus",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "23",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.USERTAB_LOG",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Menyimpan pencadangan profil user sebagai audit trail",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "24",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.LOG_UPDATE_USER",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat riwayat mutasi role (role_lama dan role_baru)",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "25",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.DTKS_LOG_PROSES",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat log aktivitas pembaruan role user di Oracle pusat",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "26",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "secman.usrgroup",
+        "GRANT": "DELETE; INSERT",
+        "KETERANGAN": "Menghapus pemetaan role lama dan memasukkan pemetaan role baru",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "27",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "secman.grouptab",
+        "GRANT": "SELECT",
+        "KETERANGAN": "Membaca daftar grup\/role master (dengan whitelist f$getuserroleaktif)",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "28",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "opharapp.usrgroup_log",
+        "GRANT": "CREATE TABLE; INSERT",
+        "KETERANGAN": "Create table ambil dari tabel yang sama di ORACLE (kosongan)",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "29",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "opharapp.usertab_log",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Menyimpan pencadangan profil user sebagai audit trail",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "30",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "opharapp.log_update_user",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat riwayat mutasi role (role_lama dan role_baru)",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "31",
+        "NAMA_MENU": "Update Role User",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "OPHARAPP.DTKS_LOG_PROSES (Oracle)",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat log eksekusi ke database Oracle pusat via helper log terpadu",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "32",
+        "NAMA_MENU": "Config Aplikasi",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.DTKS_MENU",
+        "GRANT": "SELECT; INSERT; UPDATE; DELETE",
+        "KETERANGAN": "Konfigurasi daftar sub-tab menu navigasi sidebar aplikasi",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "33",
+        "NAMA_MENU": "Config Aplikasi",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.DTKS_USERTAB",
+        "GRANT": "CREATE TABLE; SELECT; INSERT; UPDATE",
+        "KETERANGAN": "Tabel login administrator NewKotainter (jika login)",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "34",
+        "NAMA_MENU": "Posting PDL",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "BILL52.TRANS_PDL",
+        "GRANT": "SELECT; UPDATE",
+        "KETERANGAN": "Membaca dan memperbarui status\/kolom data transaksi PDL",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "35",
+        "NAMA_MENU": "Posting PDL",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.OPHAR_TRANS_PDL_LOG",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat log perubahan sebelum data PDL diperbarui",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "36",
+        "NAMA_MENU": "Posting PDL",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.DTKS_LOG_PROSES",
+        "GRANT": "SELECT; INSERT",
+        "KETERANGAN": "Mencatat riwayat log proses eksekusi Posting PDL",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "37",
+        "NAMA_MENU": "Posting PDL",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "bill52.trans_pdl",
+        "GRANT": "UPDATE",
+        "KETERANGAN": "Membaca dan memperbarui status\/kolom data TRANS PDL",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "38",
+        "NAMA_MENU": "Posting PDL",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "opharapp.ophar_trans_pdl_log",
+        "GRANT": "CREATE TABLE; INSERT",
+        "KETERANGAN": "Create table ambil dari tabel yang sama di ORACLE (kosongan)",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "39",
+        "NAMA_MENU": "Posting PDL",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "OPHARAPP.DTKS_LOG_PROSES (Oracle)",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat log eksekusi ke database Oracle pusat via helper log terpadu",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "40",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "BILL52.TRANS_101",
+        "GRANT": "SELECT; UPDATE",
+        "KETERANGAN": "Membaca status paket\/non-paket dan memperbarui kolom ID_LITTR",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "41",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "BILL52.TRANS_KIRIM_KE_LITTR",
+        "GRANT": "SELECT; UPDATE",
+        "KETERANGAN": "Membaca dan mereset status kirim ke LITTR (paket)",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "42",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "BILL52.TRANS_MOHON_PLNPAY",
+        "GRANT": "SELECT; UPDATE",
+        "KETERANGAN": "Membaca dan memperbarui kolom ID_LITTR pada data mohon PLNPay (paket)",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "43",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "BILL52.TRANS_PDL",
+        "GRANT": "SELECT; UPDATE",
+        "KETERANGAN": "Membaca dan memperbarui kolom ID_LITTR pada data PDL",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "44",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "ERWINBUDI.MASTER_LITTR_SUG2",
+        "GRANT": "SELECT",
+        "KETERANGAN": "Dropdown pilihan master LITTR baru",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "45",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.DTKS_LOG_PROSES",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat log proses eksekusi Realokasi LITTR",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "46",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "bill52.trans_101",
+        "GRANT": "UPDATE",
+        "KETERANGAN": "Memperbarui kolom ID_LITTR pada TRANS 101",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "47",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "bill52.trans_kirim_ke_littr",
+        "GRANT": "UPDATE",
+        "KETERANGAN": "Memperbarui kolom ID_LITTR pada TRANS KIRIM KE LITTR",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "48",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "bill52.trans_mohon_plnpay",
+        "GRANT": "UPDATE",
+        "KETERANGAN": "memperbarui kolom ID_LITTR pada mohon PLNPAY",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "49",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "bill52.trans_pdl",
+        "GRANT": "UPDATE",
+        "KETERANGAN": "Membaca dan memperbarui kolom ID_LITTR pada data PDL",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "50",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "erwinbudi.master_littr_sug2",
+        "GRANT": "SELECT",
+        "KETERANGAN": "Membaca daftar master ID_LITTR ",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "51",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "opharapp.dtks_log_proses",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Backup data",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "52",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "BILL52.TRANS_101_LOG",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat riwayat data TRANS_101 sebelum update",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "53",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "BILL52.TRANS_KIRIM_KE_LITTR_LOG",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat riwayat data TRANS_KIRIM_KE_LITTR sebelum update",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "54",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "OPHARAPP.TRANS_MOHON_PLNPAY_LOG",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat riwayat data TRANS_MOHON_PLNPAY sebelum update",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "55",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "ORACLE",
+        "NAMA_TABEL": "BILL52.TRANS_PDL_LOG",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Mencatat riwayat data TRANS_PDL sebelum update",
+        "STATUS": "DONE"
+    },
+    {
+        "NO": "56",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "bill52.trans_101_log",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Backup data",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "57",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "bill52.trans_kirim_ke_littr_log",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Backup data",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "58",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "opharapp.trans_mohon_plnpay_log",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Backup data",
+        "STATUS": "REQUEST"
+    },
+    {
+        "NO": "59",
+        "NAMA_MENU": "Realokasi LITTR",
+        "DATABASE": "POSTGRESQL",
+        "NAMA_TABEL": "bill52.trans_pdl_log",
+        "GRANT": "INSERT",
+        "KETERANGAN": "Backup data",
+        "STATUS": "REQUEST"
+    }
+]
