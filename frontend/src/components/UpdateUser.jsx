@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = false, menuName = "Update User", pgRegion = 'ap2t', onPgRegionChange }) {
   const [searchIdUser, setSearchIdUser] = useState('');
   const [searchUnitup, setSearchUnitup] = useState('');
+  const [searchCriteria, setSearchCriteria] = useState('id_user'); // 'id_user' or 'unitup'
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -74,8 +75,12 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!searchIdUser.trim() && !searchUnitup.trim()) {
-      showToast('Masukkan ID User atau Kode Unit pencarian terlebih dahulu!', 'warning');
+    if (searchCriteria === 'id_user' && !searchIdUser.trim()) {
+      showToast('Masukkan ID User pencarian terlebih dahulu!', 'warning');
+      return;
+    }
+    if (searchCriteria === 'unitup' && !searchUnitup.trim()) {
+      showToast('Masukkan Kode Unit pencarian terlebih dahulu!', 'warning');
       return;
     }
 
@@ -345,31 +350,51 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
       {/* Search card */}
       <div className="content-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
         <form onSubmit={handleSearch} style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-end' }}>
-          <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label htmlFor="search-iduser" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>ID User</label>
-            <input
-              type="text"
-              id="search-iduser"
-              placeholder="Contoh: PS.PUSAT.POLMA"
-              value={searchIdUser}
-              onChange={(e) => setSearchIdUser(e.target.value)}
+          <div style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <label htmlFor="search-criteria" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Cari Berdasarkan</label>
+            <select
+              id="search-criteria"
+              value={searchCriteria}
+              onChange={(e) => {
+                setSearchCriteria(e.target.value);
+                if (e.target.value === 'id_user') setSearchUnitup('');
+                else setSearchIdUser('');
+              }}
               disabled={loading || saving}
-              style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
-            />
+              style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem', cursor: 'pointer' }}
+            >
+              <option value="id_user">ID User</option>
+              <option value="unitup">Kode Unit (Unitup)</option>
+            </select>
           </div>
 
-          <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label htmlFor="search-unitup" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Kode Unit (Unitup)</label>
-            <input
-              type="text"
-              id="search-unitup"
-              placeholder="Contoh: 54110"
-              value={searchUnitup}
-              onChange={(e) => setSearchUnitup(e.target.value)}
-              disabled={loading || saving}
-              style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
-            />
-          </div>
+          {searchCriteria === 'id_user' ? (
+            <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label htmlFor="search-iduser" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>ID User</label>
+              <input
+                type="text"
+                id="search-iduser"
+                placeholder="Contoh: PS.PUSAT.POLMA"
+                value={searchIdUser}
+                onChange={(e) => setSearchIdUser(e.target.value)}
+                disabled={loading || saving}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+              />
+            </div>
+          ) : (
+            <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label htmlFor="search-unitup" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Kode Unit (Unitup)</label>
+              <input
+                type="text"
+                id="search-unitup"
+                placeholder="Contoh: 54110"
+                value={searchUnitup}
+                onChange={(e) => setSearchUnitup(e.target.value)}
+                disabled={loading || saving}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+              />
+            </div>
+          )}
 
           <button
             type="submit"

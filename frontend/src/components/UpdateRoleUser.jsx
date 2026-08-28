@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast, pgRegion = 'ap2t', onPgRegionChange }) {
   const [searchIdUser, setSearchIdUser] = useState('');
   const [searchUnitUp, setSearchUnitUp] = useState('');
+  const [searchCriteria, setSearchCriteria] = useState('id_user'); // 'id_user' or 'unitup'
   const [userDataList, setUserDataList] = useState([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -83,8 +84,12 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!searchIdUser.trim() && !searchUnitUp.trim()) {
-      showToast('Masukkan ID User atau Kode Unit untuk melakukan pencarian!', 'warning');
+    if (searchCriteria === 'id_user' && !searchIdUser.trim()) {
+      showToast('Masukkan ID User untuk melakukan pencarian!', 'warning');
+      return;
+    }
+    if (searchCriteria === 'unitup' && !searchUnitUp.trim()) {
+      showToast('Masukkan Kode Unit untuk melakukan pencarian!', 'warning');
       return;
     }
 
@@ -387,26 +392,48 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
         </h3>
         <form onSubmit={handleSearch} style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-end' }}>
           <div className="form-group" style={{ flex: '1', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>ID User</label>
-            <input
-              type="text"
-              value={searchIdUser}
-              onChange={(e) => setSearchIdUser(e.target.value)}
-              placeholder="Masukkan ID User (e.g. PS.PUSAT.POLMA)"
-              style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
-            />
+            <label htmlFor="search-criteria" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Cari Berdasarkan</label>
+            <select
+              id="search-criteria"
+              value={searchCriteria}
+              onChange={(e) => {
+                setSearchCriteria(e.target.value);
+                if (e.target.value === 'id_user') setSearchUnitUp('');
+                else setSearchIdUser('');
+              }}
+              disabled={loadingSearch || saving}
+              style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem', cursor: 'pointer' }}
+            >
+              <option value="id_user">ID User</option>
+              <option value="unitup">Kode Unit</option>
+            </select>
           </div>
-          <div className="form-group" style={{ flex: '1', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Kode Unit (Maks 6 digit)</label>
-            <input
-              type="text"
-              maxLength={6}
-              value={searchUnitUp}
-              onChange={(e) => setSearchUnitUp(e.target.value)}
-              placeholder="Masukkan Kode Unit (e.g. 54210)"
-              style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
-            />
-          </div>
+
+          {searchCriteria === 'id_user' ? (
+            <div className="form-group" style={{ flex: '1', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>ID User</label>
+              <input
+                type="text"
+                value={searchIdUser}
+                onChange={(e) => setSearchIdUser(e.target.value)}
+                placeholder="Masukkan ID User (e.g. PS.PUSAT.POLMA)"
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+              />
+            </div>
+          ) : (
+            <div className="form-group" style={{ flex: '1', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Kode Unit (Maks 6 digit)</label>
+              <input
+                type="text"
+                maxLength={6}
+                value={searchUnitUp}
+                onChange={(e) => setSearchUnitUp(e.target.value)}
+                placeholder="Masukkan Kode Unit (e.g. 54210)"
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+              />
+            </div>
+          )}
+
           <button
             type="submit"
             className="btn btn-primary"
