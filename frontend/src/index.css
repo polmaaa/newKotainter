@@ -971,4 +971,48 @@
             from { opacity: 0; transform: scale(0.97); }
             to { opacity: 1; transform: scale(1); }
         }
+
+        /* ----------------------------------------------------
+           GLOBAL COMPACT & UNIFORM SIZING OVERRIDES
+           ---------------------------------------------------- */
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="date"],
+        select,
+        textarea,
+        .select-input,
+        .form-input-text {
+            padding: 8px 12px !important;
+            height: 38px !important;
+            box-sizing: border-box !important;
+            font-size: 0.875rem !important;
+            border-radius: 6px !important;
+        }
+
+        /* Search input specific padding to accommodate search icon on left */
+        .input-text {
+            padding: 8px 12px 8px 32px !important;
+            height: 38px !important;
+            box-sizing: border-box !important;
+            font-size: 0.875rem !important;
+            border-radius: 6px !important;
+        }
+
+        .btn, 
+        button:not([class*="close"]):not([style*="background: none"]):not([style*="background:none"]) {
+            height: 38px !important;
+            padding: 8px 16px !important;
+            font-size: 0.875rem !important;
+            border-radius: 6px !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Prevent tabs scroll buttons from being broken by global button style */
+        #tabs-bar button {
+            height: 100% !important;
+            width: 32px !important;
+            padding: 0 !important;
+        }
+    
     
