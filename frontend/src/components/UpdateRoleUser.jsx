@@ -27,10 +27,16 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
   const pgDropdownRef = useRef(null);
   const [pgDropdownOpen, setPgDropdownOpen] = useState(false);
 
+  const [criteriaDropdownOpen, setCriteriaDropdownOpen] = useState(false);
+  const criteriaDropdownRef = useRef(null);
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (pgDropdownRef.current && !pgDropdownRef.current.contains(e.target)) {
         setPgDropdownOpen(false);
+      }
+      if (criteriaDropdownRef.current && !criteriaDropdownRef.current.contains(e.target)) {
+        setCriteriaDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -388,40 +394,107 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
       {/* SEARCH PANEL */}
       <div className="search-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', marginBottom: '24px' }}>
         <form onSubmit={handleSearch} style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-end' }}>
-          <div className="form-group" style={{ flex: '1', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label htmlFor="search-criteria" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Cari Berdasarkan</label>
-            <select
-              id="search-criteria"
-              className="select-input"
-              value={searchCriteria}
-              onChange={(e) => {
-                setSearchCriteria(e.target.value);
-                if (e.target.value === 'id_user') setSearchUnitUp('');
-                else setSearchIdUser('');
-              }}
+          <div className="form-group" ref={criteriaDropdownRef} style={{ flex: '1', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative' }}>
+            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Cari Berdasarkan</label>
+            
+            <button
+              type="button"
+              onClick={() => setCriteriaDropdownOpen(!criteriaDropdownOpen)}
               disabled={loadingSearch || saving}
-              style={{ 
-                padding: '10px 36px 10px 14px', 
-                borderRadius: '8px', 
-                border: '1px solid var(--border-color)', 
-                backgroundColor: 'var(--bg-input)', 
-                color: 'var(--text-main)', 
-                fontSize: '0.9rem', 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '10px 14px',
+                borderRadius: '8px',
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--bg-input)',
+                color: 'var(--text-main)',
+                fontSize: '0.9rem',
                 cursor: 'pointer',
                 height: '42px',
                 width: '100%',
-                appearance: 'none',
-                WebkitAppearance: 'none',
-                MozAppearance: 'none',
-                backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2364748b\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'right 14px center',
-                backgroundSize: '16px'
+                textAlign: 'left'
               }}
             >
-              <option value="id_user">ID User</option>
-              <option value="unitup">Kode Unit</option>
-            </select>
+              <span>{searchCriteria === 'id_user' ? 'ID User' : 'Kode Unit'}</span>
+              <i className={`pi ${criteriaDropdownOpen ? 'pi-chevron-up' : 'pi-chevron-down'}`} style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}></i>
+            </button>
+
+            {criteriaDropdownOpen && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                marginTop: '6px',
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '8px',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                zIndex: 100,
+                overflow: 'hidden'
+              }}>
+                <div
+                  onClick={() => {
+                    setSearchCriteria('id_user');
+                    setSearchUnitUp('');
+                    setCriteriaDropdownOpen(false);
+                  }}
+                  onMouseEnter={(e) => {
+                    if (searchCriteria !== 'id_user') {
+                      e.currentTarget.style.backgroundColor = 'var(--border-light)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (searchCriteria !== 'id_user') {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }
+                  }}
+                  style={{
+                    padding: '10px 14px',
+                    fontSize: '0.9rem',
+                    color: 'var(--text-main)',
+                    cursor: 'pointer',
+                    backgroundColor: searchCriteria === 'id_user' ? 'var(--primary-light)' : 'transparent',
+                    color: searchCriteria === 'id_user' ? 'var(--primary)' : 'var(--text-main)',
+                    fontWeight: searchCriteria === 'id_user' ? '600' : 'normal',
+                    transition: 'background-color 0.15s, color 0.15s'
+                  }}
+                >
+                  ID User
+                </div>
+                <div
+                  onClick={() => {
+                    setSearchCriteria('unitup');
+                    setSearchIdUser('');
+                    setCriteriaDropdownOpen(false);
+                  }}
+                  onMouseEnter={(e) => {
+                    if (searchCriteria !== 'unitup') {
+                      e.currentTarget.style.backgroundColor = 'var(--border-light)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (searchCriteria !== 'unitup') {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }
+                  }}
+                  style={{
+                    padding: '10px 14px',
+                    fontSize: '0.9rem',
+                    color: 'var(--text-main)',
+                    cursor: 'pointer',
+                    backgroundColor: searchCriteria === 'unitup' ? 'var(--primary-light)' : 'transparent',
+                    color: searchCriteria === 'unitup' ? 'var(--primary)' : 'var(--text-main)',
+                    fontWeight: searchCriteria === 'unitup' ? '600' : 'normal',
+                    transition: 'background-color 0.15s, color 0.15s'
+                  }}
+                >
+                  Kode Unit
+                </div>
+              </div>
+            )}
           </div>
 
           {searchCriteria === 'id_user' ? (
