@@ -414,7 +414,8 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
                 cursor: 'pointer',
                 height: '42px',
                 width: '100%',
-                textAlign: 'left'
+                textAlign: 'left',
+                boxSizing: 'border-box'
               }}
             >
               <span>{searchCriteria === 'id_user' ? 'ID User' : 'Kode Unit'}</span>
@@ -505,7 +506,7 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
                 value={searchIdUser}
                 onChange={(e) => setSearchIdUser(e.target.value)}
                 placeholder="Masukkan ID User (e.g. PS.PUSAT.POLMA)"
-                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem', height: '42px', boxSizing: 'border-box' }}
               />
             </div>
           ) : (
@@ -517,7 +518,7 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
                 value={searchUnitUp}
                 onChange={(e) => setSearchUnitUp(e.target.value)}
                 placeholder="Masukkan Kode Unit (e.g. 54210)"
-                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem', height: '42px', boxSizing: 'border-box' }}
               />
             </div>
           )}
@@ -526,7 +527,7 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
             type="submit"
             className="btn btn-primary"
             disabled={loadingSearch}
-            style={{ padding: '10px 24px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', height: '42px' }}
+            style={{ padding: '10px 24px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', height: '42px', boxSizing: 'border-box' }}
           >
             {loadingSearch ? <i className="pi pi-spin pi-spinner"></i> : <i className="pi pi-search"></i>}
             Cari User

@@ -376,7 +376,8 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
                 cursor: 'pointer',
                 height: '42px',
                 width: '100%',
-                textAlign: 'left'
+                textAlign: 'left',
+                boxSizing: 'border-box'
               }}
             >
               <span>{searchCriteria === 'id_user' ? 'ID User' : 'Kode Unit (Unitup)'}</span>
@@ -469,7 +470,7 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
                 value={searchIdUser}
                 onChange={(e) => setSearchIdUser(e.target.value)}
                 disabled={loading || saving}
-                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem', height: '42px', boxSizing: 'border-box' }}
               />
             </div>
           ) : (
@@ -482,7 +483,7 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
                 value={searchUnitup}
                 onChange={(e) => setSearchUnitup(e.target.value)}
                 disabled={loading || saving}
-                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem' }}
+                style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem', height: '42px', boxSizing: 'border-box' }}
               />
             </div>
           )}
@@ -491,7 +492,7 @@ export default function UpdateUser({ user, apiBaseUrl, showToast, isPostgres = f
             type="submit"
             className="btn btn-primary"
             disabled={loading}
-            style={{ padding: '10px 24px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', height: '42px', flexShrink: 0 }}
+            style={{ padding: '10px 24px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', height: '42px', flexShrink: 0, boxSizing: 'border-box' }}
           >
             {loading ? (
               <>
