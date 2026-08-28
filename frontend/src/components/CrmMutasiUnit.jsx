@@ -115,9 +115,6 @@ export default function CrmMutasiUnit({ user, apiBaseUrl, showToast, isPostgres 
 
       {/* Search panel */}
       <div className="content-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-        <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', color: '#0f766e', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <i className="pi pi-search"></i> Pencarian Data User CRM
-        </h3>
         <form onSubmit={handleSearch} style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-end' }}>
           <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <label htmlFor="crm-identifier" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>User ID / User ID AP2T / Email</label>

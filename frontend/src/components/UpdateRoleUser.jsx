@@ -387,14 +387,12 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
 
       {/* SEARCH PANEL */}
       <div className="search-card" style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-light)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', marginBottom: '24px' }}>
-        <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', color: '#0f766e', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <i className="pi pi-search"></i> Pencarian Data User
-        </h3>
         <form onSubmit={handleSearch} style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-end' }}>
           <div className="form-group" style={{ flex: '1', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <label htmlFor="search-criteria" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>Cari Berdasarkan</label>
             <select
               id="search-criteria"
+              className="select-input"
               value={searchCriteria}
               onChange={(e) => {
                 setSearchCriteria(e.target.value);
@@ -402,7 +400,24 @@ export default function UpdateRoleUser({ user, isPostgres, apiBaseUrl, showToast
                 else setSearchIdUser('');
               }}
               disabled={loadingSearch || saving}
-              style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-input)', color: 'var(--text-main)', fontSize: '0.9rem', cursor: 'pointer' }}
+              style={{ 
+                padding: '10px 36px 10px 14px', 
+                borderRadius: '8px', 
+                border: '1px solid var(--border-color)', 
+                backgroundColor: 'var(--bg-input)', 
+                color: 'var(--text-main)', 
+                fontSize: '0.9rem', 
+                cursor: 'pointer',
+                height: '42px',
+                width: '100%',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                MozAppearance: 'none',
+                backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2364748b\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 14px center',
+                backgroundSize: '16px'
+              }}
             >
               <option value="id_user">ID User</option>
               <option value="unitup">Kode Unit</option>

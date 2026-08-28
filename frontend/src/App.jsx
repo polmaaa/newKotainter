@@ -145,6 +145,9 @@ export default function App() {
         });
         const result = await response.json();
         if (response.ok && result.status === 'success') {
+          // Prioritize menu load!
+          await loadDynamicMenus();
+          
           setUser(result.data.user || { id_user: 'User', nama_user: 'User', level_user: 'Visitor' });
           if (result.data.system_settings) {
             setSystemSettings(result.data.system_settings);
@@ -152,7 +155,6 @@ export default function App() {
           loadLogs();
           checkDbStatus();
           loadDbConfig();
-          loadDynamicMenus();
         }
       } catch (err) {
         console.error('Sesi login belum aktif:', err);
@@ -210,8 +212,13 @@ export default function App() {
     }
   };
 
-  const handleLoginSuccess = (loginData) => {
+  const handleLoginSuccess = async (loginData) => {
     setTransitionState('logging-in');
+    try {
+      await loadDynamicMenus();
+    } catch (e) {
+      console.error(e);
+    }
     setTimeout(() => {
       setUser(loginData.user || { id_user: 'User', nama_user: 'User', level_user: 'Visitor' });
       if (loginData.system_settings) {
@@ -221,7 +228,6 @@ export default function App() {
       loadLogs();
       checkDbStatus();
       loadDbConfig();
-      loadDynamicMenus();
     }, 300);
   };
 
